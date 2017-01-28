@@ -45,15 +45,15 @@ for imap=1:nMaps
     p=subsasgn(p,iSub,bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},:));
     
     if p.trial.datapixx.useAsPorts
-        if strcmp(p.trial.datapixx.adc.channelMappingNames(imap),p.trial.datapixx.adc.portMapping)
-            if p.trial.datapixx.adc.portAvg==0
+        if strcmp(p.trial.datapixx.adc.channelMappingNames(imap),p.trial.ports.adc.portMapping)
+            if p.trial.ports.adc.portAvg==0
                 tmpData=bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},end);
             else
-                nAvg=max(p.trial.datapixx.adc.portAvg,size(bufferData,2));
+                nAvg=max(p.trial.ports.adc.portAvg,size(bufferData,2));
                 tmpData=bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},end-nAvg+1:end);
             end
             
-            p.trial.ports.status = (tmpData < p.trial.datapixx.adc.portThreshold);
+            p.trial.ports.status = (tmpData < p.trial.ports.adc.portThreshold);
         end
     end
     

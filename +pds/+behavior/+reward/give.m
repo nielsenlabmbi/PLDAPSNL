@@ -21,7 +21,7 @@ end
 
 if p.trial.datapixx.use
     if  p.trial.datapixx.useForReward
-        pds.datapixx.analogOut(amount, chan, p.trial.behavior.reward.dacAmp);
+        pds.datapixx.analogOutTime(amount, chan, p.trial.behavior.reward.dacAmp,p.trial.datapixx.dac.sampleRate);
     end
     %%flag
     pds.datapixx.flipBit(p.trial.event.REWARD,p.trial.pldaps.iTrial);

@@ -40,10 +40,10 @@ function s=pldapsClassDefaultParameters(s)
  s.	datapixx.	adc.	startDelay = 0;
  s.	datapixx.	adc.	XEyeposChannel = [ ];
  s.	datapixx.	adc.	YEyeposChannel = [ ];
- 
-%s. datapixx.   dac.
- s. datapixx.   dac.    sampleRate = 1000;
- 
+ s. datapixx.   adc.    portMapping = 'datapixx.adc.ports';
+ s. datapixx.   adc.    portThreshold = 2;
+ s. datapixx.   adc.    portAvg = 0;
+ s. datapixx.   adc.    
 
 %s.	datapixx.	GetPreciseTime.
  s.	datapixx.	GetPreciseTime.	maxDuration = [ ];
@@ -92,11 +92,7 @@ function s=pldapsClassDefaultParameters(s)
 %s.	git.
  s.	git.	use = false;
   
-%s. led.
- s. led.    channel = 0;
- s. led.    dacAmp = 10;
- s. led.    use = 1;
- 
+
 %s.	mouse.
  s.	mouse.	use = false;
  s.	mouse.	useAsEyepos = false;
@@ -178,9 +174,6 @@ function s=pldapsClassDefaultParameters(s)
 %s. ports.
  s. ports.   use = true;
  s. ports.   nPorts = 4;
- s. ports.   adc.  portMapping = 'datapixx.adc.ports';
- s. ports.   adc.  portThreshold = 2;
- s. ports.   adc.  portAvg = 0;
  
 %s.	session.
  s.	session.	experimentFile = [ ];

@@ -113,6 +113,10 @@ try
     
     pds.keyboard.setup(p);
     
+    % Initialize LED state
+    if p.trial.led.use == 1
+        p.trial.led.state = 0;
+    end
     
     %% Last chance to check variables
     if(p.trial.pldaps.pause.type==1 && p.trial.pldaps.pause.preExperiment==true) %0=don't,1 is debugger, 2=pause loop
@@ -237,6 +241,7 @@ try
     ListenChar(0);
     Priority(0);
     
+    %close other devices
     p = pds.eyelink.finish(p);
     p = pds.plexon.finish(p);
     if(p.defaultParameters.datapixx.use)
@@ -249,6 +254,9 @@ try
         end
     end
     
+    
+    %turn LED off (has an internal check whether LED is in use)
+    pds.LED.LEDOff(p);
     
     if ~p.defaultParameters.pldaps.nosave
         [structs,structNames] = p.defaultParameters.getAllStructs();
@@ -324,15 +332,7 @@ while(true)
             
             %M: Manual reward
         elseif  dv.trial.keyboard.firstPressQ(dv.trial.keyboard.codes.mKey)
-            pds.behavior.reward.give(p);
-            %                     if dv.trial.datapixx.use
-            %                         pds.datapixx.analogOut(dv.trial.stimulus.rewardTime)
-            %                         pds.datapixx.flipBit(dv.trial.event.REWARD);
-            %                     end
-            %                     dv.trial.ttime = GetSecs - dv.trial.trstart;
-            %                     dv.trial.stimulus.timeReward(:,dv.trial.iReward) = [dv.trial.ttime dv.trial.stimulus.rewardTime];
-            %                     dv.trial.stimulus.iReward = dv.trial.iReward + 1;
-            %                     PsychPortAudio('Start', dv.trial.sound.reward);
+            %pds.behavior.reward.give(p);
             
             %P: PAUSE (end the pause)
         elseif  dv.trial.keyboard.firstPressQ(dv.trial.keyboard.codes.pKey)
