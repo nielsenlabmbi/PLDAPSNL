@@ -37,7 +37,6 @@ try
     if ~p.defaultParameters.pldaps.nosave
         p.defaultParameters.session.dir = p.defaultParameters.pldaps.dirs.data;
         p.defaultParameters.session.file = [p.defaultParameters.session.subject datestr(p.defaultParameters.session.initTime, 'yyyymmdd') p.defaultParameters.session.experimentSetupFile datestr(p.defaultParameters.session.initTime, 'HHMM') '.PDS'];
-        %         p.defaultParameters.session.file = fullfile(p.defaultParameters.pldaps.dirs.data, [p.defaultParameters.session.subject datestr(p.defaultParameters.session.initTime, 'yyyymmdd') p.defaultParameters.session.experimentSetupFile datestr(p.defaultParameters.session.initTime, 'HHMM') '.PDS']);
         
         if p.defaultParameters.pldaps.useFileGUI
             [cfile, cdir] = uiputfile('.PDS', 'specify data storage file', fullfile( p.defaultParameters.session.dir,  p.defaultParameters.session.file));
@@ -94,7 +93,7 @@ try
     
     %things that where in the default Trial Structure
     
-    % Audio
+    % Audio (this uses psychportaudio)
     %-------------------------------------------------------------------------%
     p = pds.audio.setup(p);
     

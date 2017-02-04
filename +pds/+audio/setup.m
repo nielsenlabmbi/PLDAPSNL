@@ -6,7 +6,7 @@ function p = setup(p)
 % (c) jly 2012
 %     jk  2015 changed to work with version 4.1 and changed to load all
 %              wavfiles in the wavfiles directory
-if p.trial.sound.use && isField(p.trial, 'pldaps.dirs.wavfiles')
+if p.trial.sound.use && p.trial.sound.usePsychPortAudio && isField(p.trial, 'pldaps.dirs.wavfiles')
     % initalize
     InitializePsychSound;
     
@@ -27,6 +27,4 @@ if p.trial.sound.use && isField(p.trial, 'pldaps.dirs.wavfiles')
        
        PsychPortAudio('FillBuffer',p.trial.sound.(name(1:end-4)), wav1);
     end    
-else
-    p.trial.sound.use=false;
 end

@@ -188,4 +188,6 @@ function s=pldapsClassDefaultParameters(s)
 %s.	sound.
  s.	sound.	deviceid = [ ];
  s.	sound.	use = true;
+ s. sound.  usePsychPortAudio = 0;
+ s. sound.  volume = 0.5;
 end

@@ -82,6 +82,7 @@ switch p.trial.state
             correct=checkPortChoice(activePort,p);
             if correct==1
                 %play tone
+                pds.audio.playDatapixxAudio(p,'reward_short');
                 
                 %give reward
                 if activePort==p.trial.stimulus.port.LEFT
