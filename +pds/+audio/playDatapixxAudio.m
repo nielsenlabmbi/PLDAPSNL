@@ -8,7 +8,7 @@ if p.trial.sound.use && p.trial.sound.usePsychPortAudio==0
     
     buf=p.trial.sound.(soundName).buf;
     freq=p.trial.sound.(soundName).freq;
-    nSamples=p.trial.sound.(soundName).length;
+    nSamples=p.trial.sound.(soundName).nSamples;
     nChannels=p.trial.sound.(soundName).nChannels;
     
     if nChannels==1

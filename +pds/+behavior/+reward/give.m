@@ -24,7 +24,7 @@ if p.trial.datapixx.use
         pds.datapixx.analogOutTime(amount, chan, p.trial.behavior.reward.dacAmp,p.trial.datapixx.dac.sampleRate);
     end
     %%flag
-    pds.datapixx.flipBit(p.trial.event.REWARD,p.trial.pldaps.iTrial);
+    pds.datapixx.flipBit(p,p.trial.event.REWARD,p.trial.pldaps.iTrial);
 end
 
 %%sound

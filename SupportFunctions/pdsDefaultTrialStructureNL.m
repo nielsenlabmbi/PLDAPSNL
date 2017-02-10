@@ -26,6 +26,8 @@ p.defaultParameters.stimulus.port.LEFT = 2;
 p.defaultParameters.stimulus.port.RIGHT = 1;
 p.defaultParameters.stimulus.port.MIDDLE = 4;
 
+
+
 %-------------------------------------------------------------------------%
 % Indices into reward amounts (relative to behavior.reward.amount)
 p.defaultParameters.stimulus.rewardIdx.START = 1;

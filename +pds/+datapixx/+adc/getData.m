@@ -38,13 +38,15 @@ p.trial.datapixx.adc.dataSampleTimes(inds)=bufferTimetags;
 
 nMaps=length(p.trial.datapixx.adc.channelMappingChannels);
 for imap=1:nMaps
-%     iChannels=p.trial.datapixx.adc.channelMappingChannels{imap};
     iSub = p.trial.datapixx.adc.channelMappingSubs{imap};
     iSub(end).subs{2}=inds;
     
     p=subsasgn(p,iSub,bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},:));
     
     if p.trial.datapixx.useAsPorts
+        %if using adc channels to monitor ports, save the last or average value of the
+        %relevant channels (indicated in mapping) to  port.status for
+        %easier monitoring
         if strcmp(p.trial.datapixx.adc.channelMappingNames(imap),p.trial.ports.adc.portMapping)
             if p.trial.ports.adc.portAvg==0
                 tmpData=bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},end);

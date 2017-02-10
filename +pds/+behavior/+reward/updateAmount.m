@@ -20,4 +20,4 @@ switch sel
         p.trial.behavior.reward.amount(4)=p.trial.behavior.reward.amount(4)+p.trial.behavior.reward.amountDelta;
 end
 
-disp('Updated reward amount')
+disp('***Updated reward amount')

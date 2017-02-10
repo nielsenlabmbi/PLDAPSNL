@@ -7,12 +7,13 @@ function s=pldapsClassDefaultParameters(s)
 %s.	behavior.
 %s.	behavior.	reward.
  s.	behavior.	reward.	defaultAmount = 0.3;
+ s. behavior.   reward. manualAmount = 0.2;
  s. behavior.   reward. amount = [0.1 0.3 0.3 0.3];
  s. behavior.   reward. amountDelta = 0.05;
  s. behavior.   reward. propAmtIncorrect = 0.2;
  s. behavior.   reward. dacAmp = 10;
  s. behavior.   reward. nChannels = 3;
- s. behavior.   reward. channel. START = 3;
+ s. behavior.   reward. channel. START = 3; %dac channel for reward delivery
  s. behavior.   reward. channel. LEFT = 2;
  s. behavior.   reward. channel. RIGHT = 1;
  s. behavior.   reward. channel. MIDDLE = 4;
@@ -26,6 +27,7 @@ function s=pldapsClassDefaultParameters(s)
  s.	datapixx.	useAsEyepos = false;
  s.	datapixx.	useForReward = true;
  s. datapixx.   useAsPorts = true;
+ s. datapixx.   useForStrobe = false;
 
 %s.	datapixx.	adc.
  s.	datapixx.	adc.	bufferAddress = [ ];
@@ -57,8 +59,8 @@ function s=pldapsClassDefaultParameters(s)
  s.	display.	displayName = 'defaultScreenParameters';
  s.	display.	forceLinearGamma = false;
  s.	display.	heightcm = 45;
- s.	display.	normalizeColor = 0;
- s.	display.	screenSize = [ ];
+ s.	display.	normalizeColor = 1;
+ s.	display.	screenSize = [0 0 1920 1080];
  s.	display.	scrnNum = 1;
  s.	display.	sourceFactorNew = 'GL_SRC_ALPHA';
  s.	display.	stereoFlip = [ ];
@@ -101,6 +103,7 @@ function s=pldapsClassDefaultParameters(s)
  s.	mouse.	use = false;
  s.	mouse.	useAsEyepos = false;
  s. mouse.  useAsPort = false;
+ s. mouse.  virtualPortRadius = 20;
 
 %s.	newEraSyringePump.
  s.	newEraSyringePump.	alarmMode = 1;
@@ -129,7 +132,7 @@ function s=pldapsClassDefaultParameters(s)
 
 %s.	pldaps.	dirs.
  s.	pldaps.	dirs.	data = '~/pldapsData';
- s.	pldaps.	dirs.	wavfiles = '~/PLDAPS/beepsounds';
+ s.	pldaps.	dirs.	wavfiles = '~/PLDAPSNL/beepsounds';
 
 %s.	pldaps.	draw.
 %s.	pldaps.	draw.	cursor.
@@ -155,11 +158,11 @@ function s=pldapsClassDefaultParameters(s)
  
 %s.	pldaps.	draw.	ports.
  s.	pldaps.	draw.	ports.	show = true;
- s. pldaps. draw.   ports.  size = 50;
+ 
 
 %s. pldaps. draw.   reward.
  s. pldaps. draw.   reward. show = true;
- s. pldaps. draw.   reward. verbose = true; 
+ s. pldaps. draw.   reward. verbose = false; 
  
 %s.	pldaps.	pause.
  s.	pldaps.	pause.	preExperiment = 0;
@@ -178,9 +181,13 @@ function s=pldapsClassDefaultParameters(s)
 %s. ports.
  s. ports.   use = true;
  s. ports.   nPorts = 4;
- s. ports.   adc.  portMapping = 'datapixx.adc.ports';
+ s. ports.   movable = true;
+ s. ports.   adc.  portMapping = 'datapixx.adc.ports'; %adc channels for port contact
  s. ports.   adc.  portThreshold = 2;
  s. ports.   adc.  portAvg = 0;
+ s. ports.   dio.  channel. LEFT = 1; %dio channels to move ports
+ s. ports.   dio.  channel. MIDDLE = 3;
+ s. ports.   dio.  channel. RIGHT = 2;
  
 %s.	session.
  s.	session.	experimentFile = [ ];
@@ -189,5 +196,5 @@ function s=pldapsClassDefaultParameters(s)
  s.	sound.	deviceid = [ ];
  s.	sound.	use = true;
  s. sound.  usePsychPortAudio = 0;
- s. sound.  volume = 0.5;
+ s. sound.  volume = 0.25;
 end

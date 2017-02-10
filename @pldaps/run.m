@@ -79,9 +79,9 @@ try
     % Response ports
     %-------------------------------------------------------------------------%
     if(p.trial.ports.use)
-        p = pds.IRports.initPortStatus(p);
+        p = pds.ports.initPortStatus(p);
         if(p.trial.pldaps.draw.ports.show)
-            p = pds.IRports.makePortsRect(p);
+            p = pds.ports.makePortsPos(p);
         end
     end
     
@@ -116,6 +116,9 @@ try
     if p.trial.led.use == 1
         p.trial.led.state = 0;
     end
+    
+    % Initialize trial locking status
+    p.trialMem.lock = 0;
     
     %% Last chance to check variables
     if(p.trial.pldaps.pause.type==1 && p.trial.pldaps.pause.preExperiment==true) %0=don't,1 is debugger, 2=pause loop

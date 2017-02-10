@@ -1,4 +1,4 @@
-function basicTest2(p,state)
+function basicTest3(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -38,12 +38,28 @@ activePort=find(p.trial.ports.status==1);
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
         
-
+        if p.trial.led.state==0
+            %turn LED on
+            pds.LED.LEDOn(p);
+            p.trial.led.state=1;
+            %note timepoint
+            p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
+            p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+        end
         
         if activePort==p.trial.stimulus.port.START %start port activated
             
             %turn LED off
-            %pds.LED.LEDOff(p);
+            if p.trial.led.state==1
+                pds.LED.LEDOff(p);
+                p.trial.led.state=0;
+            end
+            
+            %move response ports (only if necessary)
+            if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
+               pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+               pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
+            end
             
             %note timepoint
             p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
@@ -72,6 +88,7 @@ switch p.trial.state
             correct=checkPortChoice(activePort,p);
             if correct==1
                 %play tone
+                pds.audio.playDatapixxAudio(p,'reward_short');
                 
                 %give reward
                 if activePort==p.trial.stimulus.port.LEFT
@@ -82,10 +99,17 @@ switch p.trial.state
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                 end
                 
+                %retract all reward ports (if necessary)
+                if any(p.trial.ports.position)
+                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                end
+                
                 %advance state
                 p.trial.state=p.trial.stimulus.states.CORRECT;
             else
                 %play tone
+                pds.audio.playDatapixxAudio(p,'breakfix');
+                
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
@@ -105,7 +129,20 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
-        if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial            
+        if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial
+            
+            %retract incorrect spout
+            if p.trial.side==p.trial.stimulus.side.LEFT
+                if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
+                end
+            end
+            if p.trial.side==p.trial.stimulus.side.RIGHT
+                if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
+                end
+            end
+            
             %check whether any port chosen
             if activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT
                 %check whether correct port chosen
@@ -114,7 +151,7 @@ switch p.trial.state
                     %note time
                     p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                     p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
-                    %play tone
+                    
                     
                     %give (small) reward
                     if activePort==p.trial.stimulus.port.LEFT
@@ -125,6 +162,11 @@ switch p.trial.state
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     end
                     
+                    %retract all spouts
+                    if any(p.trial.ports.position)
+                        pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                    end
+                    
                     %advance state
                     p.trial.state=p.trial.stimulus.states.FINALRESP;
                 
@@ -132,6 +174,11 @@ switch p.trial.state
             end
                 
         else %incorrect responses end trial immediately
+            %retract spouts
+            if any(p.trial.ports.position)
+                pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0);
+            end
+            
             %wait for ITI
             if p.trial.ttime > p.trial.stimulus.timeTrialFirstResp + p.trial.stimulus.duration.ITI
                 %trial done
@@ -175,11 +222,22 @@ p.trial.stimulus.stimSize=[400 400 800 800];
 %set state
 p.trial.state=p.trial.stimulus.states.START;
 
+%set ports correctly
+pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+
+
+
+
+
+
+
 
 
 %------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
+
 
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
@@ -195,7 +253,12 @@ disp(['C: ' num2str(p.trialMem.stats.val)])
 disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
 disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
 
-    
+%if trial was locked, keep showing this trial
+if p.trialMem.lock==1
+    disp('Trial locked!')
+    thisCondition=p.conditions{p.trial.pldaps.iTrial}; 
+    p.conditions=[p.conditions(1:p.trial.pldaps.iTrial) thisCondition p.conditions(p.trial.pldaps.iTrial+1:end)];    
+end    
 
 %%%%%%Helper functions
 %-------------------------------------------------------------------%

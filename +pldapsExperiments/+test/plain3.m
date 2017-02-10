@@ -5,7 +5,7 @@ function p=plain3(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.test.basicTest2';
+p.trial.pldaps.trialFunction='pldapsExperiments.test.basicTest3';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;

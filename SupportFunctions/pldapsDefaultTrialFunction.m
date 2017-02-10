@@ -7,14 +7,8 @@ switch state
         %    framePrepareDrawing(p);
     case p.trial.pldaps.trialStates.frameDraw
         frameDraw(p);
-        %case p.trial.pldaps.trialStates.frameIdlePreLastDraw
-        %    frameIdlePreLastDraw(p);
-        %case p.trial.pldaps.trialStates.frameDrawTimecritical;
-        %    drawTimecritical(p);
     case p.trial.pldaps.trialStates.frameDrawingFinished;
         frameDrawingFinished(p);
-        %case p.trial.pldaps.trialStates.frameIdlePostDraw;
-        %    frameIdlePostDraw(p);
     case p.trial.pldaps.trialStates.frameFlip;
         frameFlip(p);
         
@@ -29,8 +23,8 @@ end
 end
 
 
-%%% get inputs and check behavior%%%
 %% frameUpdate
+%%% get inputs and check behavior%%%
 %---------------------------------------------------------------------%
 function frameUpdate(p)
 %%TODO: add buffer for Keyboard presses, nouse position and clicks.
@@ -50,38 +44,7 @@ if p.trial.keyboard.pressedQ
 end
 
 if any(p.trial.keyboard.firstPressQ)
-    if  p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.mKey)
-        pds.behavior.reward.give(p);
-        
-    elseif  p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.pKey)   % P = pause
-        p.trial.pldaps.quit = 1;
-        ShowCursor;
-    
-    elseif  p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.qKey) % Q = quit
-        p.trial.pldaps.quit = 2;
-        ShowCursor
-    
-    elseif  p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.dKey) % d=debug
-        disp('stepped into debugger. Type return to start first trial...')
-        keyboard %#ok<MCKBD>
-    
-    elseif p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.oneKey)   % reward change
-        pds.behavior.reward.updateAmount(p,1);
-    elseif p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.twoKey)   % reward change
-        pds.behavior.reward.updateAmount(p,2);
-    elseif p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.thrKey)   % reward change
-        pds.behavior.reward.updateAmount(p,3);  
-    elseif p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.forKey)   % reward change
-        pds.behavior.reward.updateAmount(p,4);
-    elseif p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.fivKey)   % reward change
-        pds.behavior.reward.updateAmount(p,5);
-    elseif p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.sixKey)   % reward change
-        pds.behavior.reward.updateAmount(p,6);    
-    elseif p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.svnKey)   % reward change
-        pds.behavior.reward.updateAmount(p,7);  
-    elseif p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.eitKey)   % reward change
-        pds.behavior.reward.updateAmount(p,8);
-    end
+    pds.keyboard.keyboardCmd(p);
 end
 % get mouse/eyetracker/port data
 if p.trial.mouse.use
@@ -103,7 +66,7 @@ if p.trial.mouse.use
     end
     
     if p.trial.ports.use && p.trial.mouse.useAsPort
-        p.trial.ports.status = pds.IRports.mouseInPort(p);
+        p.trial.ports.status = pds.ports.mouseInPort(p);
     end
 end
 %get analogData from Datapixx
@@ -167,10 +130,15 @@ if p.trial.mouse.use && p.trial.pldaps.draw.cursor.use
         p.trial.stimulus.eyeW, p.trial.display.clut.cursor, [0 0],0);
 end
 
-%draw squares to indicate response port status
+%draw squares to indicate response port status and position
 if p.trial.ports.use && p.trial.pldaps.draw.ports.show
-    pds.IRports.drawPorts(p.trial.display.overlayptr,p.trial.pldaps.draw.ports.rect,...
-        p.trial.ports.status,p.trial.display.clut.redbg);
+    pds.ports.drawPorts(p.trial.display.overlayptr,p.trial.pldaps.draw.ports.statusDisp,...
+        p.trial.ports.status,p.trial.display.clut.blackbg,p.trial.display.clut.redbg);
+    
+    if p.trial.ports.movable
+        pds.ports.drawPorts(p.trial.display.overlayptr,p.trial.pldaps.draw.ports.positionDisp,...
+            p.trial.ports.position,p.trial.display.clut.blackbg,p.trial.display.clut.redbg);
+    end
 end
 
 
@@ -351,9 +319,9 @@ pds.eyelink.startTrialPrepare(p);
 % SYNC clocks
 %TODO move into a pds.plexon.startTrial(p) file. Also just sent the data along the trialStart flax, or a  least after?
 clocktime = fix(clock);
-if p.trial.datapixx.use
+if p.trial.datapixx.use && p.trial.datapixx.useForStrobe
     for ii = 1:6
-        p.trial.datapixx.unique_number_time(ii,:)=pds.datapixx.strobe(clocktime(ii));
+        p.trial.datapixx.unique_number_time(ii,:)=pds.datapixx.strobe(p,clocktime(ii));
     end
 end
 p.trial.unique_number = clocktime;    % trial identifier
@@ -362,7 +330,9 @@ p.trial.unique_number = clocktime;    % trial identifier
 %datapixx thing? not really....
 if p.trial.datapixx.use
     p.trial.timing.datapixxStartTime = Datapixx('Gettime');
-    p.trial.timing.datapixxTRIALSTART = pds.datapixx.flipBit(p.trial.event.TRIALSTART,p.trial.pldaps.iTrial);  % start of trial (Plexon)
+    if p.trial.datapixx.useForStrobe
+        p.trial.timing.datapixxTRIALSTART = pds.datapixx.flipBit(p,p.trial.event.TRIALSTART,p.trial.pldaps.iTrial);  % start of trial (Plexon)
+    end
 end
 
 
@@ -394,8 +364,8 @@ frameUpdate(p)
 
 %clean up analogData collection from Datapixx
 pds.datapixx.adc.cleanUpandSave(p);
-if p.trial.datapixx.use
-    p.trial.timing.datapixxTRIALEND = pds.datapixx.flipBit(p.trial.event.TRIALEND,p.trial.pldaps.iTrial);  % start of trial (Plexon)
+if p.trial.datapixx.use && p.trial.datapixx.useForStrobe
+    p.trial.timing.datapixxTRIALEND = pds.datapixx.flipBit(p,p.trial.event.TRIALEND,p.trial.pldaps.iTrial);  % start of trial (Plexon)
 end
 
 if(p.trial.pldaps.draw.photodiode.use)

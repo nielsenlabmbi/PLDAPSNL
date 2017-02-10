@@ -97,6 +97,8 @@ switch p.trial.state
                 p.trial.state=p.trial.stimulus.states.CORRECT;
             else
                 %play tone
+                pds.audio.playDatapixxAudio(p,'breakfix');
+                
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
@@ -125,7 +127,7 @@ switch p.trial.state
                     %note time
                     p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                     p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
-                    %play tone
+                    
                     
                     %give (small) reward
                     if activePort==p.trial.stimulus.port.LEFT
@@ -181,7 +183,7 @@ p.trial.stimulus.iniSize=[500 500 600 600];
 
 %set up stimulus
 p.trial.stimulus.stimColor=p.conditions{p.trial.pldaps.iTrial}.color;
-p.trial.stimulus.stimSize=[400 400 800 800];
+p.trial.stimulus.stimSize=[200 200 1000 1000];
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
