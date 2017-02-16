@@ -58,7 +58,7 @@ function s=pldapsClassDefaultParameters(s)
  s.	display.	destinationFactorNew = 'GL_ONE_MINUS_SRC_ALPHA';
  s.	display.	displayName = 'defaultScreenParameters';
  s.	display.	forceLinearGamma = false;
- s.	display.	heightcm = 45;
+ s.	display.	heightcm = 29;
  s.	display.	normalizeColor = 1;
  s.	display.	screenSize = [0 0 1920 1080];
  s.	display.	scrnNum = 1;
@@ -67,8 +67,8 @@ function s=pldapsClassDefaultParameters(s)
  s.	display.	stereoMode = 0;
  s. display.	switchOverlayCLUTs = false;
  s.	display.	useOverlay = 1;
- s.	display.	viewdist = 57;
- s.	display.	widthcm = 63;
+ s.	display.	viewdist = 75;
+ s.	display.	widthcm = 52;
  s. display.    enableBacklight = true;
 
 %s.	display.	movie.
@@ -147,6 +147,7 @@ function s=pldapsClassDefaultParameters(s)
  s.	pldaps.	draw.	framerate.	show = true;
  s.	pldaps.	draw.	framerate.	size = [ 20     5 ];
  s.	pldaps.	draw.	framerate.	use = true;
+ s. pldaps. draw.   framerate.  rescaleY = false;
 
 %s.	pldaps.	draw.	grid.
  s.	pldaps.	draw.	grid.	use = false;

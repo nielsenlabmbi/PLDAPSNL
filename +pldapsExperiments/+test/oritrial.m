@@ -182,13 +182,13 @@ p.trial.stimulus.iniSize=[500 500 600 600];
 p.trial.stimulus.displacement=p.conditions{p.trial.pldaps.iTrial}.displacement;
 p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
 p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
-p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle;
+p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle + p.trial.stimulus.rotation*p.trial.stimulus.displacement;
 p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase;
 p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
 
 %make grating
-    DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
-    PixPerDeg = 1/DegPerPix;
+    %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+    %PixPerDeg = 1/DegPerPix;
 
     % GET GRATING SPECIFICATIONS
     nCycles = 24*p.trial.stimulus.sf;

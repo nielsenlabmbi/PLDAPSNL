@@ -42,7 +42,7 @@ combCond=eval(['combvec(' str ')']);
 condIdx=[];
 if strcmp(randType,'pseudo')
     for i=1:nrBlocks
-        condIdx=[condIdx randperm(length(combCond))];
+        condIdx=[condIdx randperm(size(combCond,2))];
     end
 elseif strcmp(randType,'block')
     %determine which side

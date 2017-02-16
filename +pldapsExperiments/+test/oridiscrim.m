@@ -15,12 +15,12 @@ p.trial.stimulus.duration.ITI = 3; %ITI in s
 
 
 %% conditions:
-cond.displacement = [10 20 30 40]; %use squares of 2 colors
+cond.displacement = p.defaultParameters.stimulus.offsets; %use squares of 2 colors
 cond.phase = [0 180];
 cond.rotation = [-1 1];
-cond.sf = [0.25];
-cond.angle = [45];
-cond.range = [121];
+cond.sf = p.defaultParameters.stimulus.sf;
+cond.angle = p.defaultParameters.stimulus.angle;
+cond.range = p.defaultParameters.stimulus.range;
 side.par = 'rotation';
 side.match=[-1 1];
 
