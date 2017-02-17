@@ -1,4 +1,4 @@
-function s = config_generalSettings
+function s = phase1_generalSettings
 
 %turn adc channels off
 s.datapixx.useAsPorts = 0;
@@ -11,6 +11,9 @@ s.mouse.use = 1;
 %turn saving off
 s.pldaps.nosave = 1;
 
-%turn ports off
+%misc
+s.stimulus.baseline = 2;
+s.stimulus.lickdelay = 1;
 
-s.ports.use = false;
+%ports
+ s. ports.   nPorts = 3;

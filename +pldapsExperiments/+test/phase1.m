@@ -64,25 +64,26 @@ switch p.trial.state
             p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
             p.trial.stimulus.frameTrialStartResp = p.trial.iFrame;
             
+            %advance state
+            p.trial.state = p.trial.stimulus.states.LICKDELAY;
+            
+        end
+        
+    case p.trial.stimulus.states.LICKDELAY
+        
             %deliver reward
             amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             
-            %advance state
-            if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.rewardIdx.START + 0.05;
+         if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + amount + p.trial.stimulus.lickdelay;
+                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                end
                 p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.FINALRESP;
-            end
-            
-        end
-        
+         end
         
     case p.trial.stimulus.states.FINALRESP
-        
-        if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-             pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
-        end
-        
         %wait for ITI
         if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI
             %trial done
@@ -133,7 +134,9 @@ end
 
 
 %show stats
+if isfield(p.trial.stimulus,'timeTrialStartResp');
 disp(['Time to lick:' num2str(p.trial.stimulus.timeTrialStartResp)]);
+end
 
 % pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 % disp(['C: ' num2str(p.trialMem.stats.val)])

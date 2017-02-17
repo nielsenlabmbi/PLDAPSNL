@@ -1,5 +1,6 @@
 function s = plain3_generalSettings
 
+
 %turn adc channels off
 s.datapixx.useAsPorts = 0;
 s.datapixx.adc.channels = [];

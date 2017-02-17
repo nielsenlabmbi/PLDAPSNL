@@ -136,22 +136,10 @@ switch p.trial.state
             if correct==1
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
-                
-                %retract incorrect spout
-                if p.trial.side==p.trial.stimulus.side.LEFT
-                    if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
-                        pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
-                    end
-                end
-                if p.trial.side==p.trial.stimulus.side.RIGHT
-                    if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
-                        pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
-                    end
-                end
-                
+
                 %advance state
                 p.trial.state=p.trial.stimulus.states.LICKDELAY;
-                p.trial.stimulus.timeResp = p.trial.ttime;
+                p.trial.timeResp = p.trial.ttime;
                 %note good trial
                 p.trial.pldaps.goodtrial = 1;
                 
@@ -199,7 +187,6 @@ switch p.trial.state
                 if correct==1 %now has chosen correct port
 
                     %advance state
-                    p.trial.stimulus.timeResp = p.trial.ttime;
                     p.trial.state=p.trial.stimulus.states.LICKDELAY;
                 
                 end

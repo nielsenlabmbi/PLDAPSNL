@@ -44,3 +44,4 @@ p.defaultParameters.stimulus.states.CORRECT = 3;
 p.defaultParameters.stimulus.states.INCORRECT = 4;
 p.defaultParameters.stimulus.states.FINALRESP = 5;
 p.defaultParameters.stimulus.states.TRIALCOMPLETE = 6;
+p.defaultParameters.stimulus.states.LICKDELAY = 7;

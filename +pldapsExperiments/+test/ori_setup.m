@@ -1,4 +1,4 @@
-function p=oridiscrim(p)
+function p=ori_setup(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
@@ -22,7 +22,7 @@ cond.sf = p.defaultParameters.stimulus.sf;
 cond.angle = p.defaultParameters.stimulus.angle;
 cond.range = p.defaultParameters.stimulus.range;
 side.par = 'rotation';
-side.match=[-1 1];
+side.match=[1 -1];
 
 c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.displacement)*2)));
 
