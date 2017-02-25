@@ -186,9 +186,9 @@ function s=pldapsClassDefaultParameters(s)
  s. ports.   adc.  portMapping = 'datapixx.adc.ports'; %adc channels for port contact
  s. ports.   adc.  portThreshold = 2;
  s. ports.   adc.  portAvg = 0;
- s. ports.   dio.  channel. LEFT = 1; %dio channels to move ports
+ s. ports.   dio.  channel. LEFT = 2; %dio channels to move ports
  s. ports.   dio.  channel. MIDDLE = 3;
- s. ports.   dio.  channel. RIGHT = 2;
+ s. ports.   dio.  channel. RIGHT = 1;
  
 %s.	session.
  s.	session.	experimentFile = [ ];

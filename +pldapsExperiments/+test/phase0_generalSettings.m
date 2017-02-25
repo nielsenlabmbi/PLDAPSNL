@@ -1,4 +1,4 @@
-function s = phase1_generalSettings
+function s = phase0_generalSettings
 
 %turn adc channels off
 s.datapixx.useAsPorts = 0;
@@ -9,8 +9,8 @@ s.mouse.useAsPort = 1;
 s.mouse.use = 1;
 
 % %configure ports
-%  s.ports.use = true;
-%  s.ports.nports = 3;
+ s.ports.use = true;
+ s.ports.nports = 3;
 %  s.ports.movable = true;
 %  s.datapixx.adc.channels = [1 3 5];
 %  
@@ -19,16 +19,16 @@ s.mouse.use = 1;
 % s.mouse.use = 0;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.07 0.07 0.07 0.07];
+s. behavior.   reward. amount = [0.075 0.075 0.075 0.075];
 
 %turn saving off
 s.pldaps.nosave = 1;
 
 %misc
-s.stimulus.baseline = 1;
+s.stimulus.baseline = 0.5;
 s.stimulus.stimON = 0.5;
-s.stimulus.lickdelay = 2;
-% s.stimulus.trialduration = 10;
+s.stimulus.lickdelay = 5;
+s.stimulus.trialduration = 10;
 s.stimulus.duration.ITI = 0.5;
 
 %ports

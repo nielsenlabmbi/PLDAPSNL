@@ -14,8 +14,8 @@ p = defaultBitNames(p);
 
 %-------------------------------------------------------------------------%
 % Stimulus side association
-p.defaultParameters.stimulus.side.LEFT = 1;
-p.defaultParameters.stimulus.side.RIGHT = 2;
+p.defaultParameters.stimulus.side.LEFT = 2;
+p.defaultParameters.stimulus.side.RIGHT = 1;
 p.defaultParameters.stimulus.side.MIDDLE = 3;
 
 

@@ -205,7 +205,7 @@ end
 function p=trialSetup(p)
  
 %get side for condition
-if p.conditions{p.trial.pldaps.iTrial}.side==1
+if p.conditions{p.trial.pldaps.iTrial}.side==2
     p.trial.side=p.trial.stimulus.side.LEFT;
 else
     p.trial.side=p.trial.stimulus.side.RIGHT;

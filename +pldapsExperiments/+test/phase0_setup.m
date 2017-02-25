@@ -1,11 +1,11 @@
-function p=phase1_setup(p)
+function p=phase0_setup(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.test.phase1';
+p.trial.pldaps.trialFunction='pldapsExperiments.test.phase0';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
