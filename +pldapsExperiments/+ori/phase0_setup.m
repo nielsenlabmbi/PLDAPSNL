@@ -1,11 +1,11 @@
-function p=plain3(p)
+function p=phase0_setup(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.test.basicTest2';
+p.trial.pldaps.trialFunction='pldapsExperiments.test.phase0';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
@@ -19,7 +19,7 @@ cond.color=[0 1]; %use squares of 2 colors
 side.par='color';
 side.match=[0 1];
 
-c=generateCondList(cond,side,'pseudo',5);
+c=generateCondList(cond,side,'pseudo',100);
 
 p.conditions=c;
 

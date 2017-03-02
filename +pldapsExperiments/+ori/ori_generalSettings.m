@@ -16,7 +16,7 @@ s.stimulus.baseline = 0.3;
 s.stimulus.lickdelay = 0.8;
 s.stimulus.stimON = 0.3;
 s.stimulus.waitTime = 0;
-s.stimulus.fracInstruct = 0.8;
+s.stimulus.fracInstruct = 0;
 
 %set up the viewing distance
 s.display.viewdist = 45; 

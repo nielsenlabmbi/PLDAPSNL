@@ -95,8 +95,7 @@ function s=pldapsClassDefaultParameters(s)
  s.	git.	use = false;
   
 %s. led.
- s. led.    channel = 0;
- s. led.    dacAmp = 10;
+ s. led.    channel = 24;
  s. led.    use = 1;
  
 %s.	mouse.

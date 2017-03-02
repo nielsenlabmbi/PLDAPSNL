@@ -40,7 +40,7 @@ switch p.trial.state
         
         if p.trial.led.state==0
             %turn LED on
-            pds.LED.LEDOn(p);
+            %pds.LED.LEDOn(p);
             p.trial.led.state=1;
             %note timepoint
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
@@ -51,7 +51,7 @@ switch p.trial.state
             
             %turn LED off
             if p.trial.led.state==1
-                pds.LED.LEDOff(p);
+               % pds.LED.LEDOff(p);
                 p.trial.led.state=0;
             end
             
