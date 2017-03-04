@@ -1,0 +1,8 @@
+function s = plaid_FBAA4Settings
+
+s.display.viewdist = 50; %viewing distance in cm (about h
+
+s.stimulus.xSize=12; %stimulus radius in deg
+s.stimulus.ySize=12; 
+s.stimulus.maskRadius=10; %mask radius in deg
+
