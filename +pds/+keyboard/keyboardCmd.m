@@ -18,7 +18,15 @@ end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.lKey) % l=toggle lock trial
     p.trialMem.lock=1-p.trialMem.lock;
-    disp(['***Trial lock status: ' num2str(p.trialMem.lock)]); 
+    disp(['***Trial lock status: ' num2str(p.trialMem.lock)]); %actual locking happens in defaultTrialFunction
+end
+
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Larrow) %left arrow = user 1
+    p.trial.userInput=1;
+end
+
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Rarrow) %right arrow = user 2
+    p.trial.userInput=2;
 end
 
 %%%%%change reward amounts

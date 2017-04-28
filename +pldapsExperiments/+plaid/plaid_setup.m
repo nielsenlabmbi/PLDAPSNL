@@ -15,10 +15,10 @@ p.trial.stimulus.duration.ITI = 3; %ITI in s
 
 
 %% conditions:
-cond.ori=0; 
+cond.ori=90; 
 cond.plaid=0;
 side.par='ori';
-side.match=[-1 -1 0];
+side.match=[-1 -1 90];
 
 c=generateCondList(cond,side,'pseudo',500);
 

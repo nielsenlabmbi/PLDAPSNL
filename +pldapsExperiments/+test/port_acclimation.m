@@ -1,4 +1,4 @@
-function port_acclamation(p,state)
+function port_acclimation(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);

@@ -300,6 +300,9 @@ end
 %-------------------------------------------------------------------------%
 pds.keyboard.clearBuffer(p);
 
+%initialize keyboard selected user function
+p.trial.userInput=0;
+
 %%% Eyelink Toolbox Setup %%%
 %-------------------------------------------------------------------------%
 % preallocate for all eye samples and event data from the eyelink
@@ -423,5 +426,12 @@ end
 
 %reward system
 pds.behavior.reward.cleanUpandSave(p);
+
+%lock trial if selected
+if p.trialMem.lock==1
+    disp('Trial locked!')
+    thisCondition=p.conditions{p.trial.pldaps.iTrial}; 
+    p.conditions=[p.conditions(1:p.trial.pldaps.iTrial) thisCondition p.conditions(p.trial.pldaps.iTrial+1:end)];    
+end 
 
 end %cleanUpandSave

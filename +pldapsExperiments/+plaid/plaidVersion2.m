@@ -1,4 +1,4 @@
-function plaidVersion1(p,state)
+function plaidVersion2(p,state)
 
 %version 1: only middle stimulus to introduce ferret to middle port
 
@@ -87,8 +87,16 @@ switch p.trial.state
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
                 %give reward
-                amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
-                pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                if activePort==p.trial.stimulus.port.LEFT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                elseif activePort==p.trial.stimulus.port.RIGHT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                else
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                end
                 
                 %advance state
                 p.trial.state=p.trial.stimulus.states.CORRECT;
@@ -125,10 +133,16 @@ switch p.trial.state
                     p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                     p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                     
-                    
-                    %give (small) reward
-                    amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                    if activePort==p.trial.stimulus.port.LEFT
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                    elseif activePort==p.trial.stimulus.port.RIGHT
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                    else
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                    end
                     
                     %advance state
                     p.trial.state=p.trial.stimulus.states.FINALRESP;
@@ -161,10 +175,25 @@ end
 %------------------------------------------------------------------%
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
- 
+
+if isfield(p.trial,'masktxtr')
+    Screen('Close',p.trial.masktxtr);
+end
+p.trial.masktxtr=[];
+
+if isfield(p.trial,'gtxtr')
+    Screen('Close',p.trial.gtxtr)
+end
+p.trial.gtxtr=[];
+
 %get side for condition
-if p.conditions{p.trial.pldaps.iTrial}.side==3
-    p.trial.side=p.trial.stimulus.side.MIDDLE;
+switch p.conditions{p.trial.pldaps.iTrial}.side
+    case 1
+        p.trial.side=p.trial.stimulus.side.LEFT;
+    case 2
+        p.trial.side=p.trial.stimulus.side.RIGHT;
+    case 3
+        p.trial.side=p.trial.stimulus.side.MIDDLE;
 end
 
 %shorthand to make rest easier
@@ -172,7 +201,7 @@ p.trial.ori=p.conditions{p.trial.pldaps.iTrial}.ori;
 p.trial.plaid=p.conditions{p.trial.pldaps.iTrial}.plaid;
 
 %generate mask
-xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2;
+xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2-p.trial.stimulus.offset(p.trial.side);
 ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
 [xdom,ydom] = meshgrid(xdom,ydom); %this results in a matrix of dimension height x width
 r = sqrt(xdom.^2 + ydom.^2);
@@ -207,7 +236,7 @@ p.trial.gtxtr = Screen('MakeTexture',p.trial.display.ptr, grating,[],[],2);
 
 %compute a few additional parameters that will be needed later
 %destination rectangle
-x_pos=p.trial.display.pWidth/2;
+x_pos=p.trial.display.pWidth/2 + p.trial.stimulus.offset(p.trial.side);
 y_pos=p.trial.display.pHeight/2;
 
 p.trial.stimulus.sDst=[x_pos-floor(p.trial.stimulus.sN/2)+1 y_pos-floor(p.trial.stimulus.sN/2)+1 ...
@@ -234,7 +263,7 @@ if p.trial.plaid==1
     stimSrc2=[xoffset2 0 xoffset2 + p.trial.stimulus.sN p.trial.stimulus.sN];
     ori2=p.trial.ori+p.trial.stimulus.iAngle;
 end
-
+%disp(p.trial.stimulus.sDst)
 
 Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
 if p.trial.plaid==1
@@ -264,6 +293,13 @@ disp(['C: ' num2str(p.trialMem.stats.val)])
 disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
 disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
 
+%user function test
+if p.trial.userInput==1
+    disp('1')
+end
+if p.trial.userInput==2
+    disp('2')
+end
     
 
 %%%%%%Helper functions

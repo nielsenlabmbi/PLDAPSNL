@@ -25,11 +25,11 @@ s. behavior.   reward. amount = [0.07 0.07 0.07 0.07];
 s.pldaps.nosave = 1;
 
 %misc
-s.stimulus.baseline = 1;
-s.stimulus.stimON = 0.5;
-s.stimulus.lickdelay = 2;
+s.stimulus.baseline = 0.3;
+s.stimulus.stimON = 0.3;
+s.stimulus.lickdelay = 1.2;
 % s.stimulus.trialduration = 10;
-s.stimulus.duration.ITI = 0.5;
+s.stimulus.duration.ITI = 0.3;
 
 %ports
  s. ports.   nPorts = 3;

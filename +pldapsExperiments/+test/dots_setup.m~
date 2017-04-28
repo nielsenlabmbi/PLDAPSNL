@@ -5,13 +5,13 @@ function p=ori_setup(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.ori.oritrial';
+p.trial.pldaps.trialFunction='pldapsExperiments.test.oritrial';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI in s
+p.trial.stimulus.duration.ITI = 3; %ITI in s
 
 
 %% conditions:
@@ -31,7 +31,7 @@ p.conditions=c;
 p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
-p.trialMem.stats.cond={'displacement', 'rotation'}; %conditions to display
+p.trialMem.stats.cond={'dotCoherence', 'rotation'}; %conditions to display
 [A,B] = ndgrid(cond.displacement,cond.rotation);
 p.trialMem.stats.val = [A(:),B(:)]';
 nCond=size(p.trialMem.stats.val,2);

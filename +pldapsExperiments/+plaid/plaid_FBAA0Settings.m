@@ -1,4 +1,4 @@
-function s = plaid_FBAA4Settings
+function s = plaid_FBAA0Settings
 
 %general stimulus parameters
 s.display.viewdist = 50; %viewing distance in cm (about halfway point)
@@ -18,7 +18,9 @@ s.stimulus.blocklength=2; %only used in blocks
 s.stimulus.ori=[45 90 135];
 s.stimulus.plaid=0;
 
-s.behavior.reward.amount = [0.15 0.5 0.3 0.5];
+s.behavior.reward.amount = [0.15 0.4 0.3 0.5];
+
+
 
 
 

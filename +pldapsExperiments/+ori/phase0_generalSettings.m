@@ -1,22 +1,23 @@
 function s = phase0_generalSettings
 
-%turn adc channels off
-s.datapixx.useAsPorts = 0;
-s.datapixx.adc.channels = [];
-
-%turn mouse input on
-s.mouse.useAsPort = 1;
-s.mouse.use = 1;
+% %turn adc channels off
+% s.datapixx.useAsPorts = 0;
+% s.datapixx.adc.channels = [];
+% 
+% %turn mouse input on
+% s.mouse.useAsPort = 1;
+% s.mouse.use = 1;
 
 % %configure ports
  s.ports.use = true;
  s.ports.nports = 3;
-%  s.ports.movable = true;
-%  s.datapixx.adc.channels = [1 3 5];
-%  
-%  %turn mouse input off
-% s.mouse.useAsPort = 0;
-% s.mouse.use = 0;
+ 
+ s.ports.movable = true;
+ s.datapixx.adc.channels = [1 3 5];
+ 
+ %turn mouse input off
+s.mouse.useAsPort = 0;
+s.mouse.use = 0;
 
 %set reward amounts
 s. behavior.   reward. amount = [0.075 0.075 0.075 0.075];

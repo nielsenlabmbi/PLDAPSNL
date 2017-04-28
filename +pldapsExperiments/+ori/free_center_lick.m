@@ -1,4 +1,4 @@
-function phase2(p,state)
+function free_center_lick(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -14,11 +14,11 @@ switch state
         checkState(p);
         
     case p.trial.pldaps.trialStates.frameDraw
-        if p.trial.state==p.trial.stimulus.states.START
+%         if p.trial.state==p.trial.stimulus.states.START
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
 %         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
 %             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.stimColor,p.trial.stimulus.stimSize);
-        end
+%         end
      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
         cleanUpandSave(p);
@@ -38,14 +38,14 @@ activePort=find(p.trial.ports.status==1);
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
         
-%         if p.trial.led.state==0
-%             %turn LED on
-%             pds.LED.LEDOn(p);
-%             p.trial.led.state=1;
-%             %note timepoint
-%             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
-%             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
-%         end
+        if p.trial.led.state==0
+            %turn LED on
+            pds.LED.LEDOn(p);
+            p.trial.led.state=1;
+            %note timepoint
+            p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
+            p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+        end
 
         if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
              pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
@@ -76,6 +76,14 @@ switch p.trial.state
     case p.trial.stimulus.states.LICKDELAY
         
         amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+        if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.START %start port activated
+                    
+                    %deliver reward
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
+                    
+        end
+        
         if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + amount + p.trial.stimulus.lickdelay;
             if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
                 pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);

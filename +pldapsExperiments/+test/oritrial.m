@@ -81,7 +81,7 @@ switch p.trial.state
             
             amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
             
-            if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + amount + 0.2;
+            if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay ;
                 if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
                     pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
                 end
@@ -100,17 +100,6 @@ switch p.trial.state
                 p.trial.state=p.trial.stimulus.states.FINALRESP;
             end
             
-        
-%             case 2
-%             
-%             if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay;
-%                 if any(p.trial.ports.position)
-%                     pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
-%                 end
-%                 p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-%                 p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
-%                 p.trial.state=p.trial.stimulus.states.FINALRESP;
-%             end
         end
         
     case p.trial.stimulus.states.WAIT
@@ -340,14 +329,27 @@ pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIG
 %------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
-
+tic
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
+
 %show reward amount
 if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S';'L';'R'})
 end
 
+%show frac instruct
+disp(p.trial.stimulus.fracInstruct);
+
+%+/- fract instruct
+if p.trial.userInput==1
+    p.trial.stimulus.fracInstruct = p.trial.stimulus.fracInstruct - 0.05;
+    disp('decreased fracInstruct')
+end
+if p.trial.userInput==2
+    p.trial.stimulus.fracInstruct = p.trial.stimulus.fracInstruct + 0.05;
+    disp('increased fracInstruct')
+end
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);

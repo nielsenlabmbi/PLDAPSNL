@@ -1,4 +1,4 @@
-function plaidVersion1(p,state)
+function plaidVersion2(p,state)
 
 %version 1: only middle stimulus to introduce ferret to middle port
 
@@ -87,8 +87,16 @@ switch p.trial.state
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
                 %give reward
-                amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
-                pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                if activePort==p.trial.stimulus.port.LEFT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                elseif activePort==p.trial.stimulus.port.RIGHT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                else
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                end
                 
                 %advance state
                 p.trial.state=p.trial.stimulus.states.CORRECT;
@@ -125,10 +133,16 @@ switch p.trial.state
                     p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                     p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                     
-                    
-                    %give (small) reward
-                    amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                    if activePort==p.trial.stimulus.port.LEFT
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                    elseif activePort==p.trial.stimulus.port.RIGHT
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                    else
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                    end
                     
                     %advance state
                     p.trial.state=p.trial.stimulus.states.FINALRESP;
@@ -163,8 +177,13 @@ end
 function p=trialSetup(p)
  
 %get side for condition
-if p.conditions{p.trial.pldaps.iTrial}.side==3
-    p.trial.side=p.trial.stimulus.side.MIDDLE;
+switch p.conditions{p.trial.pldaps.iTrial}.side
+    case 1
+        p.trial.side=p.trial.stimulus.side.LEFT;
+    case 2
+        p.trial.side=p.trial.stimulus.side.RIGHT;
+    case 3
+        p.trial.side=p.trial.stimulus.side.MIDDLE;
 end
 
 %shorthand to make rest easier
@@ -264,6 +283,8 @@ disp(['C: ' num2str(p.trialMem.stats.val)])
 disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
 disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
 
+%user function test
+if p.
     
 
 %%%%%%Helper functions

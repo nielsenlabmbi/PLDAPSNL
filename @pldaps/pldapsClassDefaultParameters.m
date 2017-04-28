@@ -16,7 +16,7 @@ function s=pldapsClassDefaultParameters(s)
  s. behavior.   reward. channel. START = 3; %dac channel for reward delivery
  s. behavior.   reward. channel. LEFT = 2;
  s. behavior.   reward. channel. RIGHT = 1;
- s. behavior.   reward. channel. MIDDLE = 4;
+ s. behavior.   reward. channel. MIDDLE = 0;
 
 
 %s.	datapixx.
