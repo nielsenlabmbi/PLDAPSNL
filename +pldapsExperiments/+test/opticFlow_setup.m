@@ -1,24 +1,24 @@
-function p = dots_setup(p)
+function p = opticFlow_setup(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.test.dotstrial';
+p.trial.pldaps.trialFunction='pldapsExperiments.test.opticFlowTrial';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = p.defaultParamters.stimulus.duration.ITI; %ITI in s
+p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI in s
 
 
 %% conditions:
 cond.dotCoherence = p.defaultParameters.stimulus.dotCoherence;
-cond.dotSpeed = p.defaultParameters.stimulus.dotSpeed;
-cond.direction = [0 180];
-side.par = 'direction';
+cond.speedDots = p.defaultParameters.stimulus.speedDots;
+cond.stimDir = [-1 1];
+side.par = 'stimDir';
 side.match=[0 180];
 
 c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
