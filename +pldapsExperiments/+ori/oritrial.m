@@ -181,18 +181,6 @@ switch p.trial.state
             end
         end
         
-%     case p.trial.stimulus.states.CORRECT %correct port selected for stimulus
-%         %wait for ITI
-%         if p.trial.ttime > p.trial.stimulus.timeTrialFirstResp + p.trial.stimulus.duration.ITI
-%             %trial done - note time
-%             p.trial.stimulus.timeTrialFinish = p.trial.ttime;
-%             p.trial.stimulus.frameTrialFinish = p.trial.iFrame;
-%             
-%             %advance state, mark as correct trial and flag next trial
-%             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
-%             p.trial.pldaps.goodtrial = 1;
-%             p.trial.flagNextTrial = true;
-%         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial
@@ -310,13 +298,17 @@ p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
     sdom=sdom*p.trial.stimulus.sf*2*pi;
     sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
 
-    % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
-    r = sqrt(x.^2 + y.^2);
-    sigmaDeg = ApertureDeg/16.5;
-    MaskLimit=.6*ApertureDeg/2;
-    maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
-    maskdom(r<MaskLimit) = 1;
-    grating = sdom1.*maskdom;
+    if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
+        grating = sdom1;
+    else
+        % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
+        r = sqrt(x.^2 + y.^2);
+        sigmaDeg = ApertureDeg/16.5;
+        MaskLimit=.6*ApertureDeg/2;
+        maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
+        maskdom(r<MaskLimit) = 1;
+        grating = sdom1.*maskdom;
+    end
 
     % TRANSFER THE GRATING INTO AN IMAGE
     grating = round(grating*p.trial.stimulus.range) + 127;

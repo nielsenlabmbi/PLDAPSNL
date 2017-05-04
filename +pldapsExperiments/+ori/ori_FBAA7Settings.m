@@ -13,11 +13,13 @@ s.stimulus.lickdelay = 1.3;
 s.stimulus.duration.ITI = 2;
 s.stimulus.stimON = 0.2;
 s.stimulus.waitTime = 0;
-s.stimulus.fracInstruct = 0.4;
+s.stimulus.fracInstruct = 1;
+
+s.stimulus.fullField = 1;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
-
+% 
 % %configure ports
  s.ports.use = true;
  s.ports.nports = 3;

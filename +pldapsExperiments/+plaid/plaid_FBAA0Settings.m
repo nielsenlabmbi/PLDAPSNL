@@ -18,7 +18,7 @@ s.stimulus.blocklength=2; %only used in blocks
 s.stimulus.ori=[45 90 135];
 s.stimulus.plaid=0;
 
-s.behavior.reward.amount = [0.15 0.4 0.3 0.5];
+s.behavior.reward.amount = [0.1 0.3 0.25 0.25];
 
 
 
