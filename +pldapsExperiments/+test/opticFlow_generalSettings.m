@@ -1,23 +1,25 @@
 function s = opticFlow_generalSettings
-% % turn saving off
-% s.pldaps.nosave = 1;
+
 
 %set reward amounts
 s. behavior.   reward. amount = [0.1 0.35 0.35];
 
 %set orientation and offsets
 s.stimulus.frameRate = 120;
-s.stimulus.stim_time = 60;
+s.stimulus.stim_time = 120;
 s.stimulus.x_pos = 960;
 s.stimulus.y_pos = 540;
-s.stimulus.stimRadius = 6;
+s.stimulus.stimDir = [-1];
+s.stimulus.stimRadius = 30;
 s.stimulus.stimType = 4; 'Rand, Tx, Ty, C, R';
-s.stimulus.dotDensity = 100;
+s.stimulus.dotDensity = 50;
 s.stimulus.sizeDots = 0.2;
-s.stimulus.speedDots = 5;
+s.stimulus.speedDots = 20;
 s.stimulus.dotLifetime = 0;
 s.stimulus.dotCoherence = 100;
-s.stimulus.dotType = 0; 'sq, circ';
+s.stimulus.dotType = 1; 'sq, circ';
+s.stimulus.deltaX = [-2 0 2];
+s.stimulus.deltaY = [-2 0 2];
 
 %set viewing parameters
 s.stimulus.baseline = 0.2;
@@ -25,6 +27,7 @@ s.stimulus.lickdelay = 1.3;
 s.stimulus.duration.ITI = 1.5;
 s.stimulus.stimON = 0.2;
 s.stimulus.waitTime = 0;
+
 
 %set up the viewing distance
 s.display.viewdist = 45; 
@@ -47,3 +50,5 @@ s.datapixx.adc.channels = [];
 s.mouse.useAsPort = 1;
 s.mouse.use = 1;
 
+% turn saving off
+s.pldaps.nosave = 1;

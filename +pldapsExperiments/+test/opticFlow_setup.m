@@ -15,21 +15,21 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 
 
 %% conditions:
-cond.dotCoherence = p.defaultParameters.stimulus.dotCoherence;
-cond.speedDots = p.defaultParameters.stimulus.speedDots;
-cond.stimDir = [-1 1];
+cond.deltaX = p.defaultParameters.stimulus.deltaX;
+cond.deltaY = p.defaultParameters.stimulus.deltaY;
+cond.stimDir = [-1];
 side.par = 'stimDir';
 side.match=[0 180];
 
-c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.deltaX)*2)));
 
 p.conditions=c;
 
 p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
-p.trialMem.stats.cond={'direction', 'dotCoherence'}; %conditions to display
-[A,B] = ndgrid(cond.direction,cond.dotCoherence);
+p.trialMem.stats.cond={'stimDir'}; %conditions to display
+[A,B] = ndgrid(cond.stimDir);
 p.trialMem.stats.val = [A(:),B(:)]';
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);
