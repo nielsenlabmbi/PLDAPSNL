@@ -18,8 +18,7 @@ s.stimulus.speedDots = 20;
 s.stimulus.dotLifetime = 0;
 s.stimulus.dotCoherence = 100;
 s.stimulus.dotType = 1; 'sq, circ';
-s.stimulus.deltaX = [-2 0 2];
-s.stimulus.deltaY = [-2 0 2];
+s.stimulus.deltaXY = [-2 2 0 0; 0 0 -2 2];
 
 %set viewing parameters
 s.stimulus.baseline = 0.2;

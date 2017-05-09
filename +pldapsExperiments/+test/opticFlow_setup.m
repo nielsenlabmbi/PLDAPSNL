@@ -15,13 +15,12 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 
 
 %% conditions:
-cond.deltaX = p.defaultParameters.stimulus.deltaX;
-cond.deltaY = p.defaultParameters.stimulus.deltaY;
+cond.deltaXY = p.defaultParameters.stimulus.deltaXY;
 cond.stimDir = [-1];
 side.par = 'stimDir';
 side.match=[0 180];
 
-c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.deltaX)*2)));
+c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.deltaXY))));
 
 p.conditions=c;
 
