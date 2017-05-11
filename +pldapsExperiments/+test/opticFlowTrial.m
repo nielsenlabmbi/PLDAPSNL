@@ -143,9 +143,10 @@ p.trial.stimulus.frameI = 0;
 %stimulus radius in pixels
 deg2px = p.trial.display.pWidth/p.trial.display.dWidth;
 stimRadiusPx = p.trial.stimulus.stimRadius*round(deg2px);
+p.trial.stimulus.stimRadiusPx = stimRadiusPx;
 
 %dot displacement
-deltaFrame = p.trial.stimulus.speedDots*deg2px/fps;
+p.trial.stimulus.deltaFrame = p.trial.stimulus.speedDots*deg2px/fps;
 %central displacement
 deltaXpx = p.conditions{p.trial.pldaps.iTrial}.shiftX*p.conditions{p.trial.pldaps.iTrial}.deltaXY*deg2px/fps;
 deltaYpx = mod(p.conditions{p.trial.pldaps.iTrial}.shiftX+1,2)*p.conditions{p.trial.pldaps.iTrial}.deltaXY*deg2px/fps;
@@ -167,10 +168,10 @@ randpos=rand(s,2,nrDots); %this gives numbers between 0 and 1
 xypos(1,:)=(randpos(1,:)-0.5)*stimRadiusPx*2; %now we have between -stimsize and +stimsize
 xypos(2,:)=(randpos(2,:)-0.5)*stimRadiusPx*2;
 
-%initialize signal/noise vector; 1 indicates signal, 0 indicates noise
-nrSignal=round(nrDots*p.trial.stimulus.dotCoherence/100);
-noisevec=zeros(nrDots,1);
-noisevec(1:nrSignal)=1;
+% %initialize signal/noise vector; 1 indicates signal, 0 indicates noise
+% nrSignal=round(nrDots*p.trial.stimulus.dotCoherence/100);
+% noisevec=zeros(nrDots,1);
+% noisevec(1:nrSignal)=1;
 
 %initialize lifetime vector - between 1 and dotLifetimte
 if p.trial.stimulus.dotLifetime>0
@@ -185,39 +186,50 @@ nrFrames=ceil(p.trial.stimulus.stim_time*fps);
 p.trial.stimulus.dotFrame={};
 tmpFrame={};
 
-for i=1:nrFrames
-%     xypos(1,:)= xypos(1,:) - deltaXpx*(i-1); %now we have between -stimsize and +stimsize
-%     xypos(2,:)= xypos(2,:) - deltaYpx*(i-1);
+
+p.trial.stimulus.nrFrames = nrFrames;
+p.trial.stimulus.sizeDotsPx = p.trial.stimulus.sizeDots*deg2px;
+p.trial.stimulus.deltaXpx = deltaXpx;
+p.trial.stimulus.deltaYpx = deltaYpx;
+p.trial.stimulus.xypos = xypos;
+p.trial.stimulus.lifetime = lifetime;
+p.trial.stimulus.stream = s;
+
+
+%%
+
+%set state
+p.trial.state=p.trial.stimulus.states.START;
+
+%set ports correctly
+pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+
+%show stimulus - handles rotation and movement of grating
+
+function showStimulus(p)
+
+p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
+    i = p.trial.stimulus.frameI;
+    deltaXpx = p.trial.stimulus.deltaXpx;
+    deltaYpx = p.trial.stimulus.deltaYpx;
+    s = p.trial.stimulus.stream;
+    deltaFrame = p.trial.stimulus.deltaFrame;
+    stimRadiusPx = p.trial.stimulus.stimRadiusPx;
     
     %check lifetime (unless inf)
     if p.trial.stimulus.dotLifetime>0
-        idx=find(lifetime==0); %find the dots whose lifetime has expired
-        [~,rad]= cart2pol(xypos(1,idx) - deltaXpx*(i-1),xypos(2,idx) - deltaYpx*(i-1)); %gets the current radius, relative to new origin
+        idx=find(p.trial.stimulus.lifetime==0); %find the dots whose lifetime has expired
+        [~,rad]= cart2pol(p.trial.stimulus.xypos(1,idx) - deltaXpx*(i-1),p.trial.stimulus.xypos(2,idx) - deltaYpx*(i-1)); %gets the current radius, relative to new origin
         thrand=rand(s,1,length(idx))*2*pi; %picks a random theta
-        [xypos(1,idx),xypos(2,idx)]=pol2cart(thrand,rad); %this gets the position, assuming origin is 0
+        [p.trial.stimulus.xypos(1,idx),p.trial.stimulus.xypos(2,idx)]=pol2cart(thrand,rad); %this gets the position, assuming origin is 0
         % reposition relative to the actual origin
-        xypos(1,idx) = xypos(1,idx) + deltaXpx*(i-1);
-        xypos(2,idx) = xypos(2,idx) + deltaYpx*(i-1);
-        lifetime=lifetime-1;
-        lifetime(idx)=p.trial.stimulus.dotLifetime;
+        p.trial.stimulus.xypos(1,idx) = p.trial.stimulus.xypos(1,idx) + deltaXpx*(i-1);
+        p.trial.stimulus.xypos(2,idx) = p.trial.stimulus.xypos(2,idx) + deltaYpx*(i-1);
+        p.trial.stimulus.lifetime=p.trial.stimulus.lifetime-1;
+        p.trial.stimulus.lifetime(idx)=p.trial.stimulus.dotLifetime;
     end
     
-    
-    %generate new positions - this is different for noise and signal pixels
-    %the algorithm we use here is the one described in Britten et al, 1993
-    %first determine which pixels are signal or noise
-    noiseid=noisevec(randperm(s,nrDots));
-    %noise dots are randomly placed somewhere; again, because of the
-    %clumping when randomizing the radius, we only randomize the phase for the radial stimuli, not the
-    %radius
-    idx=find(noiseid==0);
-    [~,rad]=cart2pol(xypos(1,idx) - deltaXpx*(i-1),xypos(2,idx) - deltaYpx*(i-1));
-    thrand=rand(s,1,length(idx))*2*pi;
-    [xypos(1,idx),xypos(2,idx)]=pol2cart(thrand,rad);
-        xypos(1,idx) = xypos(1,idx) + deltaXpx*(i-1);
-        xypos(2,idx) = xypos(2,idx) + deltaYpx*(i-1);
-    
-    idx=find(noiseid==1);
     %radial pattern
     %radial pattern needs to be solved differently than the other
     %patterns because of wrap around; problem: in the expanding
@@ -229,7 +241,7 @@ for i=1:nrFrames
     %redistribute them somehow.... easier to just run an expanding
     %stimulus backwards
     
-    [th,rad]=cart2pol(xypos(1,idx) - deltaXpx*(i-1),xypos(2,idx) - deltaYpx*(i-1));
+    [th,rad]=cart2pol(p.trial.stimulus.xypos(1,:) - deltaXpx*(i-1),p.trial.stimulus.xypos(2,:) - deltaYpx*(i-1));
     
     rad=rad+deltaFrame;
     
@@ -269,49 +281,18 @@ for i=1:nrFrames
     rad(idx2)=tmprad;
     th(idx2)=tmpth;
     
-    %done with wrap around and moving, generate xypos for next
+    %done with wrap around and moving, generate p.trial.stimulus.xypos for next
     %frame
     [xtemp,ytemp]=pol2cart(th,rad);
-    xypos(1,idx)=xtemp + deltaXpx*(i-1);
-    xypos(2,idx)=ytemp + deltaYpx*(i-1);
+    p.trial.stimulus.xypos(1,:)=xtemp + deltaXpx*(i-1);
+    p.trial.stimulus.xypos(2,:)=ytemp + deltaYpx*(i-1);
     
     %make sure to only keep dots inside the stimulus radius
-    [~,rad]=cart2pol(xypos(1,:) - deltaXpx*(i-1),xypos(2,:) - deltaYpx*(i-1));
+    [~,rad]=cart2pol(p.trial.stimulus.xypos(1,:) - deltaXpx*(i-1),p.trial.stimulus.xypos(2,:) - deltaYpx*(i-1));
     idx=find(rad<stimRadiusPx);
+    p.trial.stimulus.dotFrame{i}=p.trial.stimulus.xypos(:,idx);
     
-    if p.trial.stimulus.stimDir==-1 %we still need to reverse the order for the contracting stimuli
-        tmpFrame{i}=xypos(:,idx);
-    else
-        p.trial.stimulus.dotFrame{i}=xypos(:,idx);
-    end
-    
-end
-p.trial.stimulus.nrFrames = nrFrames;
-p.trial.stimulus.sizeDotsPx = p.trial.stimulus.sizeDots*deg2px;
-p.trial.stimulus.deltaXpx = deltaXpx;
-p.trial.stimulus.deltaYpx = deltaYpx;
-
-if p.trial.stimulus.stimDir==-1
-    for i=1:nrFrames
-        p.trial.stimulus.dotFrame{i}=tmpFrame{nrFrames-i+1};
-    end
-end
-
 %%
-
-%set state
-p.trial.state=p.trial.stimulus.states.START;
-
-%set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
-
-%show stimulus - handles rotation and movement of grating
-
-function showStimulus(p)
-
-p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
-if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
-    
     Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotFrame{p.trial.stimulus.frameI}, p.trial.stimulus.sizeDotsPx, [1 1 1],...
         [p.trial.stimulus.x_pos p.trial.stimulus.y_pos], p.trial.stimulus.dotType,1);
 

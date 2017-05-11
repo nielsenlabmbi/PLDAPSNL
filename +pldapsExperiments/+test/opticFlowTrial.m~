@@ -143,9 +143,10 @@ p.trial.stimulus.frameI = 0;
 %stimulus radius in pixels
 deg2px = p.trial.display.pWidth/p.trial.display.dWidth;
 stimRadiusPx = p.trial.stimulus.stimRadius*round(deg2px);
+p.trial.stimulus.stimRadiusPx = stimRadiusPx;
 
 %dot displacement
-deltaFrame = p.trial.stimulus.speedDots*deg2px/fps;
+p.trial.stimulus.deltaFrame = p.trial.stimulus.speedDots*deg2px/fps;
 %central displacement
 deltaXpx = p.conditions{p.trial.pldaps.iTrial}.shiftX*p.conditions{p.trial.pldaps.iTrial}.deltaXY*deg2px/fps;
 deltaYpx = mod(p.conditions{p.trial.pldaps.iTrial}.shiftX+1,2)*p.conditions{p.trial.pldaps.iTrial}.deltaXY*deg2px/fps;
@@ -167,10 +168,10 @@ randpos=rand(s,2,nrDots); %this gives numbers between 0 and 1
 xypos(1,:)=(randpos(1,:)-0.5)*stimRadiusPx*2; %now we have between -stimsize and +stimsize
 xypos(2,:)=(randpos(2,:)-0.5)*stimRadiusPx*2;
 
-%initialize signal/noise vector; 1 indicates signal, 0 indicates noise
-nrSignal=round(nrDots*p.trial.stimulus.dotCoherence/100);
-noisevec=zeros(nrDots,1);
-noisevec(1:nrSignal)=1;
+% %initialize signal/noise vector; 1 indicates signal, 0 indicates noise
+% nrSignal=round(nrDots*p.trial.stimulus.dotCoherence/100);
+% noisevec=zeros(nrDots,1);
+% noisevec(1:nrSignal)=1;
 
 %initialize lifetime vector - between 1 and dotLifetimte
 if p.trial.stimulus.dotLifetime>0
@@ -190,12 +191,10 @@ p.trial.stimulus.nrFrames = nrFrames;
 p.trial.stimulus.sizeDotsPx = p.trial.stimulus.sizeDots*deg2px;
 p.trial.stimulus.deltaXpx = deltaXpx;
 p.trial.stimulus.deltaYpx = deltaYpx;
+p.trial.stimulus.xypos = xypos;
+p.trial.stimulus.lifetime = lifetime;
+p.trial.stimulus.stream = s;
 
-if p.trial.stimulus.stimDir==-1
-    for i=1:nrFrames
-        p.trial.stimulus.dotFrame{i}=tmpFrame{nrFrames-i+1};
-    end
-end
 
 %%
 
@@ -211,7 +210,87 @@ function showStimulus(p)
 
 p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
 if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
+    i = p.trial.stimulus.frameI;
+    deltaXpx = p.trial.stimulus.deltaXpx;
+    deltaYpx = p.trial.stimulus.deltaYpx;
+    s = p.trial.stimulus.stream;
     
+    %check lifetime (unless inf)
+    if p.trial.stimulus.dotLifetime>0
+        idx=find(p.trial.stimulus.lifetime==0); %find the dots whose lifetime has expired
+        [~,rad]= cart2pol(p.trial.stimulus.xypos(1,idx) - deltaXpx*(i-1),p.trial.stimulus.xypos(2,idx) - deltaYpx*(i-1)); %gets the current radius, relative to new origin
+        thrand=rand(s,1,length(idx))*2*pi; %picks a random theta
+        [p.trial.stimulus.xypos(1,idx),p.trial.stimulus.xypos(2,idx)]=pol2cart(thrand,rad); %this gets the position, assuming origin is 0
+        % reposition relative to the actual origin
+        p.trial.stimulus.xypos(1,idx) = p.trial.stimulus.xypos(1,idx) + deltaXpx*(i-1);
+        p.trial.stimulus.xypos(2,idx) = p.trial.stimulus.xypos(2,idx) + deltaYpx*(i-1);
+        p.trial.stimulus.lifetime=p.trial.stimulus.lifetime-1;
+        p.trial.stimulus.lifetime(idx)=p.trial.stimulus.dotLifetime;
+    end
+    
+    %radial pattern
+    %radial pattern needs to be solved differently than the other
+    %patterns because of wrap around; problem: in the expanding
+    %stimulus, every deltaFrame ring loses dots (because the
+    %smaller rings have less dots in them); this can be fixed by
+    %redistributing the dots that come out of the largest ring in
+    %every frame; if the stimulus contracts, every ring has more
+    %dots in the subsequent frame than before -> would need to
+    %redistribute them somehow.... easier to just run an expanding
+    %stimulus backwards
+    
+    [th,rad]=cart2pol(p.trial.stimulus.xypos(1,:) - deltaXpx*(i-1),p.trial.stimulus.xypos(2,:) - deltaYpx*(i-1));
+    
+    rad=rad+deltaFrame;
+    
+    %wrap around
+    %logic behind this computation: a ring of width deltaFrame,
+    %from r to r+deltaFrame, contains (ignoring the density)
+    %nrdots = pi(r+deltaFrame)^2-pi r^2= 2pi r deltaFrame+piDeltaFrame^2
+    %based on this, every frame each of the deltaFrame rings
+    %loses 2 pi deltaFrame^2 dots; the only exception is the
+    %central ring, which only loses pi deltaFrame^2 dots
+    %so to correctly fill in dots, we need to adjust the
+    %probability of assigning the radius for the central ring
+    %and all other rings; likelihood for a dot needing to be
+    %placed at the center is 1/(2*(nrbins-1)+1, which ends up
+    %being 1/(2*stimRadiusPx/deltaFrame -1)
+    
+    
+    %find out of bounds dots
+    idx2=find(rad>stimRadiusPx);
+    
+    %determine how many dots should fall into the center based
+    %on probability distribution described above
+    probinner=1/(2*stimRadiusPx/deltaFrame-1);
+    rinout=rand(s,1,length(idx2));
+    nrinner=length(find(rinout<probinner));
+    
+    %now get new locations (random radius within limit, random
+    %theta)
+    tmprad=[];
+    tmprad(1:nrinner)=rand(s,1,nrinner)*deltaFrame;
+    tmprad(nrinner+1:length(idx2))=rand(s,1,length(idx2)-nrinner)*...
+        (stimRadiusPx-deltaFrame)+deltaFrame;
+    
+    tmpth=rand(s,1,length(idx2))*2*pi;
+    
+    %put back into original matrix
+    rad(idx2)=tmprad;
+    th(idx2)=tmpth;
+    
+    %done with wrap around and moving, generate p.trial.stimulus.xypos for next
+    %frame
+    [xtemp,ytemp]=pol2cart(th,rad);
+    p.trial.stimulus.xypos(1,:)=xtemp + deltaXpx*(i-1);
+    p.trial.stimulus.xypos(2,:)=ytemp + deltaYpx*(i-1);
+    
+    %make sure to only keep dots inside the stimulus radius
+    [~,rad]=cart2pol(p.trial.stimulus.xypos(1,:) - deltaXpx*(i-1),p.trial.stimulus.xypos(2,:) - deltaYpx*(i-1));
+    idx=find(rad<stimRadiusPx);
+    p.trial.stimulus.dotFrame{i}=p.trial.stimulus.xypos(:,idx);
+    
+%%
     Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotFrame{p.trial.stimulus.frameI}, p.trial.stimulus.sizeDotsPx, [1 1 1],...
         [p.trial.stimulus.x_pos p.trial.stimulus.y_pos], p.trial.stimulus.dotType,1);
 
