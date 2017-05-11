@@ -201,7 +201,7 @@ p.trial.ori=p.conditions{p.trial.pldaps.iTrial}.ori;
 p.trial.plaid=p.conditions{p.trial.pldaps.iTrial}.plaid;
 
 %generate mask
-xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2-p.trial.stimulus.offset(p.trial.side);
+xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2-p.trialMem.stimulus.offset(p.trial.side);
 ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
 [xdom,ydom] = meshgrid(xdom,ydom); %this results in a matrix of dimension height x width
 r = sqrt(xdom.^2 + ydom.^2);
@@ -236,7 +236,7 @@ p.trial.gtxtr = Screen('MakeTexture',p.trial.display.ptr, grating,[],[],2);
 
 %compute a few additional parameters that will be needed later
 %destination rectangle
-x_pos=p.trial.display.pWidth/2 + p.trial.stimulus.offset(p.trial.side);
+x_pos=p.trial.display.pWidth/2 + p.trialMem.stimulus.offset(p.trial.side);
 y_pos=p.trial.display.pHeight/2;
 
 p.trial.stimulus.sDst=[x_pos-floor(p.trial.stimulus.sN/2)+1 y_pos-floor(p.trial.stimulus.sN/2)+1 ...
@@ -295,10 +295,14 @@ disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntria
 
 %user function test
 if p.trial.userInput==1
-    disp('1')
+    disp('decrement offset:')
+    p.trialMem.stimulus.offset=p.trialMem.stimulus.offset+p.trial.stimulus.deltaOffset;
+    disp(['offset left - ' num2str(p.trialMem.stimulus.offset(1))]);
 end
 if p.trial.userInput==2
-    disp('2')
+    disp('increment offset:')
+    p.trialMem.stimulus.offset=p.trialMem.stimulus.offset-p.trial.stimulus.deltaOffset;
+    disp(['offset left - ' num2str(p.trialMem.stimulus.offset(1))]);
 end
     
 

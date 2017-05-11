@@ -38,3 +38,6 @@ nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);
 p.trialMem.stats.count.incorrect=zeros(1,nCond);
 p.trialMem.stats.count.Ntrial=zeros(1,nCond);
+
+%% for user control over stimulus position
+p.trialMem.stimulus.offset=p.trial.stimulus.iniOffset;

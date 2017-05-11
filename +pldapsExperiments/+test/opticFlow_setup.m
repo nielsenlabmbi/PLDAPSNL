@@ -16,7 +16,8 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 
 %% conditions:
 cond.deltaXY = p.defaultParameters.stimulus.deltaXY;
-cond.stimDir = [-1];
+cond.shiftX = p.defaultParameters.stimulus.shiftX;
+cond.stimDir = p.defaultParameters.stimulus.stimDir;
 side.par = 'stimDir';
 side.match=[0 180];
 

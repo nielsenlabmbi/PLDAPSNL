@@ -24,7 +24,11 @@ cond.range = p.defaultParameters.stimulus.range;
 side.par = 'rotation';
 side.match=[-1 1];
 
-c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.displacement)*2)));
+if strcmp(p.defaultParameters.stimulus.runtype,'block')
+    c=generateCondList(cond,side,'block',ceil(400/(p.defaultParameters.stimulus.blockLength)), p.defaultParameters.stimulus.blockLength);
+else
+    c=generateCondList(cond,side,'block',ceil(400/(length(cond.displacement)*2)));
+end
 
 p.conditions=c;
 

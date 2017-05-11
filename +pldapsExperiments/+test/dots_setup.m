@@ -11,7 +11,7 @@ p.trial.pldaps.trialFunction='pldapsExperiments.test.dotstrial';
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = p.defaultParamters.stimulus.duration.ITI; %ITI in s
+p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI in s
 
 
 %% conditions:
