@@ -246,7 +246,9 @@ if p.conditions{p.trial.pldaps.iTrial}.side==2
 else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
-
+if isfield(p.trialMem,'fracInstruct');
+    p.trial.stimulus.fracInstruct = p.trialMem.fracInstruct;
+end
 %determine which spouts are presented when stimulus is presented
 p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
 
@@ -390,15 +392,17 @@ end
 %show frac instruct
 disp(p.trial.stimulus.fracInstruct);
 
-%+/- fract instruct
+
+%+/- frac instruct
 if p.trial.userInput==1
-    p.trial.stimulus.fracInstruct = p.trial.stimulus.fracInstruct - 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.05;
     disp('decreased fracInstruct')
 end
 if p.trial.userInput==2
-    p.trial.stimulus.fracInstruct = p.trial.stimulus.fracInstruct + 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.05;
     disp('increased fracInstruct')
 end
+
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);

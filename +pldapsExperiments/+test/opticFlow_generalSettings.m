@@ -6,11 +6,11 @@ s. behavior.   reward. amount = [0.1 0.35 0.35];
 
 %set orientation and offsets
 s.stimulus.frameRate = 120;
-s.stimulus.stim_time = 120;
+s.stimulus.stim_time = 360;
 s.stimulus.x_pos = 960;
 s.stimulus.y_pos = 540;
 s.stimulus.stimDir = [1];
-s.stimulus.stimRadius = 40;
+s.stimulus.stimRadius = 50;
 s.stimulus.stimType = 4; 'Rand, Tx, Ty, C, R';
 s.stimulus.dotDensity = 30;
 s.stimulus.sizeDots = 0.2;
@@ -24,7 +24,7 @@ s.stimulus.shiftX = [1 0];
 %set viewing parameters
 s.stimulus.baseline = 0.2;
 s.stimulus.lickdelay = 0.2;
-s.stimulus.duration.ITI = 1; %s.stimulus.stim_time/s.stimulus.frameRate;
+s.stimulus.duration.ITI = 3; %s.stimulus.stim_time/s.stimulus.frameRate;
 s.stimulus.stimON = 0.2;
 s.stimulus.waitTime = 0;
 
