@@ -80,9 +80,12 @@ try
     
     % Response ports
     %-------------------------------------------------------------------------%
-    p = pds.ports.initPortStatus(p);
-    p = pds.ports.makePortsPos(p);
+    if(p.trial.ports.use)
        
+        if(p.trial.pldaps.draw.ports.show)
+            p = pds.ports.makePortsPos(p);
+        end
+    end
     
     %get and store changes of current code to the git repository
     p = pds.git.setup(p);
