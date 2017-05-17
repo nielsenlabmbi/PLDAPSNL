@@ -70,28 +70,26 @@ try
     %
     % Setup Photodiode stimuli
     %-------------------------------------------------------------------------%
-    makePhotodiodeRect(p);
-
+    p = makePhotodiodeRect(p);
     
     % Tick Marks
     %-------------------------------------------------------------------------%
     p = initTicks(p);
-    
-    
+        
     % Response ports
     %-------------------------------------------------------------------------%
     p = pds.ports.initPortStatus(p);
     p = pds.ports.makePortsPos(p);
-       
-    
+           
+    % Git
+    %-------------------------------------------------------------------------%
     %get and store changes of current code to the git repository
     p = pds.git.setup(p);
     
-    %things that were in the conditionFile
+    % Eyelink
+    %-------------------------------------------------------------------------%
     p = pds.eyelink.setup(p);
-    
-    %things that where in the default Trial Structure
-    
+          
     % Audio (this uses psychportaudio)
     %-------------------------------------------------------------------------%
     p = pds.audio.setup(p);
@@ -105,12 +103,23 @@ try
     p = pds.behavior.reward.setup(p);
     p.trialMem.currentAmount=p.trial.behavior.reward.amount;
     
+    % Datapixx
+    %-------------------------------------------------------------------------%
     % Initialize Datapixx including dual CLUTS and timestamp
     % logging
     p = pds.datapixx.init(p);
+
+
+    % Behavior camera
+    %-------------------------------------------------------------------------%
+    p = pds.behavcam.setup(p);
     
+    % Keyboard
+    %-------------------------------------------------------------------------%
     pds.keyboard.setup(p);
     
+    % States
+    %-------------------------------------------------------------------------%
     % Initialize LED state
     if p.trial.led.use == 1
         p.trial.led.state = 0;

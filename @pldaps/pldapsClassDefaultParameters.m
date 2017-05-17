@@ -18,6 +18,11 @@ function s=pldapsClassDefaultParameters(s)
  s. behavior.   reward. channel. RIGHT = 1;
  s. behavior.   reward. channel. MIDDLE = 0;
 
+%s. camera
+ s. camera.     use = 0;
+ s. camera.     cameraIP='172.30.11.XXX';
+ s. camera.     udpRemotePort = 8000;
+ s. camera.     udpLocalPort = 9000;
 
 %s.	datapixx.
  s.	datapixx.	enablePropixxCeilingMount = false;
