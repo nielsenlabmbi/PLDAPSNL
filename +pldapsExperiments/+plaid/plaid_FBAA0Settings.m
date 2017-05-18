@@ -9,7 +9,7 @@ s.stimulus.sf=0.25; %spatial frequency
 s.stimulus.t_period=15; %frames for 1 cycle
 s.stimulus.phase=0; %phase
 s.stimulus.iAngle=90; %intersection angle between gratings
-s.stimulus.iniOffset=[250 -250 0];
+s.stimulus.iniOffset=[150 -150 0];
 s.stimulus.deltaOffset=[-50 50 0];
 s.ports.nPorts = 4;
 
