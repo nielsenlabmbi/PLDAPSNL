@@ -1,6 +1,4 @@
-function plaidVersion1(p,state)
-
-%version 1: only middle stimulus to introduce ferret to middle port
+function basicCamTest(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -17,9 +15,9 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            Screen(screenPTR, 'FillRect', 0.5)
+            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
-            showStimulus(p);
+            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.stimColor,p.trial.stimulus.stimSize);
         end
      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -47,6 +45,11 @@ switch p.trial.state
             %note timepoint
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+            
+            %send trigger pulse to camera
+            pds.behavcam.triggercam(p);
+            p.trial.stimulus.timeCamOn = p.trial.ttime;
+            p.trial.stimulus.frameCamOn = p.trial.iFrame;
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
@@ -55,6 +58,12 @@ switch p.trial.state
             if p.trial.led.state==1
                 pds.LED.LEDOff(p);
                 p.trial.led.state=0;
+            end
+            
+            %move response ports (only if necessary)
+            if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
+               pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+               pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
             end
             
             %note timepoint
@@ -71,7 +80,7 @@ switch p.trial.state
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         %check whether any port chosen
-        if ismember(activePort, p.trial.stimulus.port.MIDDLE, p.trial.stimulus.port.LEFT, p.trial.stimulus.port.RIGHT)
+        if activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
             p.trial.stimulus.frameTrialFirstResp = p.trial.iFrame;
@@ -87,8 +96,18 @@ switch p.trial.state
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
                 %give reward
-                amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
-                pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                if activePort==p.trial.stimulus.port.LEFT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                elseif activePort==p.trial.stimulus.port.RIGHT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                end
+                
+                %retract all reward ports (if necessary)
+                if any(p.trial.ports.position)
+                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                end
                 
                 %advance state
                 p.trial.state=p.trial.stimulus.states.CORRECT;
@@ -115,9 +134,22 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
-        if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial            
+        if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial
+            
+            %retract incorrect spout
+            if p.trial.side==p.trial.stimulus.side.LEFT
+                if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
+                end
+            end
+            if p.trial.side==p.trial.stimulus.side.RIGHT
+                if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
+                end
+            end
+            
             %check whether any port chosen
-            if ismember(activePort, p.trial.stimulus.port.MIDDLE, p.trial.stimulus.port.LEFT, p.trial.stimulus.port.RIGHT)
+            if activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT
                 %check whether correct port chosen
                 correct=checkPortChoice(activePort,p);                
                 if correct==1 %now has chosen correct port
@@ -127,8 +159,18 @@ switch p.trial.state
                     
                     
                     %give (small) reward
-                    amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
+                    if activePort==p.trial.stimulus.port.LEFT
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                    elseif activePort==p.trial.stimulus.port.RIGHT
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                    end
+                    
+                    %retract all spouts
+                    if any(p.trial.ports.position)
+                        pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                    end
                     
                     %advance state
                     p.trial.state=p.trial.stimulus.states.FINALRESP;
@@ -137,6 +179,11 @@ switch p.trial.state
             end
                 
         else %incorrect responses end trial immediately
+            %retract spouts
+            if any(p.trial.ports.position)
+                pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0);
+            end
+            
             %wait for ITI
             if p.trial.ttime > p.trial.stimulus.timeTrialFirstResp + p.trial.stimulus.duration.ITI
                 %trial done
@@ -156,86 +203,43 @@ switch p.trial.state
 end
 
         
-
+         
         
 %------------------------------------------------------------------%
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
  
 %get side for condition
-if p.conditions{p.trial.pldaps.iTrial}.side==3
-    p.trial.side=p.trial.stimulus.side.MIDDLE;
+if p.conditions{p.trial.pldaps.iTrial}.side==2
+    p.trial.side=p.trial.stimulus.side.LEFT;
+else
+    p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
-%shorthand to make rest easier
-p.trial.ori=p.conditions{p.trial.pldaps.iTrial}.ori;
-p.trial.plaid=p.conditions{p.trial.pldaps.iTrial}.plaid;
+%set up initialization stimulus (this could be in settings file)
+p.trial.stimulus.iniColor=1;
+p.trial.stimulus.iniSize=[500 500 600 600];
 
 %set up stimulus
-%generate mask
-xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2;
-ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
-[xdom,ydom] = meshgrid(xdom,ydom); %this results in a matrix of dimension height x width
-r = sqrt(xdom.^2 + ydom.^2);
-
-mN=deg2pix(p,p.trial.stimulus.maskRadius,'round',2);
-
-maskT = 1-exp((-r.^2)/(2*mN^2));
-mask = 0.5*ones(p.trial.display.pHeight,p.trial.display.pWidth,2);
-mask(:,:,2) = maskT;
-p.trial.masktxtr = Screen(p.trial.display.ptr, 'MakeTexture', mask,[],[],2);  %need to specify correct mode to allow for floating point numbers
-
-%set up one line of grating (one grating sufficient even for plaid)
-%stimuli will need to be larger to deal with rotation
-stimsize=2*sqrt((p.trial.stimulus.xSize/2).^2+(p.trial.stimulus.ySize/2).^2); %deg
-%add extra so that we can slide the window to generate motion 
-stimsize=stimsize+1/p.trial.stimulus.sf; %deg
-
-p.trial.stimulus.sN=deg2pix(p,stimsize,'ceil',2); %pixel
-
-x_ecc=linspace(-stimsize/2,stimsize/2,sN); %deg
-sdom = x_ecc*p.trial.stimulus.sf*2*pi; %radians
-grating = cos(sdom);
-
-p.trial.gtxtr = Screen('MakeTexture',p.trial.display.ptr, grating,[],[],2);
-
-%compute a few additional parameters that will be needed in showing
-%stimulus
-
-%destination rectangle
-x_pos=p.trial.display.pWidth/2;
-y_pos=p.trial.display.pHeight/2;
-
-p.trial.stimulus.sDst=[x_pos-floor(p.trial.stimulus.sN/2)+1 y_pos-floor(p.trial.stimulus.sN/2)+1 ...
-    x_pos+ceil(p.trial.stimulus.sN/2) y_pos+ceil(p.trial.stimulus.sN/2)]';
-
-%shift per frame
-p.trial.stimulus.pCycle=deg2pix(p,1/p.trial.stimulus.sf,'none',2);
-p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.stimulus.t_period;
+p.trial.stimulus.stimColor=p.conditions{p.trial.pldaps.iTrial}.color;
+p.trial.stimulus.stimSize=[400 400 800 800];
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
 
+%set ports correctly
+pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
 
-%------------------------------------------------------------------%
-%show stimulus - handles rotation and movement of grating
-function showStimulus(p)
-
-%determine offset
-xoffset = mod((p.trial.iFrame-1)*p.trial.stimulus.dFrame+p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle);
-stimSrc=[xoffset 0 xoffset + p.trial.stimulus.sN-1 p.trial.stimulus.sN-1];
-
-if 
-
-Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
+%get camera ready (there's a little bit of wait associated with this, so we
+%have to do it here; the actual start happens with a trigger pulse when the
+%led turns on
+pds.behavcam.startcam(p);
 
 
-    
-    %get parameters for second grating if necessary
-    if P.plaid_bit==1 || P.surround_bit==1
-        xoffset2 = mod((i-1)*shiftperframe2+P.phase2/360*pixpercycle2,pixpercycle2);
-        stimSrc2=[xoffset2 0 xoffset2 + stimsizeN2 stimsizeN2];
-    end
+
+
+
 
 
 
@@ -243,6 +247,8 @@ Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
 %------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
+
+pds.behavcam.stopcam(p);
 
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
@@ -258,7 +264,12 @@ disp(['C: ' num2str(p.trialMem.stats.val)])
 disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
 disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
 
-    
+%if trial was locked, keep showing this trial
+if p.trialMem.lock==1
+    disp('Trial locked!')
+    thisCondition=p.conditions{p.trial.pldaps.iTrial}; 
+    p.conditions=[p.conditions(1:p.trial.pldaps.iTrial) thisCondition p.conditions(p.trial.pldaps.iTrial+1:end)];    
+end    
 
 %%%%%%Helper functions
 %-------------------------------------------------------------------%

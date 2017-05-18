@@ -45,6 +45,7 @@ switch p.trial.state
             %note timepoint
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+            
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated

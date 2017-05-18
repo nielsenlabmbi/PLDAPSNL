@@ -63,36 +63,33 @@ try
     p.defaultParameters.pldaps.maxFrames=p.defaultParameters.pldaps.maxTrialLength*p.defaultParameters.display.frate;
     feval(p.defaultParameters.session.experimentSetupFile, p);
     
+    %for all of the setup stuff following below, the necessary if clauses
+    %that determine whether a particular setup is needed are in the setup
+    %file itself
+    
     %
     % Setup Photodiode stimuli
     %-------------------------------------------------------------------------%
-    if(p.trial.pldaps.draw.photodiode.use)
-        makePhotodiodeRect(p);
-    end
+    p = makePhotodiodeRect(p);
     
     % Tick Marks
     %-------------------------------------------------------------------------%
-    if(p.trial.pldaps.draw.grid.use)
-        p = initTicks(p);
-    end
-    
+    p = initTicks(p);
+        
     % Response ports
     %-------------------------------------------------------------------------%
-    if(p.trial.ports.use)
-        p = pds.ports.initPortStatus(p);
-        if(p.trial.pldaps.draw.ports.show)
-            p = pds.ports.makePortsPos(p);
-        end
-    end
-    
+    p = pds.ports.initPortStatus(p);
+    p = pds.ports.makePortsPos(p);
+           
+    % Git
+    %-------------------------------------------------------------------------%
     %get and store changes of current code to the git repository
     p = pds.git.setup(p);
     
-    %things that were in the conditionFile
+    % Eyelink
+    %-------------------------------------------------------------------------%
     p = pds.eyelink.setup(p);
-    
-    %things that where in the default Trial Structure
-    
+          
     % Audio (this uses psychportaudio)
     %-------------------------------------------------------------------------%
     p = pds.audio.setup(p);
@@ -106,12 +103,23 @@ try
     p = pds.behavior.reward.setup(p);
     p.trialMem.currentAmount=p.trial.behavior.reward.amount;
     
+    % Datapixx
+    %-------------------------------------------------------------------------%
     % Initialize Datapixx including dual CLUTS and timestamp
     % logging
     p = pds.datapixx.init(p);
+
+
+    % Behavior camera
+    %-------------------------------------------------------------------------%
+    p = pds.behavcam.setupcam(p);
     
+    % Keyboard
+    %-------------------------------------------------------------------------%
     pds.keyboard.setup(p);
     
+    % States
+    %-------------------------------------------------------------------------%
     % Initialize LED state
     if p.trial.led.use == 1
         p.trial.led.state = 0;
@@ -259,6 +267,9 @@ try
     
     %turn LED off (has an internal check whether LED is in use)
     pds.LED.LEDOff(p);
+    
+    %close camera (if used)
+    pds.behavcam.closecam(p);
     
     if ~p.defaultParameters.pldaps.nosave
         [structs,structNames] = p.defaultParameters.getAllStructs();
