@@ -1,4 +1,4 @@
-function plaidVersion1(p,state)
+function plaidVersion3(p,state)
 
 %version 1: only middle stimulus to introduce ferret to middle port
 

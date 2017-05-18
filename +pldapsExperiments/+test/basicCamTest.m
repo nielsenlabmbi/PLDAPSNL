@@ -47,7 +47,7 @@ switch p.trial.state
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
             
             %send trigger pulse to camera
-            pds.behavcam.triggercam(p);
+            pds.behavcam.triggercam(p,1);
             p.trial.stimulus.timeCamOn = p.trial.ttime;
             p.trial.stimulus.frameCamOn = p.trial.iFrame;
         end
@@ -248,7 +248,9 @@ pds.behavcam.startcam(p);
 %display stats at end of trial
 function cleanUpandSave(p)
 
+%stop camera and set trigger to low
 pds.behavcam.stopcam(p);
+pds.behavcam.triggercam(p,0);
 
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
