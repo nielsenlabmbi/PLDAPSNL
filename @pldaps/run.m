@@ -268,6 +268,9 @@ try
     %turn LED off (has an internal check whether LED is in use)
     pds.LED.LEDOff(p);
     
+    %close camera (if used)
+    pds.camera.close(p);
+    
     if ~p.defaultParameters.pldaps.nosave
         [structs,structNames] = p.defaultParameters.getAllStructs();
         
