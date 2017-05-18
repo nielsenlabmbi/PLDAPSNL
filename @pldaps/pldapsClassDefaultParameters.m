@@ -20,9 +20,10 @@ function s=pldapsClassDefaultParameters(s)
 
 %s. camera
  s. camera.     use = 0;
- s. camera.     cameraIP='172.30.11.XXX';
+ s. camera.     cameraIP='172.30.11.123';
  s. camera.     udpRemotePort = 8000;
  s. camera.     udpLocalPort = 9000;
+ s. camera.     trigger. channel = 4;
 
 %s.	datapixx.
  s.	datapixx.	enablePropixxCeilingMount = false;

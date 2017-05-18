@@ -112,7 +112,7 @@ try
 
     % Behavior camera
     %-------------------------------------------------------------------------%
-    p = pds.behavcam.setup(p);
+    p = pds.behavcam.setupcam(p);
     
     % Keyboard
     %-------------------------------------------------------------------------%
@@ -269,7 +269,7 @@ try
     pds.LED.LEDOff(p);
     
     %close camera (if used)
-    pds.camera.close(p);
+    pds.behavcam.closecam(p);
     
     if ~p.defaultParameters.pldaps.nosave
         [structs,structNames] = p.defaultParameters.getAllStructs();

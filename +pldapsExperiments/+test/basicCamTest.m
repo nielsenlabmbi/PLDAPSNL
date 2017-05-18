@@ -1,4 +1,4 @@
-function basicTest3(p,state)
+function basicCamTest(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -40,19 +40,23 @@ switch p.trial.state
         
         if p.trial.led.state==0
             %turn LED on
-            %pds.LED.LEDOn(p);
+            pds.LED.LEDOn(p);
             p.trial.led.state=1;
             %note timepoint
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
             
+            %send trigger pulse to camera
+            pds.behavcam.triggercam(p);
+            p.trial.stimulus.timeCamOn = p.trial.ttime;
+            p.trial.stimulus.frameCamOn = p.trial.iFrame;
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
             
             %turn LED off
             if p.trial.led.state==1
-               % pds.LED.LEDOff(p);
+                pds.LED.LEDOff(p);
                 p.trial.led.state=0;
             end
             
@@ -227,6 +231,11 @@ p.trial.state=p.trial.stimulus.states.START;
 pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
 pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
 
+%get camera ready (there's a little bit of wait associated with this, so we
+%have to do it here; the actual start happens with a trigger pulse when the
+%led turns on
+pds.behavcam.startcam(p);
+
 
 
 
@@ -239,6 +248,7 @@ pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIG
 %display stats at end of trial
 function cleanUpandSave(p)
 
+pds.behavcam.stopcam(p);
 
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])

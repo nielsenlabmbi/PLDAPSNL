@@ -1,4 +1,4 @@
-function p = setup(p)
+function p = setupcam(p)
 
 %setup communication with GigE camera used to record behavior;
 %generate preview window and set filename
@@ -39,14 +39,14 @@ if p.trial.camera.use
     %generate preview
     msg='P~';
     fwrite(p.trial.camera.udpHandle,msg);
-    pds.camera.waitforCamResp(p);
+    pds.behavcam.waitforCamResp(p);
 
     %send filename
     fname=p.trial.session.file;
     fname=fname(1:end-4);
     msg=['F;' fname '~'];
     fwrite(p.trial.camera.udpHandle,msg);
-    pds.camera.waitforCamResp(p);
+    pds.behavcam.waitforCamResp(p);
     
     %rest is handled in runTrial loop
 end
