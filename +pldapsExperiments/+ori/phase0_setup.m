@@ -11,7 +11,7 @@ p.trial.pldaps.trialFunction='pldapsExperiments.ori.phase0';
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = 3; %ITI in s
+p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; 
 
 
 %% conditions:
@@ -19,7 +19,7 @@ cond.color=[0 1]; %use squares of 2 colors
 side.par='color';
 side.match=[0 1];
 
-c=generateCondList(cond,side,'pseudo',100);
+c=generateCondList(cond,side,'pseudo',200);
 
 p.conditions=c;
 

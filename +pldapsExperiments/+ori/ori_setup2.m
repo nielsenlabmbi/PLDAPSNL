@@ -1,17 +1,17 @@
-function p=ori_setup(p)
+function p=ori_setup2(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.test.oritrial';
+p.trial.pldaps.trialFunction='pldapsExperiments.ori.oritrial2';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = 3; %ITI in s
+p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI in s
 
 
 %% conditions:
@@ -24,7 +24,11 @@ cond.range = p.defaultParameters.stimulus.range;
 side.par = 'rotation';
 side.match=[-1 1];
 
-c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.displacement)*2)));
+if strcmp(p.defaultParameters.stimulus.runtype,'block')
+    c=generateCondList(cond,side,'block',ceil(400/(p.defaultParameters.stimulus.blockLength)), p.defaultParameters.stimulus.blockLength);
+else
+    c=generateCondList(cond,side,'pseudo',ceil(400/(length(cond.displacement)*2)));
+end
 
 p.conditions=c;
 

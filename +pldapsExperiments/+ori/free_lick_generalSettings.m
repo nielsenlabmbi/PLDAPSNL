@@ -1,4 +1,4 @@
-function s = free_center_lick_generalSettings
+function s = free_lick_generalSettings
 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
@@ -19,14 +19,15 @@ s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.075 0.07 0.07 0.07];
+s. behavior.   reward. amount = [0.05 0.02 0.02 0.05];
 
 %turn saving off
 s.pldaps.nosave = 1;
 
 %misc
 s.stimulus.baseline = 0.5;
-s.stimulus.lickdelay = 6000;
+s.stimulus.lickdelay = 1800;
+s.stimulus.fracInstruct = 0;
 
 %ports
  s. ports.   nPorts = 3;

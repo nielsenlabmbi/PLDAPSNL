@@ -1,4 +1,4 @@
-function oritrial(p,state)
+function oritrial2(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -15,11 +15,12 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
+            %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
+            Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
         elseif p.trial.state == p.trial.stimulus.states.WAIT
-            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,p.trial.stimulus.iniSize);
+            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
         
     case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -78,18 +79,51 @@ switch p.trial.state
     case p.trial.stimulus.states.LICKDELAY
         switch p.trial.stimulus.switchVAR
             case 0
-            
-            amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
-            
-            if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay ;
+                %deliver reward
+                amount= p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+                pulseAmount = p.trial.behavior.reward.pulseAmount(p.trial.stimulus.rewardIdx.START);
+                for i = 1:round(amount/pulseAmount)
+                    pds.behavior.reward.give(p,pulseAmount,p.trial.behavior.reward.channel.START);
+                    WaitSecs(p.trial.behavior.reward.pulseInt);
+                end
+                
+                %             if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay;
                 if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
                     pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
                 end
                 p.trial.stimulus.timeTrialWait = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.WAIT;
-            end
+%             end
             
             case 1
+            %give reward
+                if activePort==p.trial.stimulus.port.LEFT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pulseAmount = p.trial.behavior.reward.pulseAmount(p.trial.stimulus.rewardIdx.LEFT);
+                    for i = 1:round(amount/pulseAmount)
+                        pds.behavior.reward.give(p,pulseAmount,p.trial.behavior.reward.channel.LEFT);
+                        WaitSecs(p.trial.behavior.reward.pulseInt);
+                    end
+                    
+                elseif activePort==p.trial.stimulus.port.RIGHT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pulseAmount = p.trial.behavior.reward.pulseAmount(p.trial.stimulus.rewardIdx.RIGHT);
+                    for i = 1:round(amount/pulseAmount);
+                        pds.behavior.reward.give(p,pulseAmount,p.trial.behavior.reward.channel.RIGHT);
+                        WaitSecs(p.trial.behavior.reward.pulseInt);
+                    end
+                end
+                
+%             if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay;
+                if any(p.trial.ports.position)
+                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                end
+                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                p.trial.state=p.trial.stimulus.states.FINALRESP;
+%             end
+            
+            case 2
             
             if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay;
                 if any(p.trial.ports.position)
@@ -133,15 +167,6 @@ switch p.trial.state
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
-                %give reward
-                if activePort==p.trial.stimulus.port.LEFT
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-                elseif activePort==p.trial.stimulus.port.RIGHT
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-                end
-                
                 %retract incorrect spout
                 if p.trial.side==p.trial.stimulus.side.LEFT
                     if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
@@ -170,18 +195,6 @@ switch p.trial.state
             end
         end
         
-%     case p.trial.stimulus.states.CORRECT %correct port selected for stimulus
-%         %wait for ITI
-%         if p.trial.ttime > p.trial.stimulus.timeTrialFirstResp + p.trial.stimulus.duration.ITI
-%             %trial done - note time
-%             p.trial.stimulus.timeTrialFinish = p.trial.ttime;
-%             p.trial.stimulus.frameTrialFinish = p.trial.iFrame;
-%             
-%             %advance state, mark as correct trial and flag next trial
-%             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
-%             p.trial.pldaps.goodtrial = 1;
-%             p.trial.flagNextTrial = true;
-%         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial
@@ -215,7 +228,7 @@ switch p.trial.state
                     
                     %advance state
                     p.trial.stimulus.timeResp = p.trial.ttime;
-                    p.trial.stimulus.switchVAR = 1;
+                    p.trial.stimulus.switchVAR = 2;
                     p.trial.state=p.trial.stimulus.states.LICKDELAY;
                 
                 end
@@ -258,23 +271,31 @@ if p.conditions{p.trial.pldaps.iTrial}.side==2
 else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
-
+if isfield(p.trialMem,'fracInstruct');
+    p.trial.stimulus.fracInstruct = p.trialMem.fracInstruct;
+end
 %determine which spouts are presented when stimulus is presented
 p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
 
 %set up initialization stimulus (this could be in settings file)
-p.trial.stimulus.iniColor=1;
-p.trial.stimulus.iniSize=[910 490 1010 590];
+p.trial.stimulus.iniColor=0;
+inibar = 248*ones(10,1);
+p.trial.stimulus.initex = Screen('MakeTexture',p.trial.display.ptr,inibar);
+[s1,s2] = size(inibar);
+dstRect = [0 0 s1 s2].*40;
+p.trial.stimulus.dstRect = CenterRectOnPointd(dstRect,960,540);
+% p.trial.stimulus.iniSize=[910 490 1010 590];
+
 p.trial.stimulus.waitColor = 0.5;
 
 %set up stimulus
+p.trial.stimulus.refangle = p.conditions{p.trial.pldaps.iTrial}.angle;
 p.trial.stimulus.displacement=p.conditions{p.trial.pldaps.iTrial}.displacement;
 p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
 p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
 p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle + p.trial.stimulus.rotation*p.trial.stimulus.displacement;
 p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase;
 p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
-
 %make grating
     %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
     %PixPerDeg = 1/DegPerPix;
@@ -297,13 +318,17 @@ p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
     sdom=sdom*p.trial.stimulus.sf*2*pi;
     sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
 
-    % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
-    r = sqrt(x.^2 + y.^2);
-    sigmaDeg = ApertureDeg/16.5;
-    MaskLimit=.6*ApertureDeg/2;
-    maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
-    maskdom(r<MaskLimit) = 1;
-    grating = sdom1.*maskdom;
+    if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
+        grating = sdom1;
+    else
+        % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
+        r = sqrt(x.^2 + y.^2);
+        sigmaDeg = ApertureDeg/16.5;
+        MaskLimit=.6*ApertureDeg/2;
+        maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
+        maskdom(r<MaskLimit) = 1;
+        grating = sdom1.*maskdom;
+    end
 
     % TRANSFER THE GRATING INTO AN IMAGE
     grating = round(grating*p.trial.stimulus.range) + 127;
@@ -332,7 +357,6 @@ function cleanUpandSave(p)
 tic
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
-
 %show reward amount
 if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S';'L';'R'})
@@ -341,13 +365,13 @@ end
 %show frac instruct
 disp(p.trial.stimulus.fracInstruct);
 
-%+/- fract instruct
+%+/- frac instruct
 if p.trial.userInput==1
-    p.trial.stimulus.fracInstruct = p.trial.stimulus.fracInstruct - 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.05;
     disp('decreased fracInstruct')
 end
 if p.trial.userInput==2
-    p.trial.stimulus.fracInstruct = p.trial.stimulus.fracInstruct + 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.05;
     disp('increased fracInstruct')
 end
 

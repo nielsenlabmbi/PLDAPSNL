@@ -1,4 +1,4 @@
-function phase1(p,state)
+function phase01(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -36,78 +36,32 @@ activePort=find(p.trial.ports.status==1);
 
 
 switch p.trial.state
-    case p.trial.stimulus.states.START %trial started
-        
-        
-        if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
-        end
-        
-        
-        if activePort==p.trial.stimulus.port.START %start port activated
-            
-            %turn LED off
-            if p.trial.led.state==1
-                pds.LED.LEDOff(p);
-                p.trial.led.state=0;
-            end
-            
-            %note timepoint
-            p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
-            p.trial.stimulus.frameTrialStartResp = p.trial.iFrame;
-            
-              %deliver reward
-            amount= p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START)/3;
-            for i = 1:3
-                pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
-                WaitSecs(p.trial.behavior.reward.pulseInt);
-            end
-            WaitSecs(p.trial.behavior.reward.pulseInt*3);
-            %advance state
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
-            p.trial.stimulus.timeTrialWait = p.trial.ttime;
-            p.trial.state=p.trial.stimulus.states.WAIT;
-            
-        end
-        
-    case p.trial.stimulus.states.WAIT
-        if p.trial.ttime > p.trial.stimulus.timeTrialWait + p.trial.stimulus.waitTime;
-            p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
-            p.trial.state=p.trial.stimulus.states.STIMON;
-        end
-        
+           
     case p.trial.stimulus.states.STIMON
         
         if p.trial.ttime > p.trial.stimulus.stimON
-            if p.trial.side == p.trial.stimulus.side.LEFT && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
+            if p.trial.side == p.trial.stimulus.side.LEFT && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 
                 pds.ports.movePort(p.trial.ports.dio.channel.LEFT,1,p);
-                pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,p.trial.ports.moveBool,p);
 
             end
             
-            if p.trial.side == p.trial.stimulus.side.RIGHT && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
+            if p.trial.side == p.trial.stimulus.side.RIGHT && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
                 pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,1,p);
-                pds.ports.movePort(p.trial.ports.dio.channel.LEFT,p.trial.ports.moveBool,p);
 
             end
             
-            if activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT
+            if p.trial.side == p.trial.stimulus.side.MIDDLE && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0;
+                pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+
+            end
+            
+            if any(p.trial.ports.status)
                 
                 %note timepoint
                 p.trial.stimulus.timeResp = p.trial.ttime;
                 p.trial.stimulus.frameResp = p.trial.iFrame;
                 
-                 %move ports
-                if activePort==p.trial.stimulus.port.LEFT
-                    if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
-                       pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
-                    end
-                    
-                elseif activePort==p.trial.stimulus.port.RIGHT
-                    if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
-                        pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p)
-                    end
-                end
+               
                 %advance state
                 p.trial.state=p.trial.stimulus.states.LICKDELAY;
                 
@@ -133,11 +87,19 @@ switch p.trial.state
                         WaitSecs(p.trial.behavior.reward.pulseInt);
                     end
                     WaitSecs(p.trial.behavior.reward.pulseInt*3);
+                    
+               elseif activePort==p.trial.stimulus.port.START
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START)/p.trial.behavior.reward.pulseFreq;
+                    for i = 1:p.trial.behavior.reward.pulseFreq;
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
+                        WaitSecs(p.trial.behavior.reward.pulseInt);
+                    end
+                    WaitSecs(p.trial.behavior.reward.pulseInt*3);
                 end
                 
                  %advance state
                 if any(p.trial.ports.position)
-                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
                 end
                 p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                 p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
@@ -163,8 +125,10 @@ function p=trialSetup(p)
 %get side for condition
 if p.conditions{p.trial.pldaps.iTrial}.side==1
     p.trial.side=p.trial.stimulus.side.LEFT;
-else
+elseif p.conditions{p.trial.pldaps.iTrial}.side==2
     p.trial.side=p.trial.stimulus.side.RIGHT;
+else
+    p.trial.side = p.trial.stimulus.side.MIDDLE;
 end
 if isfield(p.trialMem,'waitTime');
     p.trial.stimulus.waitTime = p.trialMem.waitTime;
@@ -179,7 +143,7 @@ p.trial.stimulus.stimColor=p.conditions{p.trial.pldaps.iTrial}.color;
 p.trial.stimulus.stimSize=[400 400 800 800];
 
 %set state
-p.trial.state=p.trial.stimulus.states.START;
+p.trial.state=p.trial.stimulus.states.STIMON;
 
 %set ports correctly
 pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);

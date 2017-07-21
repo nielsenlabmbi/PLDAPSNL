@@ -1,4 +1,4 @@
-function phase0(p,state)
+function phase1(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -68,14 +68,9 @@ switch p.trial.state
         
     case p.trial.stimulus.states.STIMON
         
-        if p.trial.ttime > p.trial.stimulus.stimON
-            if p.trial.side == p.trial.stimulus.side.LEFT & ~any(p.trial.ports.position)
-                pds.ports.movePort(p.trial.ports.dio.channel.LEFT,1,p);
-            end
+        if p.trial.ttime > p.trial.stimulus.stimON + p.trial.stimulus.baseline
             
-            if p.trial.side == p.trial.stimulus.side.RIGHT & ~any(p.trial.ports.position)
-                pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,1,p);
-            end
+            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
             
             if activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT
                 
@@ -87,10 +82,19 @@ switch p.trial.state
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                    %retract other spout
+                    if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
+                        pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
+                    end
+                    
                 elseif activePort==p.trial.stimulus.port.RIGHT
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                    %retract other spout
+                    if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
+                        pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
+                    end
                 end
                 
                 %advance state

@@ -1,17 +1,17 @@
-function p=phase1_setup(p)
+function p=phase2_setup(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.ori.phase1';
+p.trial.pldaps.trialFunction='pldapsExperiments.test.phase2';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; 
+p.trial.stimulus.duration.ITI = 3; %ITI in s
 
 
 %% conditions:
@@ -19,8 +19,7 @@ cond.color=[0 1]; %use squares of 2 colors
 side.par='color';
 side.match=[0 1];
 
-%c=generateCondList(cond,side,'pseudo',100);
-c=generateCondList(cond,side,'block',20,p.trial.stimulus.blocklength);
+c=generateCondList(cond,side,'pseudo',100);
 
 p.conditions=c;
 

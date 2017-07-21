@@ -1,4 +1,4 @@
-function plaidVersion2(p,state)
+function plaidVersion4(p,state)
 
 %version 1: only middle stimulus to introduce ferret to middle port
 
@@ -175,7 +175,7 @@ end
 %------------------------------------------------------------------%
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
-
+tic
 if isfield(p.trial,'masktxtr')
     Screen('Close',p.trial.masktxtr);
 end
@@ -195,7 +195,9 @@ switch p.conditions{p.trial.pldaps.iTrial}.side
     case 3
         p.trial.side=p.trial.stimulus.side.MIDDLE;
 end
-
+switch p.trial.type
+    case 1 %gratings/plaids
+        
 %shorthand to make rest easier
 p.trial.ori=p.conditions{p.trial.pldaps.iTrial}.ori;
 p.trial.plaid=p.conditions{p.trial.pldaps.iTrial}.plaid;
@@ -246,35 +248,152 @@ p.trial.stimulus.sDst=[x_pos-floor(p.trial.stimulus.sN/2)+1 y_pos-floor(p.trial.
 p.trial.stimulus.pCycle=deg2pix(p,1/p.trial.stimulus.sf,'none',2);
 p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.stimulus.t_period;
 
+
+    case 2 %dots
+       DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+PixPerDeg = 1/DegPerPix;
+
+%dot size
+p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
+%dot coherence
+p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence;
+%dot speed
+p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
+%ori
+p.trial.stimulus.ori = p.conditions{p.trial.pldaps.iTrial}.ori;
+%initialize frame
+p.trial.stimulus.frameI = 0;
+
+%initialize dot positions - these need to be in pixels from center
+randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
+randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth; 
+randpos(2,:)=(randpos(2,:)-0.5)*p.trial.display.pHeight;
+
+
+%pick color for each dot
+p.trial.stimulus.dotcolor=ones(3,p.trial.stimulus.nrDots)*255;
+p.trial.stimulus.dotcolor(:,1:round(p.trial.stimulus.fractionBlack*p.trial.stimulus.nrDots))=0;
+p.trial.stimulus.dotcolor=p.trial.stimulus.dotcolor(:,randperm(p.trial.stimulus.nrDots));
+
+%initialize noise vector
+nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
+noisevec=zeros(p.trial.stimulus.nrDots,1);
+noisevec(1:nrSignal)=1;
+
+%initialize oris: correct displacement for signal, random for noise
+%side is either 1 or 2; 1 should equal ori=0, 2 ori=180
+randdir=zeros(p.trial.stimulus.nrDots,1);
+randdir(1:end)=p.trial.stimulus.ori;
+idx=find(noisevec==0);
+randdir(idx)=randi([0,359],length(idx),1);
+
+
+%initialize lifetime vector
+if p.trial.stimulus.dotLifetime>0
+    lifetime=randi(p.trial.stimulus.dotLifetime,p.trial.stimulus.nrDots,1);
+end
+
+%compute nr frames
+p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
+
+%compute speed
+deltaF=p.trial.stimulus.dotSpeed*PixPerDeg;
+   
+%save misc variables
+p.trial.stimulus.randpos = randpos;
+p.trial.stimulus.randdir = randdir;
+p.trial.stimulus.deltaF = deltaF;
+p.trial.stimulus.lifetime = lifetime;
+end 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
+toc
 
 
 %------------------------------------------------------------------%
 %show stimulus - handles rotation and movement of grating
 function showStimulus(p)
-
-%determine offset
-xoffset = mod((p.trial.iFrame-1)*p.trial.stimulus.dFrame+p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle);
-stimSrc=[xoffset 0 xoffset + p.trial.stimulus.sN-1 p.trial.stimulus.sN-1];
-
-if p.trial.plaid==1
-    xoffset2 = mod((p.trial.iFrame-1)*p.trial.stimulus.dFrame+p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle);
-    stimSrc2=[xoffset2 0 xoffset2 + p.trial.stimulus.sN p.trial.stimulus.sN];
-    ori2=p.trial.ori+p.trial.stimulus.iAngle;
+switch p.trial.type
+    case 1 %gratings/plaids
+        %determine offset
+        xoffset = mod((p.trial.iFrame-1)*p.trial.stimulus.dFrame+p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle);
+        stimSrc=[xoffset 0 xoffset + p.trial.stimulus.sN-1 p.trial.stimulus.sN-1];
+        
+        if p.trial.plaid==1
+            xoffset2 = mod((p.trial.iFrame-1)*p.trial.stimulus.dFrame+p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle);
+            stimSrc2=[xoffset2 0 xoffset2 + p.trial.stimulus.sN p.trial.stimulus.sN];
+            ori2=p.trial.ori+p.trial.stimulus.iAngle;
+        end
+        %disp(p.trial.stimulus.sDst)
+        
+        Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
+        if p.trial.plaid==1
+            Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc2, p.trial.stimulus.sDst,ori2 - 45,[],0.5);
+            Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.ori - 45,[],0.5);
+        else
+            Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.ori,[],0.5);
+        end
+        Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        Screen('DrawTexture', p.trial.display.ptr, p.trial.masktxtr);
+        
+    case 2 %dots
+        % misc variables
+        p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+        if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
+            f = p.trial.stimulus.frameI;
+            randpos = p.trial.stimulus.randpos;
+            randdir = p.trial.stimulus.randdir;
+            deltaF = p.trial.stimulus.deltaF;
+            lifetime = p.trial.stimulus.lifetime;
+            %compute vectors for necessary frames
+            %move all dots according to their ori
+            xproj=-cos(randdir*pi/180);
+            yproj=-sin(randdir*pi/180);
+            
+            randpos(1,:)=randpos(1,:)+deltaF*xproj';
+            randpos(2,:)=randpos(2,:)+deltaF*yproj';
+            
+            %now deal with wrap around - we pick the axis on which to replot a dot
+            %based on the dots ori
+            idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
+            
+            rvec=rand(size(idx)); %btw 0 and 1
+            for i=1:length(idx)
+                if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
+                    randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
+                    randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
+                else
+                    randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
+                    randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
+                end
+            end
+            
+            
+            %if lifetime is expired, randomly assign new ori
+            if p.trial.stimulus.dotLifetime>0
+                idx=find(lifetime==0);
+                %oris are drawn based on coherence level
+                rvec=rand(size(idx));
+                for i=1:length(idx)
+                    if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
+                        randdir(idx(i))=p.trial.stimulus.ori;
+                    else
+                        randdir(idx(i))=randi([0,359],1,1);
+                    end
+                end
+                
+                lifetime=lifetime-1;
+                lifetime(idx)=p.trial.stimulus.dotLifetime;
+            end
+            p.trial.stimulus.lifetime = lifetime;
+            p.trial.stimulus.dotpos{f}=randpos;
+            p.trial.stimulus.randpos = randpos;
+            p.trial.stimulus.randdir = randdir;
+            Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
+                p.trial.stimulus.dotSizePix, p.trial.stimulus.dotcolor, ...
+                [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+        end
 end
-%disp(p.trial.stimulus.sDst)
-
-Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
-if p.trial.plaid==1
-    Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc2, p.trial.stimulus.sDst,ori2 - 45,[],0.5);
-    Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.ori - 45,[],0.5);
-else
-    Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.ori,[],0.5);
-end
-Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-Screen('DrawTexture', p.trial.display.ptr, p.trial.masktxtr);
-
 
 %------------------------------------------------------------------%
 %display stats at end of trial
@@ -289,11 +408,14 @@ end
 
 
 %show stats
+% pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
+% disp(['C: ' num2str(p.trialMem.stats.val)])
+% disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
+% disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
+% 
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
-disp(['C: ' num2str(p.trialMem.stats.val)])
-disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
-disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
-
+num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
 %user function test
 if p.trial.userInput==1
     disp('decrement offset:')

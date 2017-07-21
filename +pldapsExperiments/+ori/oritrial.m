@@ -15,11 +15,12 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
+            %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
+            Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
         elseif p.trial.state == p.trial.stimulus.states.WAIT
-            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,p.trial.stimulus.iniSize);
+            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
         
     case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -264,18 +265,24 @@ end
 p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
 
 %set up initialization stimulus (this could be in settings file)
-p.trial.stimulus.iniColor=1;
-p.trial.stimulus.iniSize=[910 490 1010 590];
+p.trial.stimulus.iniColor=0;
+inibar = 248*ones(10,1);
+p.trial.stimulus.initex = Screen('MakeTexture',p.trial.display.ptr,inibar);
+[s1,s2] = size(inibar);
+dstRect = [0 0 s1 s2].*40;
+p.trial.stimulus.dstRect = CenterRectOnPointd(dstRect,960,540);
+% p.trial.stimulus.iniSize=[910 490 1010 590];
+
 p.trial.stimulus.waitColor = 0.5;
 
 %set up stimulus
+p.trial.stimulus.refangle = p.conditions{p.trial.pldaps.iTrial}.angle;
 p.trial.stimulus.displacement=p.conditions{p.trial.pldaps.iTrial}.displacement;
 p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
 p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
 p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle + p.trial.stimulus.rotation*p.trial.stimulus.displacement;
 p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase;
 p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
-
 %make grating
     %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
     %PixPerDeg = 1/DegPerPix;

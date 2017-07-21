@@ -29,6 +29,12 @@ if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Rarrow) %right arrow = us
     p.trial.userInput=2;
 end
 
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.spaceKey) %change trials list
+    p.trialMem.whichConditions = mod(p.trialMem.whichConditions+1,2);
+    p.conditions = p.trial.allconditions{p.trialMem.whichConditions + 1};
+    disp(['Switched to trials list:' num2str(p.trialMem.whichConditions) ]);
+end
+
 %%%%%change reward amounts
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.oneKey)   % reward change
     pds.behavior.reward.updateAmount(p,1);

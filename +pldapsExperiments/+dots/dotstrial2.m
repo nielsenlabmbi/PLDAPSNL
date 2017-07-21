@@ -75,12 +75,12 @@ switch p.trial.state
         switch p.trial.stimulus.switchVAR
             case 0
              %deliver reward
-            amount= p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
-            pulseAmount = p.trial.behavior.reward.pulseAmount(p.trial.stimulus.rewardIdx.START);
-            for i = 1:round(amount/pulseAmount)
-                pds.behavior.reward.give(p,pulseAmount,p.trial.behavior.reward.channel.START);
+            amount= p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START)/3;
+            for i = 1:3
+                pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
                 WaitSecs(p.trial.behavior.reward.pulseInt);
             end
+            WaitSecs(2*p.trial.behavior.reward.pulseInt);
             
 %             if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay;
                 if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
@@ -93,20 +93,20 @@ switch p.trial.state
             case 1
             %give reward
                 if activePort==p.trial.stimulus.port.LEFT
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
-                    pulseAmount = p.trial.behavior.reward.pulseAmount(p.trial.stimulus.rewardIdx.LEFT);
-                    for i = 1:round(amount/pulseAmount)
-                        pds.behavior.reward.give(p,pulseAmount,p.trial.behavior.reward.channel.LEFT);
+                    amount= p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT)/p.trial.behavior.reward.pulseFreq;
+                    for i = 1:p.trial.behavior.reward.pulseFreq
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                         WaitSecs(p.trial.behavior.reward.pulseInt);
                     end
+                    WaitSecs(2*p.trial.behavior.reward.pulseInt);
                     
                 elseif activePort==p.trial.stimulus.port.RIGHT
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
-                    pulseAmount = p.trial.behavior.reward.pulseAmount(p.trial.stimulus.rewardIdx.RIGHT);
-                    for i = 1:round(amount/pulseAmount);
-                        pds.behavior.reward.give(p,pulseAmount,p.trial.behavior.reward.channel.RIGHT);
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT)/p.trial.behavior.reward.pulseFreq;
+                    for i = 1:p.trial.behavior.reward.pulseFreq;
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                         WaitSecs(p.trial.behavior.reward.pulseInt);
                     end
+                    WaitSecs(2*p.trial.behavior.reward.pulseInt);
                 end
                 
 %             if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay;
@@ -329,52 +329,11 @@ p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
 deltaF=p.trial.stimulus.dotSpeed*PixPerDeg;
 
 
-%compute vectors for necessary frames
-for f=1:p.trial.stimulus.nrFrames
-    
-    %move all dots according to their direction
-    xproj=cos(randdir*pi/180);
-    yproj=-sin(randdir*pi/180);
-    
-    randpos(1,:)=randpos(1,:)+deltaF*xproj';
-    randpos(2,:)=randpos(2,:)+deltaF*yproj';
-    
-    %now deal with wrap around - we pick the axis on which to replot a dot
-    %based on the dots direction
-    idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
-    
-    rvec=rand(size(idx)); %btw 0 and 1
-    for i=1:length(idx)
-        if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
-            randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
-            randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
-        else
-            randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
-            randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
-        end        
-    end
-    
-            
-    %if lifetime is expired, randomly assign new direction
-    if p.trial.stimulus.dotLifetime>0
-        idx=find(lifetime==0);
-        %directions are drawn based on coherence level
-        rvec=rand(size(idx));
-        for i=1:length(idx)
-            if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
-                randdir(idx(i))=p.trial.stimulus.direction;
-            else
-                randdir(idx(i))=randi([0,359],1,1);
-            end
-        end
-        
-        lifetime=lifetime-1;
-        lifetime(idx)=p.trial.stimulus.dotLifetime;
-    end
-    
-    p.trial.stimulus.dotpos{f}=randpos;
-   
-end
+%save misc variables
+p.trial.stimulus.randpos = randpos;
+p.trial.stimulus.randdir = randdir;
+p.trial.stimulus.deltaF = deltaF;
+p.trial.stimulus.lifetime = lifetime;
 
 %%
 
@@ -387,14 +346,61 @@ pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIG
 
 %show stimulus - handles rotation and movement of grating
 function showStimulus(p)
-
-p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
-if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
-    
-    Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
-        p.trial.stimulus.dotSizePix, p.trial.stimulus.dotcolor, ...
-        [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
-end
+        p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+        if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
+            f = p.trial.stimulus.frameI;
+            randpos = p.trial.stimulus.randpos;
+            randdir = p.trial.stimulus.randdir;
+            deltaF = p.trial.stimulus.deltaF;
+            lifetime = p.trial.stimulus.lifetime;
+            %compute vectors for necessary frames
+            %move all dots according to their direction
+            xproj=cos(randdir*pi/180);
+            yproj=-sin(randdir*pi/180);
+            
+            randpos(1,:)=randpos(1,:)+deltaF*xproj';
+            randpos(2,:)=randpos(2,:)+deltaF*yproj';
+            
+            %now deal with wrap around - we pick the axis on which to replot a dot
+            %based on the dots direction
+            idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
+            
+            rvec=rand(size(idx)); %btw 0 and 1
+            for i=1:length(idx)
+                if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
+                    randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
+                    randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
+                else
+                    randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
+                    randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
+                end
+            end
+            
+            
+            %if lifetime is expired, randomly assign new direction
+            if p.trial.stimulus.dotLifetime>0
+                idx=find(lifetime==0);
+                %directions are drawn based on coherence level
+                rvec=rand(size(idx));
+                for i=1:length(idx)
+                    if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
+                        randdir(idx(i))=p.trial.stimulus.direction;
+                    else
+                        randdir(idx(i))=randi([0,359],1,1);
+                    end
+                end
+                
+                lifetime=lifetime-1;
+                lifetime(idx)=p.trial.stimulus.dotLifetime;
+            end
+            p.trial.stimulus.lifetime = lifetime;
+            p.trial.stimulus.dotpos{f}=randpos;
+            p.trial.stimulus.randpos = randpos;
+            p.trial.stimulus.randdir = randdir;
+            Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
+                p.trial.stimulus.dotSizePix, p.trial.stimulus.dotcolor, ...
+                [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+        end
 
 
 %------------------------------------------------------------------%

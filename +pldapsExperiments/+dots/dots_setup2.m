@@ -5,7 +5,7 @@ function p = dots_setup2(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.test.dotstrial2';
+p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial2';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;

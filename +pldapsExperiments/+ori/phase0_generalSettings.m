@@ -20,17 +20,21 @@ s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.075 0.075 0.075 0.075];
+s. behavior.   reward. amount = [0.1 0.2 0.2];
+s.behavior.reward.pulseFreq = 8;
+s.behavior.reward.pulseInt = 0.2;
 
 %turn saving off
 s.pldaps.nosave = 1;
 
 %misc
-s.stimulus.baseline = 0.5;
+s.stimulus.baseline = 0;
 s.stimulus.stimON = 0.5;
-s.stimulus.lickdelay = 5;
-s.stimulus.trialduration = 10;
-s.stimulus.duration.ITI = 0.5;
+s.stimulus.waitTime = 0.25;
+s.stimulus.trialduration = 1;
+s.stimulus.duration.ITI = 1.5;
+
+s.stimulus.fracInstruct = 0.7;
 
 %ports
  s. ports.   nPorts = 3;
