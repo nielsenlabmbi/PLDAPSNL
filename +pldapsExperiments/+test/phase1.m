@@ -129,18 +129,28 @@ switch p.trial.state
                 end
                 
             case 2
-                if p.trial.ttime < (p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay)
-                                    
-                if activePort==p.trial.stimulus.port.LEFT 
-                    %deliver reward
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-                elseif activePort==p.trial.stimulus.port.RIGHT
+                                %give reward
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT %start port activated
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-                end
                     
+                end
+                
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT %start port activated
+                    %deliver reward
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                    
+                end
+                
+                if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay;
+                if any(p.trial.ports.position)
+                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                end
+                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                p.trial.state=p.trial.stimulus.states.FINALRESP;
                 end
                 
                 if p.trial.ttime > (p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay) & any(p.trial.ports.position)

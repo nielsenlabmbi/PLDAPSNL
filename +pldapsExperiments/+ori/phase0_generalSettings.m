@@ -20,7 +20,7 @@ s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.1 0.2 0.2];
+s. behavior.   reward. amount = [0.2 0.2 0.2];
 s.behavior.reward.pulseFreq = 8;
 s.behavior.reward.pulseInt = 0.2;
 

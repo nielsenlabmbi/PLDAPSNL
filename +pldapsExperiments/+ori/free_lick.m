@@ -46,17 +46,17 @@ switch p.trial.state
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
         end
-
-        if p.trial.side == p.trial.stimulus.side.RIGHT && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
-                pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,1,p);
-                pds.ports.movePort(p.trial.ports.dio.channel.LEFT,p.trial.ports.moveBool,p);
-        end
+        pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+%         if p.trial.side == p.trial.stimulus.side.RIGHT && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
+%                 pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,1,p);
+%                 pds.ports.movePort(p.trial.ports.dio.channel.LEFT,p.trial.ports.moveBool,p);
+%         end
         if p.trial.side == p.trial.stimulus.side.LEFT && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
                 pds.ports.movePort(p.trial.ports.dio.channel.LEFT,1,p);
                 pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,p.trial.ports.moveBool,p);
         end
         
-        if any(p.trial.ports.position) %start port activated
+        if any(p.trial.ports.position) %port activated
             
             %turn LED off
             if p.trial.led.state==1

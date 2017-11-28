@@ -1,0 +1,11 @@
+%% Cheat sheet for Chiad (training FBAA4 and FBAA0)
+
+%% FBAA4: press 'run section', or copy and paste into command window
+settingsStruct = pldapsExperiments.test.gambling_FBAA4Settings;
+p = pldaps(@pldapsExperiments.test.gambling0_setup,'FBAA4',settingsStruct);
+p.run
+
+%% FBAA0: press 'run section', or copy and paste into command window
+settingsStruct = pldapsExperiments.test.gambling_FBAA0Settings;
+p = pldaps(@pldapsExperiments.test.gambling0_setup,'FBAA0',settingsStruct);
+p.run

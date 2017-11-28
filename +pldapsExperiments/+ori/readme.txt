@@ -6,6 +6,9 @@ Headfixed ferret training protocol, paradigms:
 
 2. Free center lick - this dispenses reward from the center spout whenever it is licked. 
 
+(deleted: original phase 0, presents the center, followed by one of the side spouts. The new phase1 code 
+could function this way with a fractInstruct = 0, I think). 
+
 3. Phase0 - runs trials consisting of initiation stimulus > center spout presented > lick and receive reward.
 3a. Phase01 - runs trials where each spout is presented on its own.  
 

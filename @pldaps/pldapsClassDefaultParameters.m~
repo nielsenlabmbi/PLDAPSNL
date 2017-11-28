@@ -46,8 +46,8 @@ function s=pldapsClassDefaultParameters(s)
  s.	datapixx.	adc.	numBufferFrames = 600000;
  s.	datapixx.	adc.	srate =1000;
  s.	datapixx.	adc.	startDelay = 0;
- s.	datapixx.	adc.	XEyeposChannel = [10];
- s.	datapixx.	adc.	YEyeposChannel = [11];
+ s.	datapixx.	adc.	XEyeposChannel = [ 10];
+ s.	datapixx.	adc.	YEyeposChannel = [ 11];
  
 %s. datapixx.   dac.
  s. datapixx.   dac.    sampleRate = 1000;
