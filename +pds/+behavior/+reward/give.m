@@ -15,7 +15,7 @@ if nargin < 2
 end
 
 
-if p.trial.newEraSyringePump.use    
+if p.trial.newEraSyringePump.use(p.trial.side)    
     pds.newEraSyringePump.give(p,amount);
 end
 

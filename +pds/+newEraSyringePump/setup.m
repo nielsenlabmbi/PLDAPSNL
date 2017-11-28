@@ -6,53 +6,47 @@ function p = setup(p)
 % USB. Currently only modes that run a by defined volume per reward are implemented
 %
 % jk wrote it 2015
+% edw adapted 2017
 
-if p.trial.newEraSyringePump.use
-    cs='BaudRate=19200 DTR=1 RTS=1 ReceiveTimeout=1';
-    IOPort('closeAll'); %risky. for now....
-    WaitSecs(0.1);
-    [h,errmsg]=IOPort('OpenSerialPort',p.trial.newEraSyringePump.port,cs);%'/dev/cu.usbserial'
-    WaitSecs(0.1);
-    if ~isempty(errmsg)
-        error('pds:newEraSyringePump:setup',['Failed to open serial Port with message ' char(10) errmsg]);
-    end
-    p.trial.newEraSyringePump.h = h;
-    
-    p.trial.newEraSyringePump.commandSeparator = [char(13) repmat(char(10),1,20)];
 
-    IOPort('Write', h, [p.trial.newEraSyringePump.commandSeparator],0);
-    IOPort('Write', h, ['DIA' p.trial.newEraSyringePump.commandSeparator],0);%0.05
-    
-    IOPort('Write', h, ['DIR INF'  p.trial.newEraSyringePump.commandSeparator],0);
 
-    IOPort('Write', h, ['LN ' num2str(p.trial.newEraSyringePump.lowNoiseMode) p.trial.newEraSyringePump.commandSeparator],0); %low noise mode, try
+if any(p.trial.newEraSyringePump.use)
     
-    IOPort('Write', h, ['AL ' num2str(p.trial.newEraSyringePump.alarmMode) p.trial.newEraSyringePump.commandSeparator],0); %low noise mode, try
-
-    IOPort('Write', h, ['TRG T2'  p.trial.newEraSyringePump.commandSeparator],0);
-    
-    WaitSecs(0.1);
-    a=char(IOPort('Read',h,1,14));
-    currentDiameter=str2double(a(10:end));
-    
-    if currentDiameter~=p.trial.newEraSyringePump.diameter
-        if p.trial.newEraSyringePump.allowNewDiameter
-            IOPort('Write', h, ['DIA ' num2str(p.trial.newEraSyringePump.diameter) p.trial.newEraSyringePump.commandSeparator],0); 
-        else
-            error('pds:newEraSyringePump:setup','Change in Diametersize requested. Please confirm that you want to do this, as it would zero the current volume settings')
-        end
+    s = instrfind('Port',p.trial.newEraSyringePump.port);
+    if ~isempty(s);
+    fclose(s);
+    delete(s);
     end
     
-    IOPort('Write', h, ['RAT ' num2str(p.trial.newEraSyringePump.rate) ' MH ' p.trial.newEraSyringePump.commandSeparator],0);%2900
-
-    IOPort('Write', h, ['VOL ' num2str(p.trial.behavior.reward.defaultAmount) p.trial.newEraSyringePump.commandSeparator],0);%0.05
+    s = serial(p.trial.newEraSyringePump.port,'BaudRate', 19200, 'Terminator','CR/LF');
+    fopen(s);
     
+    % This assumes that the pump addresses are the same as the side
+    % assignments - I think this will need to be set separately (outside of
+    % pldaps)
     
-%     a=char(IOPort('Read',h)); %clear buffer
-    %now read and store the current Volumes at the beginning of the
-    %experiment. Don't reset to allow a volume that caputre the volume
-    %dispensed over a whole session
-    [volumeGiven,volumeWithdrawn] = pds.newEraSyringePump.getVolume(p);
-    p.trial.newEraSyringePump.initialVolumeGiven = volumeGiven;
-    p.trial.newEraSyringePump.initialVolumeWithdrawn = volumeWithdrawn;
+    for i = 1:length(p.trial.newEraSyringePump.noPumps)
+        
+        cmd = sprintf([num2str(i) ' ' 'DIA ' num2str(p.trial.newEraSyringePump.diameter)]);
+        fprintf(s,cmd);
+        
+        cmd = sprintf([num2str(i) ' ' 'RAT ' num2str(p.trial.newEraSyringePump.rate) ' MH ']);
+        fprintf(s,cmd);
+        
+        cmd = sprintf([num2str(i) ' ' 'DIR INF']);
+        fprintf(s,cmd);
+        
+        cmd = sprintf([num2str(i) ' ' 'LN ' num2str(p.trial.newEraSyringePump.lowNoiseMode) ' MH ']);
+        fprintf(s,cmd);
+        
+        cmd = sprintf([num2str(i) ' ' 'AL ' num2str(p.trial.newEraSyringePump.alarmMode) ' MH ']);
+        fprintf(s,cmd);
+        
+        cmd = sprintf([num2str(i) ' ' 'CLD INF']);
+        fprintf(s,cmd);
+        
+        p.trial.newEraSyringePump.initialVolumeGiven(i) = pds.newEraSyringePump.getVolume(p,i);
+        
+    end
+    p.trial.newEraSyringePump.s = s;
 end

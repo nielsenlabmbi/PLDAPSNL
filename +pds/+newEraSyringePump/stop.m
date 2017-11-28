@@ -4,9 +4,14 @@ function p = stop(p)
 % p = pds.newEraSyringePump.stop(p)
 %
 % jk wrote it 2015
+% edw edited 2017
 
-    if p.trial.newEraSyringePump.use
-        %get current given volume and store
-        h = p.trial.newEraSyringePump.h;
-        IOPort('Write', h, ['STP' p.trial.newEraSyringePump.commandSeparator],0);
+    if any(p.trial.newEraSyringePump.use)
+        s = p.trial.newEraSyringePump.s;
+        
+        for i = 1:length(p.trial.newEraSyringePump.noPumps)
+        cmd = sprintf([num2str(i) ' ' 'STP']);
+        fprintf(s,cmd);
+        end
+        
     end

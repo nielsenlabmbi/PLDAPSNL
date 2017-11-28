@@ -6,7 +6,11 @@ function p = finish(p)
 % p = pds.newEraSyringePump.finish(p)
 %
 % jk wrote it 2015
+% edw edited 2017
 
-if p.trial.newEraSyringePump.use
-    IOPort('close',p.trial.newEraSyringePump.h)
+if any(p.trial.newEraSyringePump.use)
+    
+    fclose(p.trial.newEraSyringePump.s);
+    delete(p.trial.newEraSyringePump.s);
+    
 end
