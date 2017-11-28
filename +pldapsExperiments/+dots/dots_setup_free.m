@@ -11,15 +11,15 @@ p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial_free';
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI in s
-
+p.trial.stimulus.duration.ITI = 3;
 
 %% conditions:
 cond.dotCoherence = p.defaultParameters.stimulus.dotCoherence;
 cond.dotSpeed = p.defaultParameters.stimulus.dotSpeed;
-cond.direction = [0 90 180];
+cond.direction = [0 180];
+cond.dotLifetime = p.defaultParameters.stimulus.dotLifetime;
 side.par = 'direction';
-side.match=[0 180 90];
+side.match=[0 180];
 
 c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
 
@@ -28,8 +28,8 @@ p.conditions=c;
 p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
-p.trialMem.stats.cond={'direction'}; %conditions to display
-p.trialMem.stats.val=[0 90 180]; %values for the conditions
+p.trialMem.stats.cond={'dotCoherence'}; %conditions to display
+p.trialMem.stats.val=cond.dotCoherence; %values for the conditions
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);
 p.trialMem.stats.count.incorrect=zeros(1,nCond);

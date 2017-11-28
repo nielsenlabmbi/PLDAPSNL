@@ -207,6 +207,8 @@ p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence
 p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
 %direction
 p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+%lifetime
+p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
 %initialize frame
 p.trial.stimulus.frameI = 0;
 
@@ -325,12 +327,16 @@ if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S';'L';'R';'M'})
 end
 
-
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
-disp(['C: ' num2str(p.trialMem.stats.val)])
-disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
-disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
+num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
+
+% %show stats
+% pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
+% disp(['C: ' num2str(p.trialMem.stats.val)])
+% disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
+% disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
 
 %user function test
 if p.trial.userInput==1
