@@ -1,8 +1,8 @@
-function s = dots_FBAA7Settings
+function s = dots_FBAA9Settings
 
 
 %set reward amounts
-s. behavior.   reward. amount = [0.04 0.05 0.07];
+s. behavior.   reward. amount = [0.04 0.05 0.05];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -12,7 +12,7 @@ s.behavior.reward.amountDelta = 0.01;
 s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 250;
 s.stimulus.fractionBlack = 0.5;
-s.stimulus.dotCoherence = 1;
+s.stimulus.dotCoherence = 1;%[0.2 0.4 0.4 0.6 0.6 0.8 0.8 1 1 1];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
 s.stimulus.durStim = 480;
@@ -20,14 +20,15 @@ s.stimulus.frameRate = 120;
 
 %set viewing parameters
 s.stimulus.baseline = 0.1;
+
 s.stimulus.lickdelay = 1.5;
 s.stimulus.forceCorrect_delay = 0.5;
-s.stimulus.duration.ITI = 1;
-s.stimulus.stimON = 0.3;
+s.stimulus.duration.ITI = 1.5;
+s.stimulus.stimON = 0.2;
 s.stimulus.waitTime = 0;
 
-%set instructive trialsgs
-s.stimulus.fracInstruct = 0.7;
+%set instructive trials
+s.stimulus.fracInstruct = 0.1;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
