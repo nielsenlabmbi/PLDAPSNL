@@ -3,7 +3,8 @@ function s = plain3_generalSettings
 s.display.bgColor = [0 0 0];
 %turn adc channels off
 s.datapixx.useAsPorts = 0;
-s.datapixx.adc.channels = [];
+s.datapixx.useAsEyePos = 1;
+%s.datapixx.adc.channels = [];
 
 %turn mouse input on
 s.mouse.useAsPort = 1;

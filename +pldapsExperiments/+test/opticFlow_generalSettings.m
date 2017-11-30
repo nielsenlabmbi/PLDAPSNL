@@ -12,8 +12,8 @@ s.stimulus.y_pos = 540;
 s.stimulus.stimDir = [1];
 s.stimulus.stimRadius = 50;
 s.stimulus.stimType = 4; 'Rand, Tx, Ty, C, R';
-s.stimulus.dotDensity = 30;
-s.stimulus.sizeDots = 0.2;
+s.stimulus.dotDensity = 50;
+s.stimulus.sizeDots = 0.3;
 s.stimulus.speedDots = 10;
 s.stimulus.dotLifetime = 240;
 s.stimulus.dotCoherence = 100;
@@ -44,11 +44,11 @@ s.display.viewdist = 75;
 % 
 %turn adc channels off
 s.datapixx.useAsPorts = 0;
-s.datapixx.adc.channels = [];
+s.datapixx.adc.channels = [10 11];
 
 %turn mouse input on
 s.mouse.useAsPort = 1;
 s.mouse.use = 1;
 
 % turn saving off
-s.pldaps.nosave = 1;
+s.pldaps.nosave = 0;

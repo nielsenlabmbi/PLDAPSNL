@@ -31,7 +31,7 @@ s.stimulus.stimON = 0.3;
 s.stimulus.waitTime = 0;
 
 %set instructive trials
-s.stimulus.fracInstruct = 0;
+s.stimulus.fracInstruct = 0.2;
 
 %set up the viewing distance
 s.display.viewdist = 45; 

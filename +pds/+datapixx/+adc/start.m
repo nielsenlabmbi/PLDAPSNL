@@ -35,6 +35,11 @@ function p = start(p)
 %     jk  modified 2014 new parameter structure, add flexibility, sample timing
 
 %% build the AdcChListCode
+% add channels for eye tracking
+if p.trial.datapixx.adc.XEyeposChannel
+    p.trial.datapixx.adc.channels = [p.trial.datapixx.adc.channels p.trial.datapixx.adc.XEyeposChannel p.trial.datapixx.adc.YEyeposChannel];
+end
+
 if ~p.trial.datapixx.use || isempty(p.trial.datapixx.adc.channels)
     return;
 end

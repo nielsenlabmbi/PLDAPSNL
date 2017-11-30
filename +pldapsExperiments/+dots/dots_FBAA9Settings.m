@@ -12,7 +12,7 @@ s.behavior.reward.amountDelta = 0.01;
 s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 250;
 s.stimulus.fractionBlack = 0.5;
-s.stimulus.dotCoherence = 1;%[0.2 0.4 0.4 0.6 0.6 0.8 0.8 1 1 1];
+s.stimulus.dotCoherence = [1 0.8];%[0.2 0.4 0.4 0.6 0.6 0.8 0.8 1 1 1];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
 s.stimulus.durStim = 480;
@@ -37,7 +37,7 @@ s.display.viewdist = 45;
  s.ports.use = true;
  s.ports.nports = 3;
  s.ports.movable = true;
- s.datapixx.adc.channels = [1 3 5];
+ s.datapixx.adc.channels = [1 3 5]; %[1 3 5 10 11];
  
  %turn mouse input off
 s.mouse.useAsPort = 0;
