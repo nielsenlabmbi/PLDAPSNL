@@ -36,11 +36,12 @@ function p = start(p)
 
 %% build the AdcChListCode
 % add channels for eye tracking
-if p.trial.datapixx.adc.XEyeposChannel
+if p.trial.datapixx.useAsEyePos
     p.trial.datapixx.adc.channels = [p.trial.datapixx.adc.channels p.trial.datapixx.adc.XEyeposChannel p.trial.datapixx.adc.YEyeposChannel];
+    p.trial.datapixx.adc.channelMapping = horzcat({p.trial.datapixx.adc.channelMapping}, {'datapixx.adc.eyepos'});
 end
 
-if ~p.trial.datapixx.use || isempty(p.trial.datapixx.adc.channels)
+if ~p.trial.datapixx.use || isempty(p.trial.datapixx.adc.channels) && ~p.trial.datapixx.useAsEyePos
     return;
 end
 AdcChListCode = zeros(2,length(p.trial.datapixx.adc.channels));
@@ -63,6 +64,9 @@ end
 
 if length(p.trial.datapixx.adc.channelMapping)==1
     p.trial.datapixx.adc.channelMapping=repmat(p.trial.datapixx.adc.channelMapping,[1,length(p.trial.datapixx.adc.channels)]);
+elseif p.trial.datapixx.useAsEyePos
+    p.trial.datapixx.adc.channelMapping = [repmat(p.trial.datapixx.adc.channelMapping(1), [1,length(p.trial.datapixx.adc.channels)-2]),...
+        repmat(p.trial.datapixx.adc.channelMapping(2),[1,2])];
 end
 maps=unique(p.trial.datapixx.adc.channelMapping);
 

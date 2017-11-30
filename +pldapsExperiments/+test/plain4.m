@@ -23,7 +23,7 @@ s.display.viewdist = 45;
 
 %turn adc channels off
 s.datapixx.useAsPorts = 0;
-s.datapixx.adc.channels = [];
+%s.datapixx.adc.channels = [];
 s.datapixx.useAsEyePos = 1;
 %turn mouse input on
 s.mouse.useAsPort = 1;
