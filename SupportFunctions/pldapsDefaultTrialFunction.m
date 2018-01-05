@@ -121,9 +121,31 @@ end
 
 %draw the eyepositon to the second srceen only
 %move the color and size parameters to
-if p.trial.pldaps.draw.eyepos.use
-    Screen('Drawdots',  p.trial.display.overlayptr, [p.trial.eyeX p.trial.eyeY]', ...
-        p.trial.stimulus.eyeW, p.trial.display.clut.eyepos, [0 0],0);
+if p.trial.pldaps.draw.eyepos.use && p.trial.iFrame>2
+    %update data
+    p.trial.pldaps.draw.eyepos.acq = p.trial.datapixx.adc.dataSampleCount;
+    p.trial.pldaps.draw.eyepos.dataX=circshift(p.trial.pldaps.draw.eyepos.dataX,-1);
+    p.trial.pldaps.draw.eyepos.dataX(end) = mean(p.trial.datapixx.adc.eyepos(1,p.trial.pldaps.draw.eyepos.lastacq:p.trial.pldaps.draw.eyepos.acq));
+    p.trial.pldaps.draw.eyepos.dataY=circshift(p.trial.pldaps.draw.eyepos.dataY,-1);
+    p.trial.pldaps.draw.eyepos.dataY(end) = mean(p.trial.datapixx.adc.eyepos(2,p.trial.pldaps.draw.eyepos.lastacq:p.trial.pldaps.draw.eyepos.acq));
+
+    if p.trial.pldaps.draw.eyepos.show
+        %adjust y limit
+        p.trial.pldaps.draw.eyepos.sf.ylims=[-1 1];
+        p.trial.pldaps.draw.eyepos.sf2.ylims = [-2 1];
+%         %current ifi is solid black
+%         pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.framerate.sf, p.trial.pldaps.draw.framerate.sf.xlims, [p.trial.display.ifi p.trial.display.ifi], p.trial.display.clut.blackbg, '-');
+%         %2 ifi reference is 5 black dots
+%         pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.framerate.sf, p.trial.pldaps.draw.framerate.sf.xlims(2)*(0:0.25:1), ones(1,5)*2*p.trial.display.ifi, p.trial.display.clut.blackbg, '.');
+%         %0 ifi reference is 5 black dots
+%         pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.framerate.sf, p.trial.pldaps.draw.framerate.sf.xlims(2)*(0:0.25:1), zeros(1,5), p.trial.display.clut.blackbg, '.');
+        %data are red dots
+        pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.eyepos.sf, 1:p.trial.pldaps.draw.eyepos.nFrames, p.trial.pldaps.draw.eyepos.dataX', p.trial.display.clut.redbg, '.');
+        pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.eyepos.sf2, 1:p.trial.pldaps.draw.eyepos.nFrames, p.trial.pldaps.draw.eyepos.dataY', p.trial.display.clut.greenbg, '.');    
+    end
+
+    %Screen('Drawdots',  p.trial.display.overlayptr, [p.trial.eyeX p.trial.eyeY]', ...
+     %   p.trial.stimulus.eyeW, p.trial.display.clut.eyepos, [0 0],0);
 end
 if p.trial.mouse.use && p.trial.pldaps.draw.cursor.use
     Screen('Drawdots',  p.trial.display.overlayptr,  p.trial.mouse.cursorSamples(1:2,p.trial.mouse.samples), ...
@@ -266,6 +288,25 @@ if p.trial.pldaps.draw.framerate.use
     sf.linetype='-';
     
     p.trial.pldaps.draw.framerate.sf=sf;
+end
+
+%%% prepare to plot eyepos history on screen
+if p.trial.pldaps.draw.eyepos.use
+    p.trial.pldaps.draw.eyepos.lastacq = 1;
+    p.trial.pldaps.draw.eyepos.nFrames=round(p.trial.pldaps.draw.eyepos.nSeconds/p.trial.display.ifi);
+    p.trial.pldaps.draw.eyepos.dataX=zeros(p.trial.pldaps.draw.eyepos.nFrames,1); %holds the data
+    p.trial.pldaps.draw.eyepos.dataY=zeros(p.trial.pldaps.draw.eyepos.nFrames,1); %holds the data
+    sf.startPos=round(p.trial.display.w2px'.*(p.trial.pldaps.draw.eyepos.location) + [p.trial.display.pWidth/2 p.trial.display.pHeight/2]);
+    sf.size=p.trial.display.w2px'.*p.trial.pldaps.draw.eyepos.size;
+    sf.window=p.trial.display.overlayptr;
+    sf.xlims=[1 p.trial.pldaps.draw.eyepos.nFrames];
+    sf.ylims=  [0 2*p.trial.display.ifi];
+    sf.linetype='-';
+ 
+    p.trial.pldaps.draw.eyepos.sf=sf;
+    p.trial.pldaps.draw.eyepos.sf2 = sf;
+    p.trial.pldaps.draw.eyepos.sf2.startPos = round(p.trial.display.w2px'.*(p.trial.pldaps.draw.eyepos.location + [0 3]) + [p.trial.display.pWidth/2 p.trial.display.pHeight/2]);
+    
 end
 
 % set reward amount to the value the last trial finished with (unless it's

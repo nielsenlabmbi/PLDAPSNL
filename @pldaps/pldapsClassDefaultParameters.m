@@ -146,7 +146,12 @@ function s=pldapsClassDefaultParameters(s)
 
 %s.	pldaps.	draw.	eyepos.
  s.	pldaps.	draw.	eyepos.	use = false;
-
+ s.	pldaps.	draw.	eyepos.	location = [ -30   -5 ];
+ s.	pldaps.	draw.	eyepos.	nSeconds = 3;
+ s.	pldaps.	draw.	eyepos.	show = false;
+ s.	pldaps.	draw.	eyepos.	size = [ 20     5 ];
+ s. pldaps. draw.   eyepos. rescaleY = false;
+ 
 %s.	pldaps.	draw.	framerate.
  s.	pldaps.	draw.	framerate.	location = [ -30   -10 ];
  s.	pldaps.	draw.	framerate.	nSeconds = 3;
