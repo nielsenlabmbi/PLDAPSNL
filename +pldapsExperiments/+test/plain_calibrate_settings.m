@@ -1,4 +1,4 @@
-function s = ori_FBAA7Settings
+function s = plain_calibrate_settings
 % turn saving off
 % s.pldaps.nosave = 1;
 
@@ -16,20 +16,21 @@ s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 1;
 %set viewing parameters
 s.stimulus.baseline = 0.2;
-s.stimulus.trialdur = 300;
+s.stimulus.trialdur = 180;
 
 s.stimulus.lickdelay = 1.5;
 s.stimulus.forceCorrect_delay = 0.5;
-s.stimulus.duration.ITI = 1.0;
+s.stimulus.duration.ITI = 2;
 s.stimulus.stimON = 0.3;
-s.stimulus.waitTime = 0.5;
+s.stimulus.waitTime = 0;
 
 %set instructive trials
-s.stimulus.fracInstruct = 0.8;
+s.stimulus.fracInstruct = 0.9;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
-% 
+% % %turn saving off
+ s.pldaps.nosave = 1;
 
 % %configure ports
  s.ports.use = true;

@@ -1,4 +1,4 @@
-function s = dots_FBAA9Settings
+function s = dots_FBAB0Settings
 
 
 %set reward amounts
@@ -21,15 +21,15 @@ s.stimulus.frameRate = 120;
 %set viewing parameters
 s.stimulus.baseline = 0.1;
 
-s.stimulus.lickdelay = 1.5;
-s.stimulus.forceCorrect_delay = 0.5;
+s.stimulus.lickdelay = 1.7;
+s.stimulus.forceCorrect_delay = 0.75;
 s.stimulus.duration.ITI = 1.5;
 s.stimulus.stimON = 0.2;
 s.stimulus.waitTime = 0;
-s.stimulus.trialdur = 30;
+s.stimulus.trialdur = 300;
 
 %set instructive trials
-s.stimulus.fracInstruct = 0.5; %0.5;
+s.stimulus.fracInstruct = 0.2;
 
 %set up the viewing distance
 s.display.viewdist = 45; 

@@ -117,8 +117,8 @@ function s=pldapsClassDefaultParameters(s)
  s.	newEraSyringePump.	lowNoiseMode = 0;
  s.	newEraSyringePump.	port = '/dev/ttyUSB1';
  s.	newEraSyringePump.	rate = 2120; %mL/hr
- s.	newEraSyringePump.	use = [0 0 0];
- s. newEraSyringePump.  noPumps = length(find(s.newEraSyringePump.use));
+ s.	newEraSyringePump.	use = [0 0 0 0];
+%  s. newEraSyringePump.  noPumps = length(find(s.newEraSyringePump.use));
 
 %s.	pldaps.
  s.	pldaps.	eyeposMovAv = 1;
@@ -151,6 +151,8 @@ function s=pldapsClassDefaultParameters(s)
  s.	pldaps.	draw.	eyepos.	show = false;
  s.	pldaps.	draw.	eyepos.	size = [ 20     5 ];
  s. pldaps. draw.   eyepos. rescaleY = false;
+ s. pldaps. draw.   eyepos. range = [-0.75 0.75];
+ s. pldaps. draw.   eyepos. baseline = 0;
  
 %s.	pldaps.	draw.	framerate.
  s.	pldaps.	draw.	framerate.	location = [ -30   -10 ];

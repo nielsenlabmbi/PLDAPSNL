@@ -1,14 +1,14 @@
-function s = ori_FBAA7Settings
+function s = ori_FBAA9Settings
 % turn saving off
 % s.pldaps.nosave = 1;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.04 0.07 0.07];
+s. behavior.   reward. amount = [0.04 0.08 0.08];
 s.behavior.reward.amountDelta = 0.01;
 
 
 %set orientation and offsets
-s.stimulus.offsets = [45];
+s.stimulus.offsets = [20];
 s.stimulus.angle = 45;
 s.stimulus.sf = 0.25;
 s.stimulus.range = 121;
@@ -20,8 +20,8 @@ s.stimulus.trialdur = 300;
 
 s.stimulus.lickdelay = 1.5;
 s.stimulus.forceCorrect_delay = 0.5;
-s.stimulus.duration.ITI = 1.0;
-s.stimulus.stimON = 0.3;
+s.stimulus.duration.ITI = 1;
+s.stimulus.stimON = 0.2;
 s.stimulus.waitTime = 0.5;
 
 %set instructive trials

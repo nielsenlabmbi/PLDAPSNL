@@ -1,5 +1,5 @@
 function s = dots_FBAA7Settings
-
+ s.datapixx.useAsEyepos = 1;
 
 %set reward amounts
 s. behavior.   reward. amount = [0.04 0.05 0.07];
@@ -25,9 +25,10 @@ s.stimulus.forceCorrect_delay = 0.5;
 s.stimulus.duration.ITI = 1;
 s.stimulus.stimON = 0.3;
 s.stimulus.waitTime = 0;
+s.stimulus.trialdur = 3;
 
 %set instructive trialsgs
-s.stimulus.fracInstruct = 0.7;
+s.stimulus.fracInstruct = 0.65;
 
 %set up the viewing distance
 s.display.viewdist = 45; 

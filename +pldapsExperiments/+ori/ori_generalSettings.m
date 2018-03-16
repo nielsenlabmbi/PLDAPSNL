@@ -10,14 +10,14 @@ s.stimulus.offsets = [20];
 s.stimulus.angle = 45;
 s.stimulus.sf = 0.25;
 s.stimulus.range = 121;
-s.stimulus.baseline = 0.2;
-s.stimulus.lickdelay = 1.3;
-s.stimulus.duration.ITI = 1.5;
-s.stimulus.stimON = 0.2;
-s.stimulus.waitTime = 0;
+s.stimulus.baseline = 0.3;
+s.stimulus.stimON = 0.3;
+s.stimulus.waitTime = 0.2;
 s.stimulus.fracInstruct = 0.7;
 s.stimulus.runtype = 'pseudo';
-
+s.stimulus.lickdelay = 1;
+s.stimulus.forceCorrect_delay = 0.5;
+s.stimulus.duration.ITI = 1.5;
 %set up the viewing distance
 s.display.viewdist = 45; 
 % 
