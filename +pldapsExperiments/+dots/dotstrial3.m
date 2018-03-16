@@ -111,8 +111,6 @@ switch p.trial.state
                 if any(p.trial.ports.position)
                     pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
                 end
-                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                 p.trial.state=p.trial.stimulus.states.FINALRESP;
                 end
                 
@@ -122,8 +120,6 @@ switch p.trial.state
                     if any(p.trial.ports.position)
                         pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
                     end
-                    p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-                    p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                     p.trial.state=p.trial.stimulus.states.FINALRESP;
                 end
                 
@@ -140,7 +136,11 @@ switch p.trial.state
         %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
-            pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
+            if p.trial.stimulus.dotCoherence == 1;
+                pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
+            else
+                pds.ports.movePort(1+mod(p.trial.side,2),1,p);
+            end
             %             pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
         end
         
@@ -157,6 +157,9 @@ switch p.trial.state
             %check whether correct port chosen
             correct=checkPortChoice(activePort,p);
             if correct==1
+                    p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                    p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
@@ -210,6 +213,9 @@ switch p.trial.state
                 correct=checkPortChoice(activePort,p);
                 if correct==1 %now has chosen correct port
                     p.trial.stimulus.timeResp = p.trial.ttime;
+                    p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                    p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                    
                     if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay & activePort==p.trial.stimulus.port.RIGHT 
                         %deliver reward
                         amount=2*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
@@ -223,14 +229,6 @@ switch p.trial.state
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                         
                     end
-%                     %give (small) reward
-%                     if activePort==p.trial.stimulus.port.LEFT
-%                         amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
-%                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-%                     elseif activePort==p.trial.stimulus.port.RIGHT
-%                         amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
-%                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-%                     end
                     
                     %advance state
                     p.trial.stimulus.switchVAR = 2;
@@ -302,6 +300,8 @@ p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
 p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 %initialize frame
 p.trial.stimulus.frameI = 0;
+%lifetime
+p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
 
 %initialize dot positions - these need to be in pixels from center
 randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1

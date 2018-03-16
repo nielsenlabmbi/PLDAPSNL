@@ -1,17 +1,17 @@
-function p=phase0_setup(p)
+function p=free_center_lick1_setup(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.ori.phase0';
+p.trial.pldaps.trialFunction='pldapsExperiments.ori.free_center_lick1';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; 
+p.trial.stimulus.duration.ITI = 3; %ITI in s
 
 
 %% conditions:
@@ -19,7 +19,7 @@ cond.color=[0 1]; %use squares of 2 colors
 side.par='color';
 side.match=[0 1];
 
-c=generateCondList(cond,side,'pseudo',200);
+c=generateCondList(cond,side,'pseudo',5);
 
 p.conditions=c;
 

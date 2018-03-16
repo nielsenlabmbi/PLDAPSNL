@@ -18,11 +18,15 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 cond.dotCoherence = p.defaultParameters.stimulus.dotCoherence;
 cond.dotSpeed = p.defaultParameters.stimulus.dotSpeed;
 cond.direction = [0 180];
+cond.dotLifetime = p.defaultParameters.stimulus.dotLifetime;
 side.par = 'direction';
 side.match=[0 180];
-
-c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
-
+if length(cond.dotCoherence) > 2
+   c=generateCondList_sides(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+else
+   c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+end
+ 
 p.conditions=c;
 
 p.trial.pldaps.finish = length(p.conditions);

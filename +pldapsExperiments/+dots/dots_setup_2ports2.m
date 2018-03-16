@@ -22,6 +22,7 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 cond.dotCoherence = p.defaultParameters.stimulus.dotCoherence;
 cond.dotSpeed = p.defaultParameters.stimulus.dotSpeed;
 cond.direction = [0 180];
+cond.dotLifetime = p.defaultParameters.stimulus.dotLifetime;
 
 side.par = 'direction';
 side.match=[0 180];

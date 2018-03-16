@@ -14,24 +14,24 @@ function p = trialSetup(p)
 setupID = p.trial.behavior.reward.setupID;
 %main loop
 if strcmp(setupID,'fixed')
-pulse = 0.02:0.02:0.08;
+pulse = .1;%0.04:0.02:0.1;
 p.trial.behavior.reward.logvals = zeros(length(pulse),3);
 
 for j = 1:length(pulse)
     amount = pulse(j);
-for i = 1:500
+for i = 1:50
     pds.behavior.reward.give(p,amount,2); %left
-    WaitSecs(0.2);
+    WaitSecs(0.1);
 end
-for i = 1:500
+for i = 1:50
     pds.behavior.reward.give(p,amount,1); %right
-    WaitSecs(0.2);
+    WaitSecs(0.1);
 end
-for i = 1:500
+for i = 1:50
     pds.behavior.reward.give(p,amount,3); %start (middle)
-    WaitSecs(0.2);
+    WaitSecs(0.1);
 end
-keyboard
+%keyboard
 end
 
 elseif strcmp(setupID,'free');

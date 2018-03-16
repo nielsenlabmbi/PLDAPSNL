@@ -39,12 +39,12 @@ switch p.trial.state
     case p.trial.stimulus.states.START
         
         if p.trial.led.state==0
-            %turn LED on
-            pds.LED.LEDOn(p);
-            p.trial.led.state=1;
+%             %turn LED on
+%             pds.LED.LEDOn(p);
+%             p.trial.led.state=1;
             %note timepoint
-            p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
-            p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+%             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
+%             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
         end
         
         if p.trial.ttime > p.trial.stimulus.baseline
@@ -57,14 +57,16 @@ switch p.trial.state
         switch p.trial.stimulus.switchVAR
             case 1
             %give reward
-                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT 
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT... 
+                    & activePort == p.trial.side
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     
                 end
                 
-                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT 
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT ...
+                    & activePort == p.trial.side
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
@@ -294,11 +296,11 @@ disp(p.trial.stimulus.fracInstruct);
 
 %+/- frac instruct
 if p.trial.userInput==1
-    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.1;
     disp('decreased fracInstruct')
 end
 if p.trial.userInput==2
-    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.1;
     disp('increased fracInstruct')
 end
 

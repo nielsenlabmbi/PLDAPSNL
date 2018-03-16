@@ -40,14 +40,14 @@ activePort=find(p.trial.ports.status==1);
 switch p.trial.state
     case p.trial.stimulus.states.START %trial RIGHTed
         
-        if p.trial.led.state==0
-            %turn LED on
-            pds.LED.LEDOn(p);
-            p.trial.led.state=1;
-            %note timepoint
-            p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
-            p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
-        end
+%         if p.trial.led.state==0
+%             %turn LED on
+%             pds.LED.LEDOn(p);
+%             p.trial.led.state=1;
+%             %note timepoint
+%             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
+%             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+%         end
         
         if p.trial.ttime > p.trial.stimulus.baseline
             p.trial.stimulus.timeTrialWait = p.trial.ttime;
@@ -59,14 +59,16 @@ switch p.trial.state
         switch p.trial.stimulus.switchVAR
             case 1
             %give reward
-                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT %RIGHT port activated
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT...
+                        & activePort == p.trial.side
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     
                 end
                 
-                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT %RIGHT port activated
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT...
+                        & activePort == p.trial.side
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
@@ -106,7 +108,11 @@ switch p.trial.state
          %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
-            pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
+            if p.trial.stimulus.dotCoherence == 1;
+                pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
+            else
+                pds.ports.movePort(1+mod(p.trial.side,2),1,p);
+            end
             %             pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
         end
         
@@ -123,6 +129,8 @@ switch p.trial.state
             %check whether correct port chosen
             correct=checkPortChoice(activePort,p);
             if correct==1
+                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
@@ -152,8 +160,15 @@ switch p.trial.state
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
+            
         end
-        
+        %if ferret does not make a choice after trial duration, advance
+        %state
+        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.trialdur;
+             p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+             p.trial.stimulus.timeoutFlag = 1;
+             p.trial.state = p.trial.stimulus.states.FINALRESP;
+        end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial
@@ -191,18 +206,7 @@ switch p.trial.state
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                         
                     end
-%                     if activePort==p.trial.stimulus.port.LEFT
-%                         for i = 1:2
-%                             amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
-%                             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-%                         end
-%                     elseif activePort==p.trial.stimulus.port.RIGHT
-%                         for i = 1:2
-%                             amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
-%                             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-%                         end
-%                     end
-%                     
+                    
                     %advance state
                     p.trial.stimulus.switchVAR = 2;
                     p.trial.state=p.trial.stimulus.states.LICKDELAY;
@@ -250,9 +254,18 @@ end
 if isfield(p.trialMem,'fracInstruct');
     p.trial.stimulus.fracInstruct = p.trialMem.fracInstruct;
 end
-%determine which spouts are presented when stimulus is presented
-p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
 
+if ~isfield(p.trialMem,'count') || p.trialMem.count == 0;
+    p.trialMem.count = 1;
+    p.trialMem.moveBool = zeros(1,10);
+    p.trialMem.moveBool(1:round((1 - p.trial.stimulus.fracInstruct)*10)) = 1;
+    p.trialMem.moveBool = p.trialMem.moveBool(randperm(10));
+
+end
+
+    p.trial.ports.moveBool = p.trialMem.moveBool(p.trialMem.count);
+    p.trialMem.count = mod(p.trialMem.count+1,11);
+    
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
@@ -273,6 +286,8 @@ p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
 p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 %initialize frame
 p.trial.stimulus.frameI = 0;
+%lifetime
+p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
 
 %initialize dot positions - these need to be in pixels from center
 randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
@@ -402,11 +417,11 @@ disp(p.trial.stimulus.fracInstruct);
 
 %+/- frac instruct
 if p.trial.userInput==1
-    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.1;
     disp('decreased fracInstruct')
 end
 if p.trial.userInput==2
-    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.1;
     disp('increased fracInstruct')
 end
 
