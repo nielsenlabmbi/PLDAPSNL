@@ -15,6 +15,7 @@ p.trial.stimulus.duration.ITI = p.trial.stimulus.duration.ITI;
 
 %% conditions:
 cond.LED=p.trial.stimulus.LEDCh; %3 test LEDS
+cond.LEDSt = p.trial.stimulus.LEDChSt;
 cond.middle = [-1 1 -1];
 side.par='middle';
 side.match=[-1 1 -1];

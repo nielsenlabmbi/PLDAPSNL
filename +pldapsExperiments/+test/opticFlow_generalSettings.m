@@ -1,8 +1,8 @@
 function s = opticFlow_generalSettings
-
+ s.datapixx.useAsEyepos = 1;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.1 0.35 0.35];
+s. behavior.   reward. amount = [0.35 0.35 0.35];
 
 %set orientation and offsets
 s.stimulus.frameRate = 120;
@@ -12,9 +12,9 @@ s.stimulus.y_pos = 540;
 s.stimulus.stimDir = [1];
 s.stimulus.stimRadius = 50;
 s.stimulus.stimType = 4; 'Rand, Tx, Ty, C, R';
-s.stimulus.dotDensity = 50;
+s.stimulus.dotDensity = 60;
 s.stimulus.sizeDots = 0.3;
-s.stimulus.speedDots = 10;
+s.stimulus.speedDots = 20;
 s.stimulus.dotLifetime = 240;
 s.stimulus.dotCoherence = 100;
 s.stimulus.dotType = 1; 'sq, circ';
@@ -32,7 +32,7 @@ s.stimulus.waitTime = 0;
 %set up the viewing distance
 s.display.viewdist = 75; 
 
-% % %configure ports
+% %configure ports
 %  s.ports.use = true;
 %  s.ports.nports = 3;
 %  s.ports.movable = true;
@@ -44,9 +44,9 @@ s.display.viewdist = 75;
 % 
 %turn adc channels off
 s.datapixx.useAsPorts = 0;
-s.datapixx.adc.channels = [10 11];
+%s.datapixx.adc.channels = [10 11];
 
-%turn mouse input on
+% turn mouse input on
 s.mouse.useAsPort = 1;
 s.mouse.use = 1;
 

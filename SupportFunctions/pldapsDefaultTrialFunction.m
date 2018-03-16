@@ -115,24 +115,28 @@ if p.trial.pldaps.draw.framerate.use && p.trial.iFrame>2
         %0 ifi reference is 5 black dots
         pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.framerate.sf, p.trial.pldaps.draw.framerate.sf.xlims(2)*(0:0.25:1), zeros(1,5), p.trial.display.clut.blackbg, '.');
         %data are red dots
-        pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.framerate.sf, 1:p.trial.pldaps.draw.framerate.nFrames, p.trial.pldaps.draw.framerate.data', p.trial.display.clut.redbg, '.');
+        pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.framerate.sf, 1:p.trial.pldaps.draw.framerate.nFrames, p.trial.pldaps.draw.framerate.data', p.trial.display.clut.blackbg, '.');
     end
 end
 
 %draw the eyepositon to the second srceen only
 %move the color and size parameters to
 if p.trial.pldaps.draw.eyepos.use && p.trial.iFrame>2
+    if p.trial.pldaps.draw.eyepos.lastacq == 1;
+        p.trial.pldaps.draw.eyepos.baseline1 = mean(p.trial.datapixx.adc.eyepos(1,1:5));
+        p.trial.pldaps.draw.eyepos.baseline2 = mean(p.trial.datapixx.adc.eyepos(2,1:5));
+        %adjust Y limit
+        p.trial.pldaps.draw.eyepos.sf.ylims = p.trial.pldaps.draw.eyepos.sf.ylims + p.trial.pldaps.draw.eyepos.baseline1;
+        p.trial.pldaps.draw.eyepos.sf2.ylims = p.trial.pldaps.draw.eyepos.sf2.ylims + p.trial.pldaps.draw.eyepos.baseline2;
+    end
     %update data
     p.trial.pldaps.draw.eyepos.acq = p.trial.datapixx.adc.dataSampleCount;
     p.trial.pldaps.draw.eyepos.dataX=circshift(p.trial.pldaps.draw.eyepos.dataX,-1);
     p.trial.pldaps.draw.eyepos.dataX(end) = mean(p.trial.datapixx.adc.eyepos(1,p.trial.pldaps.draw.eyepos.lastacq:p.trial.pldaps.draw.eyepos.acq));
     p.trial.pldaps.draw.eyepos.dataY=circshift(p.trial.pldaps.draw.eyepos.dataY,-1);
     p.trial.pldaps.draw.eyepos.dataY(end) = mean(p.trial.datapixx.adc.eyepos(2,p.trial.pldaps.draw.eyepos.lastacq:p.trial.pldaps.draw.eyepos.acq));
-
+    p.trial.pldaps.draw.eyepos.lastacq = p.trial.pldaps.draw.eyepos.acq;
     if p.trial.pldaps.draw.eyepos.show
-        %adjust y limit
-        p.trial.pldaps.draw.eyepos.sf.ylims=[-1 1];
-        p.trial.pldaps.draw.eyepos.sf2.ylims = [-2 1];
 %         %current ifi is solid black
 %         pds.pldaps.draw.screenPlot(p.trial.pldaps.draw.framerate.sf, p.trial.pldaps.draw.framerate.sf.xlims, [p.trial.display.ifi p.trial.display.ifi], p.trial.display.clut.blackbg, '-');
 %         %2 ifi reference is 5 black dots
@@ -300,7 +304,7 @@ if p.trial.pldaps.draw.eyepos.use
     sf.size=p.trial.display.w2px'.*p.trial.pldaps.draw.eyepos.size;
     sf.window=p.trial.display.overlayptr;
     sf.xlims=[1 p.trial.pldaps.draw.eyepos.nFrames];
-    sf.ylims=  [0 2*p.trial.display.ifi];
+    sf.ylims=  p.trial.pldaps.draw.eyepos.range;
     sf.linetype='-';
  
     p.trial.pldaps.draw.eyepos.sf=sf;

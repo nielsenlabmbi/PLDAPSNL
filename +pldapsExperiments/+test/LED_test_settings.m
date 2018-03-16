@@ -1,20 +1,18 @@
 function s = LED_test_settings
 
 %set reward amounts
-s. behavior.   reward. amount = [0.01 0.02 0.07];
+s. behavior.   reward. amount = [0.08 0.08 0.08];
 s.behavior.reward.amountDelta = 0.01;
 
 %set viewing parameters
-s.stimulus.LEDCh = [18 20 22];
-s.stimulus.LEDChSt = 24; %[16];
+s.stimulus.LEDCh = [16 18 20 22];
+s.stimulus.LEDChSt = 18;%[16 18 20 22];
 s.stimulus.pwd = 0.05;
-s.stimulus.numflash = 5;
-s.stimulus.trialdur = 1.5;
+s.stimulus.trialdur = 2;
 
-s.stimulus.lickdelay = 1;
-s.stimulus.duration.ITI = 0.5;
-s.stimulus.stimON = 0.3;
-s.stimulus.waitTime = 0;
+s.stimulus.lickdelay = 1.5;
+s.stimulus.duration.ITI = 1;
+%s.stimulus.waitTime = 0;
 
 %set eye tracking parameters
 s.datapixx.useAsEyepos = 1;
@@ -40,4 +38,4 @@ s.display.viewdist = 45;
 % s.mouse.use = 1;
 % 
 % turn saving off
-s.pldaps.nosave = 1;
+%s.pldaps.nosave = 1;
