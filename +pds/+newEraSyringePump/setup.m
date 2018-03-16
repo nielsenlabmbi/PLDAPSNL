@@ -8,7 +8,7 @@ function p = setup(p)
 % jk wrote it 2015
 % edw adapted 2017
 
-
+p.trial.newEraSyringePump.  noPumps = length(find(p.trial.newEraSyringePump.use));
 
 if any(p.trial.newEraSyringePump.use)
     
@@ -25,28 +25,28 @@ if any(p.trial.newEraSyringePump.use)
     % assignments - I think this will need to be set separately (outside of
     % pldaps)
     
-    for i = 1:length(p.trial.newEraSyringePump.noPumps)
+    for i = 1:p.trial.newEraSyringePump.noPumps
         
-        cmd = sprintf([num2str(i) ' ' 'DIA ' num2str(p.trial.newEraSyringePump.diameter)]);
+        cmd = sprintf([num2str(i -1 ) ' ' 'DIA ' num2str(p.trial.newEraSyringePump.diameter)]);
         fprintf(s,cmd);
         
-        cmd = sprintf([num2str(i) ' ' 'RAT ' num2str(p.trial.newEraSyringePump.rate) ' MH ']);
+        cmd = sprintf([num2str(i -1 ) ' ' 'RAT ' num2str(p.trial.newEraSyringePump.rate) ' MH ']);
         fprintf(s,cmd);
         
-        cmd = sprintf([num2str(i) ' ' 'DIR INF']);
+        cmd = sprintf([num2str(i -1) ' ' 'DIR INF']);
         fprintf(s,cmd);
         
-        cmd = sprintf([num2str(i) ' ' 'LN ' num2str(p.trial.newEraSyringePump.lowNoiseMode) ' MH ']);
+        cmd = sprintf([num2str(i -1) ' ' 'LN ' num2str(p.trial.newEraSyringePump.lowNoiseMode) ' MH ']);
         fprintf(s,cmd);
         
-        cmd = sprintf([num2str(i) ' ' 'AL ' num2str(p.trial.newEraSyringePump.alarmMode) ' MH ']);
+        cmd = sprintf([num2str(i -1) ' ' 'AL ' num2str(p.trial.newEraSyringePump.alarmMode) ' MH ']);
         fprintf(s,cmd);
         
-        cmd = sprintf([num2str(i) ' ' 'CLD INF']);
+        cmd = sprintf([num2str(i -1) ' ' 'CLD INF']);
         fprintf(s,cmd);
         
+        p.trial.newEraSyringePump.s = s;
         p.trial.newEraSyringePump.initialVolumeGiven(i) = pds.newEraSyringePump.getVolume(p,i);
         
     end
-    p.trial.newEraSyringePump.s = s;
 end

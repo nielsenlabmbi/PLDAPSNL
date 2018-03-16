@@ -15,17 +15,23 @@ if nargin < 2
 end
 
 
-if p.trial.newEraSyringePump.use(p.trial.side)    
+if p.trial.newEraSyringePump.use(logical(p.trial.ports.status))    
     pds.newEraSyringePump.give(p,amount);
-end
-
-if p.trial.datapixx.use
+elseif p.trial.datapixx.use
     if  p.trial.datapixx.useForReward
         pds.datapixx.analogOutTime(amount, chan, p.trial.behavior.reward.dacAmp,p.trial.datapixx.dac.sampleRate);
     end
     %%flag
     pds.datapixx.flipBit(p,p.trial.event.REWARD,p.trial.pldaps.iTrial);
 end
+
+% if p.trial.datapixx.use
+%     if  p.trial.datapixx.useForReward
+%         pds.datapixx.analogOutTime(amount, chan, p.trial.behavior.reward.dacAmp,p.trial.datapixx.dac.sampleRate);
+%     end
+%     %%flag
+%     pds.datapixx.flipBit(p,p.trial.event.REWARD,p.trial.pldaps.iTrial);
+% end
 
 %%sound
 %if p.trial.sound.use

@@ -10,17 +10,17 @@ function volumeGiven = getVolume(p,i)
         s = p.trial.newEraSyringePump.s;
         
         % get volume
-        cmd = sprintf([num2str(i) ' '  'DIS']);
+        cmd = sprintf([num2str(i-1) ' DIS']);
         fprintf(s,cmd);
         recvStr = '';
         while s.BytesAvailable > 0                                                  % CLEAR THE BUFFER
-            recvStr =  fscanf(s,'%s',s.BytesAvailable);  pause(.001);
+            fscanf(s,'%c',s.BytesAvailable);  pause(.001);
         end
+        fprintf(s,cmd);                                                             % SEND THE COMMAND
+        while s.BytesAvailable < 10; pause(.001); end;                              % WAIT FOR THE RESPONSE
+        recvStr = fscanf(s,'%s',s.BytesAvailable);                                      % READ THE RESPONSE
         
-        if(~strcmp(recvStr, ''))
-            fprintf('\n sendCmd bytes in buffer :  <%s>\n', cmd, recvStr);
-        end
-        volumeGiven = recvStr(6:10);
+        volumeGiven = str2num(recvStr(6:10));
     else
         volumeGiven = NaN;
     end
