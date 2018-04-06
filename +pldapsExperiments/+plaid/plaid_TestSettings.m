@@ -16,8 +16,8 @@ s.ports.nPorts = 4;
 %run/condition specific parameters
 s.stimulus.runtype='pseudo'; %or block
 s.stimulus.blocklength=2; %only used in blocks
-s.stimulus.ori=[45 90 135];
-s.stimulus.plaid=[0 1];
+s.stimulus.ori=[0 90];
+s.stimulus.plaid=[0];
 s.stimulus.plaid1 = [0 1 1 1 1];
 
 %turn adc channels off

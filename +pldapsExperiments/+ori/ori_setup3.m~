@@ -18,16 +18,16 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 side.par = 'rotation';
 side.match=[-1 1];
 
-for i = 1:length(p.trial.stimulus.offsets)
+for i = 1:length(offsets)
 cond(i).displacement = p.defaultParameters.stimulus.offsets{i};
 cond(i).phase = [0 180];
 cond(i).rotation = [-1 1];
 cond(i).sf = p.defaultParameters.stimulus.sf;
 cond(i).angle = p.defaultParameters.stimulus.angle;
 cond(i).range = p.defaultParameters.stimulus.range;
-cond(i).fullField = p.defaultParameters.stimulus.fullField(i); 
+cond(i).fullField = p.defaultParameters.stimulus.fullField{i}; 
 cond(i).type = i; 
-c{i}=generateCondList(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
+c{i}=generateCondList(cond(i),side,'pseudo',ceil(500/(length(cond.displacement)*2)));
 end
 
 p.trial.allconditions = c;
@@ -39,13 +39,12 @@ p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
 p.trialMem.stats.cond={'rotation','displacement','type'}; %conditions to display
-A = []; B = []; C = [];
-for i = 1:length(p.trial.stimulus.offsets)
-    [aa,bb] = ndgrid(cond(i).rotation,cond(i).displacement);
-    A = [A; aa(:)]; B = [B; bb(:)];
-    C = [C; cond(i).type*ones(length(aa(:)),1)];
-end
-
+[A,B] = ndgrid(cond.rotation,cond.displacement);
+[A1,B1] = ndgrid(cond1.rotation,cond1.displacement);
+C = ones(length(A(:)),1);
+C1 = 2*ones(length(A1(:)),1);
+A = [A(:); A1(:)]; B = [B(:); B1(:)]; C = [C(:);C1(:)];
+%[A,B,C] = ndgrid(cond.rotation,cond1.displacement,[1 2]);
 p.trialMem.stats.val = [A(:),B(:),C(:)]';
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);

@@ -296,11 +296,11 @@ disp(p.trial.stimulus.fracInstruct);
 
 %+/- frac instruct
 if p.trial.userInput==1
-    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.1;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.3;
     disp('decreased fracInstruct')
 end
 if p.trial.userInput==2
-    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.1;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.3;
     disp('increased fracInstruct')
 end
 

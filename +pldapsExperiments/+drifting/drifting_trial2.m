@@ -1,4 +1,4 @@
-function oritrial3(p,state)
+function drifting_trial2(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -15,10 +15,9 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
             Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
-            Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+            showStimulus(p);
         elseif p.trial.state == p.trial.stimulus.states.WAIT
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
@@ -33,53 +32,26 @@ end
 
 %-------------------------------------------------------------------%
 %check port status and set events accordingly
-%check port status and set events accordingly
 function p=checkState(p)
 
 activePort=find(p.trial.ports.status==1);
 
 
 switch p.trial.state
-    case p.trial.stimulus.states.START %trial RIGHTed
+    case p.trial.stimulus.states.START 
         
-        if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
-        end
-        
-        if activePort==p.trial.stimulus.port.START %start port activated
+        if p.trial.ttime > p.trial.stimulus.baseline
+            p.trial.stimulus.timeTrialWait = p.trial.ttime;
+            p.trial.state=p.trial.stimulus.states.WAIT;
             
-            %note timepoint
-            p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
-            p.trial.stimulus.frameTrialStartResp = p.trial.iFrame;
-            
-            %advance state
-            p.trial.state = p.trial.stimulus.states.LICKDELAY;
-            p.trial.stimulus.switchVAR = 0;
         end
         
     case p.trial.stimulus.states.LICKDELAY
         switch p.trial.stimulus.switchVAR
-            case 0
-                
-                if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + 0.5 & activePort==p.trial.stimulus.port.START %start port activated
-                    %deliver reward
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
-                    
-                end
-                
-                
-                if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + 0.5;
-                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
-                end
-                p.trial.stimulus.timeTrialWait = p.trial.ttime;
-                p.trial.state=p.trial.stimulus.states.WAIT;
-                end
             case 1
             %give reward
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT...
-                        & activePort == p.trial.side %active port is the correct port
+                        & activePort == p.trial.side
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
@@ -87,7 +59,7 @@ switch p.trial.state
                 end
                 
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT...
-                        & activePort == p.trial.side %active port is the correct port
+                        & activePort == p.trial.side
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
@@ -120,18 +92,21 @@ switch p.trial.state
         if p.trial.ttime > p.trial.stimulus.timeTrialWait + p.trial.stimulus.waitTime;
                 p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.STIMON;
+                p.trial.iFrame0 = p.trial.iFrame;
+                p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
         end
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
-        
+        p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
          %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
-            if p.trial.stimulus.displacement >=20;
+            if p.trial.stimulus.dotCoherence == 1;
                 pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
             else
                 pds.ports.movePort(1+mod(p.trial.side,2),1,p);
             end
+            %             pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
         end
         
         
@@ -178,20 +153,18 @@ switch p.trial.state
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
-            p.trial.stimulus.timeoutFlag = 0;
+            
         end
-        
         %if ferret does not make a choice after trial duration, advance
         %state
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.trialdur;
              p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-             p.trial.state = p.trial.stimulus.states.FINALRESP;
              p.trial.stimulus.timeoutFlag = 1;
+             p.trial.state = p.trial.stimulus.states.FINALRESP;
         end
         
-        
-        
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
+         p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial
             
             %retract incorrect spout
@@ -214,16 +187,16 @@ switch p.trial.state
                     
                     p.trial.stimulus.timeResp = p.trial.ttime;
                     %give (small) reward                
-                    if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay & p.trial.side==p.trial.stimulus.port.RIGHT 
+                    if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay & activePort==p.trial.stimulus.port.RIGHT 
                         %deliver reward
-                        amount=0.06;
+                        amount=2*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                         
                     end
                     
                     if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay & activePort==p.trial.stimulus.port.LEFT 
                         %deliver reward
-                        amount=0.06;
+                        amount=2*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                         
                     end
@@ -260,9 +233,20 @@ switch p.trial.state
 end
 
 
+
+
 %------------------------------------------------------------------%
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
+if isfield(p.trial,'masktxtr')
+    Screen('Close',p.trial.masktxtr);
+end
+p.trial.masktxtr=[];
+
+if isfield(p.trial,'gtxtr')
+    Screen('Close',p.trial.gtxtr)
+end
+p.trial.gtxtr=[];
 
 %get side for condition
 if p.conditions{p.trial.pldaps.iTrial}.side==2
@@ -271,9 +255,11 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
+%get instructive fraction
 if isfield(p.trialMem,'fracInstruct');
     p.trial.stimulus.fracInstruct = p.trialMem.fracInstruct;
 end
+
 if ~isfield(p.trialMem,'count') || p.trialMem.count == 0;
     p.trialMem.count = 1;
     p.trialMem.moveBool = zeros(1,10);
@@ -284,11 +270,7 @@ end
 
     p.trial.ports.moveBool = p.trialMem.moveBool(p.trialMem.count);
     p.trialMem.count = mod(p.trialMem.count+1,11);
-
-%determine which spouts are presented when stimulus is presented
-%p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
-
-
+    
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=0;
 inibar = 248*ones(10,1);
@@ -296,58 +278,122 @@ p.trial.stimulus.initex = Screen('MakeTexture',p.trial.display.ptr,inibar);
 [s1,s2] = size(inibar);
 dstRect = [0 0 s1 s2].*40;
 p.trial.stimulus.dstRect = CenterRectOnPointd(dstRect,960,540);
-% p.trial.stimulus.iniSize=[910 490 1010 590];
-
+p.trial.stimulus.refangle = p.conditions{p.trial.pldaps.iTrial}.angle;
 p.trial.stimulus.waitColor = 0.5;
 
-%set up stimulus
-p.trial.stimulus.refangle = p.conditions{p.trial.pldaps.iTrial}.angle;
-p.trial.stimulus.displacement=p.conditions{p.trial.pldaps.iTrial}.displacement;
-p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
-p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
-p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle + p.trial.stimulus.rotation*p.trial.stimulus.displacement;
-p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase;
-p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
-p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
-%make grating
-    %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
-    %PixPerDeg = 1/DegPerPix;
+%% setup stimuli
+switch p.trial.type
+    case 1 %gratings
+        %shorthand to make rest easier
+        p.trial.ori=p.conditions{p.trial.pldaps.iTrial}.direction;
+        p.trial.t_period = p.conditions{p.trial.pldaps.iTrial}.t_period;
+        %generate mask
+        xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2;
+        ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
+        [xdom,ydom] = meshgrid(xdom,ydom); %this results in a matrix of dimension height x width
+        r = sqrt(xdom.^2 + ydom.^2);
+        
+        %transform mask parameters into pixel
+        sigmaN=deg2pix(p,p.trial.stimulus.sigma,'round',2);
+        mN=deg2pix(p,p.trial.stimulus.maskLimit,'round',2);
+        
+        %compute mask
+        maskT = exp(-.5*(r-mN).^2/sigmaN.^2);
+        maskT(r<mN) = 1;
+        
+        mask = 0.5*ones(p.trial.display.pHeight,p.trial.display.pWidth,2);
+        mask(:,:,2) = 1-maskT;
+        
+        p.trial.masktxtr = Screen(p.trial.display.ptr, 'MakeTexture', mask,[],[],2);
+        
+        %set up one line of grating 
+        %stimuli will need to be larger to deal with rotation
+        stimsize=2*sqrt(2*(p.trial.stimulus.radius).^2); %deg
+        p.trial.stimulus.sN=deg2pix(p,stimsize,'ceil',2); %pixel
+        
+        %add space for sliding window
+        stimsize=stimsize+1/p.trial.stimulus.sf; %deg
+        stimsizeN=deg2pix(p,stimsize,'ceil',2);
+        
+        x_ecc=linspace(-stimsize/2,stimsize/2,stimsizeN); %deg
+        sdom = x_ecc*p.trial.stimulus.sf*2*pi; %radians
+        grating = cos(sdom);
+        
+        p.trial.gtxtr = Screen('MakeTexture',p.trial.display.ptr, grating,[],[],2);
+        
+        %compute a few additional parameters that will be needed later
+        %destination rectangle
+        x_pos=p.trial.display.pWidth/2;
+        y_pos=p.trial.display.pHeight/2;
+        
+        p.trial.stimulus.sDst=[x_pos-floor(p.trial.stimulus.sN/2)+1 y_pos-floor(p.trial.stimulus.sN/2)+1 ...
+            x_pos+ceil(p.trial.stimulus.sN/2) y_pos+ceil(p.trial.stimulus.sN/2)]';
+        
+        %shift per frame
+        p.trial.stimulus.pCycle=deg2pix(p,1/p.trial.stimulus.sf,'none',2);
+        p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.t_period;
 
-    % GET GRATING SPECIFICATIONS
-%     nCycles = 24*p.trial.stimulus.sf;
-%     DegPerCyc = 1/p.trial.stimulus.sf;
-    ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
+    case 2 %dots
+        DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+        PixPerDeg = 1/DegPerPix;
+        
+        %dot size
+        p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
+        %dot coherence
+        p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence;
+        %dot speed
+        p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
+        %direction
+        p.trial.stimulus.direction = mod(p.conditions{p.trial.pldaps.iTrial}.direction,180);
+        %initialize frame
+        p.trial.stimulus.frameI = 0;
+        %lifetime
+        p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
+        
+        %initialize dot positions - these need to be in pixels from center
+        randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
+        randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth;
+        randpos(2,:)=(randpos(2,:)-0.5)*p.trial.display.pHeight;
+        
+        
+        %pick color for each dot
+        p.trial.stimulus.dotcolor=ones(3,p.trial.stimulus.nrDots)*255;
+        p.trial.stimulus.dotcolor(:,1:round(p.trial.stimulus.fractionBlack*p.trial.stimulus.nrDots))=0;
+        p.trial.stimulus.dotcolor=p.trial.stimulus.dotcolor(:,randperm(p.trial.stimulus.nrDots));
+        
+        %initialize noise vector
+        nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
+        noisevec=zeros(p.trial.stimulus.nrDots,1);
+        noisevec(1:nrSignal)=1;
+        
+        %initialize directions: correct displacement for signal, random for noise
+        %side is either 1 or 2; 1 should equal ori=0, 2 ori=180
+        randdir=zeros(p.trial.stimulus.nrDots,1);
+        randdir(1:end)=p.trial.stimulus.direction;
+        idx=find(noisevec==0);
+        randdir(idx)=randi([0,359],length(idx),1);
+        
+        
+        %initialize lifetime vector
+        if p.trial.stimulus.dotLifetime>0
+            lifetime=randi(p.trial.stimulus.dotLifetime,p.trial.stimulus.nrDots,1);
+        end
+        
+        %compute nr frames
+        p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
+        
+        %compute speed
+        deltaF=p.trial.stimulus.dotSpeed*PixPerDeg;
+        
+        
+        %save misc variables
+        p.trial.stimulus.randpos = randpos;
+        p.trial.stimulus.randdir = randdir;
+        p.trial.stimulus.deltaF = deltaF;
+        p.trial.stimulus.lifetime = lifetime;
+end
 
-    % CREATE A MESHGRID THE SIZE OF THE GRATING
-    x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);
-    y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
-    [x,y] = meshgrid(x,y);
-
-
-    % Transform to account for orientation
-    sdom=x*cos(p.trial.stimulus.angle*pi/180)-y*sin(p.trial.stimulus.angle*pi/180);
-
-    % GRATING
-    sdom=sdom*p.trial.stimulus.sf*2*pi;
-    sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
-
-    if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
-        grating = sdom1;
-    else
-        % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
-        r = sqrt(x.^2 + y.^2);
-        sigmaDeg = ApertureDeg/16.5;
-        MaskLimit=.6*ApertureDeg/2;
-        maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
-        maskdom(r<MaskLimit) = 1;
-        grating = sdom1.*maskdom;
-    end
-
-    % TRANSFER THE GRATING INTO AN IMAGE
-    grating = round(grating*p.trial.stimulus.range) + 127;
-
-    p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
-    p.trial.gratPos = [0 0 1920 1080];
+%%
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
@@ -356,13 +402,77 @@ p.trial.state=p.trial.stimulus.states.START;
 pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
 
 
-
-
-
-
-
-
-
+%show stimulus - handles rotation and movement of grating
+function showStimulus(p)
+switch p.trial.type
+    case 1 %gratings/plaids
+        %determine offset
+        xoffset = mod((p.trial.iFrame2)*p.trial.stimulus.dFrame+p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle*1.1);
+        stimSrc=[xoffset 0 xoffset + p.trial.stimulus.sN-1 p.trial.stimulus.sN-1];
+        
+        Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
+        Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.ori,[],0.5);
+        
+        Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        Screen('DrawTexture', p.trial.display.ptr, p.trial.masktxtr);
+        
+    case 2
+        p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+        if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
+            f = p.trial.stimulus.frameI;
+            randpos = p.trial.stimulus.randpos;
+            randdir = p.trial.stimulus.randdir;
+            deltaF = p.trial.stimulus.deltaF;
+            lifetime = p.trial.stimulus.lifetime;
+            %compute vectors for necessary frames
+            %move all dots according to their direction
+            xproj=cos(randdir*pi/180);
+            yproj=-sin(randdir*pi/180);
+            
+            randpos(1,:)=randpos(1,:)+deltaF*xproj';
+            randpos(2,:)=randpos(2,:)+deltaF*yproj';
+            
+            %now deal with wrap around - we pick the axis on which to replot a dot
+            %based on the dots direction
+            idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
+            
+            rvec=rand(size(idx)); %btw 0 and 1
+            for i=1:length(idx)
+                if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
+                    randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
+                    randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
+                else
+                    randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
+                    randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
+                end
+            end
+            
+            
+            %if lifetime is expired, randomly assign new direction
+            if p.trial.stimulus.dotLifetime>0
+                idx=find(lifetime==0);
+                %directions are drawn based on coherence level
+                rvec=rand(size(idx));
+                for i=1:length(idx)
+                    if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
+                        randdir(idx(i))=p.trial.stimulus.direction;
+                    else
+                        randdir(idx(i))=randi([0,359],1,1);
+                    end
+                end
+                
+                lifetime=lifetime-1;
+                lifetime(idx)=p.trial.stimulus.dotLifetime;
+            end
+            p.trial.stimulus.lifetime = lifetime;
+            p.trial.stimulus.dotpos{f}=randpos;
+            p.trial.stimulus.randpos = randpos;
+            p.trial.stimulus.randdir = randdir;
+            Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
+                p.trial.stimulus.dotSizePix, p.trial.stimulus.dotcolor, ...
+                [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+        end
+end
 
 %------------------------------------------------------------------%
 %display stats at end of trial
@@ -370,6 +480,7 @@ function cleanUpandSave(p)
 tic
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
+
 %show reward amount
 if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S';'L';'R'})
@@ -378,17 +489,17 @@ end
 %show frac instruct
 disp(p.trial.stimulus.fracInstruct);
 
+
 %+/- frac instruct
 if p.trial.userInput==1
     p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.1;
-    p.trialMem.count = 0;
     disp('decreased fracInstruct')
 end
 if p.trial.userInput==2
     p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.1;
-    p.trialMem.count = 0;
     disp('increased fracInstruct')
 end
+
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
@@ -413,10 +524,12 @@ switch p.trial.side
     case p.trial.stimulus.side.LEFT
         if activePort==p.trial.stimulus.side.LEFT
             correct=1;
+            p.trial.stimulus.switchVAR = 1;
         end
     case p.trial.stimulus.side.RIGHT
-        if activePort==p.trial.stimulus.side.RIGHT
+        if activePort==p.trial.stimulus.port.RIGHT
             correct=1;
+            p.trial.stimulus.switchVAR = 2; 
         end
 end
 

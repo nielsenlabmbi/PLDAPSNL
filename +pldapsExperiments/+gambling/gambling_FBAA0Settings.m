@@ -8,7 +8,7 @@ s.stimulus.gambleAmt = 0.3; % could be vector
 s.stimulus.fixedAmt = 0.15;
 s.stimulus.fixedPort = 1; %fix the right side (could be vector instead)
 s.stimulus.gamblePort = 2; %gamble the left side (could be a vector)
-s.stimulus.probability = 0.7; 
+s.stimulus.probability = 0.3; 
 s.stimulus.forceCorrect = 1;
 
 s.	newEraSyringePump.	use = [1 1 0 0];
@@ -18,7 +18,7 @@ s.camera.use=1;
 s.audio.use = 1;
 % % 
 
-%%% Debugging case%%% 
+% %% Debugging case%%% 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
 % s.datapixx.adc.channels = [];
@@ -29,9 +29,9 @@ s.audio.use = 1;
 % 
 % %turn saving off
 % s.pldaps.nosave = 1;
-
-%%turn off camera
-%s.camera.use = 0;
+% 
+% %turn off camera
+% s.camera.use = 0;
 % %%%%%%%%%%%%%%%%%%%%%
 
 
