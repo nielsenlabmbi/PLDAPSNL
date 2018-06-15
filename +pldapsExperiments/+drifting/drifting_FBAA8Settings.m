@@ -1,7 +1,7 @@
-function s = drifting_FBAB0Settings
+function s = drifting_FBAA8Settings
 
 %set reward amounts
-s. behavior.   reward. amount = [0.04 0.07 0.07];
+s. behavior.   reward. amount = [0.03 0.08 0.08];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -34,14 +34,14 @@ s.stimulus.radius=20; %stimulus radius in deg
 s.stimulus.sigma=2*s.stimulus.radius/16.5;
 s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential function
 s.stimulus.sf=0.2; %spatial frequency
-s.stimulus.t_period=[1280 2560 0]; %frames for 1 cycle
+s.stimulus.t_period=[20]; %frames for 1 cycle
 s.stimulus.phase=0; %phase
 
 
 %run/condition specific parameters
 s.stimulus.runtype='pseudo'; %or block
 s.stimulus.blocklength=2; %only used in blocks
-s.stimulus.stimtype = [1 1 1 1];
+s.stimulus.stimtype = [2 2 2 2];
 
 % %configure ports
  s.ports.use = true;

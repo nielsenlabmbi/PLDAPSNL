@@ -8,7 +8,7 @@ s.stimulus.gambleAmt = 0.3; % could be vector
 s.stimulus.fixedAmt = 0.1;
 s.stimulus.fixedPort = 1; %fix the right side (could be vector instead)
 s.stimulus.gamblePort = 2; %gamble the left side (could be a vector)
-s.stimulus.probability = 0.4; 
+s.stimulus.probability = 0.2; 
 s.stimulus.forceCorrect = 1;
 
 s.	newEraSyringePump.	use = [1 1 0 0];

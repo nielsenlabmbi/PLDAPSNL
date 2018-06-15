@@ -25,7 +25,7 @@ s.stimulus.stimON = 0.3;
 s.stimulus.waitTime = 0;
 
 %set instructive trials
-s.stimulus.fracInstruct = 0.9;
+s.stimulus.fracInstruct = 1;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
@@ -41,3 +41,15 @@ s.display.viewdist = 45;
  %turn mouse input off
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
+% 
+% % 
+% %turn adc channels off
+% s.datapixx.useAsPorts = 0;
+% s.datapixx.adc.channels = [];
+% 
+% %turn mouse input on
+% s.mouse.useAsPort = 1;
+% s.mouse.use = 1;
+% 
+% % turn saving off
+% s.pldaps.nosave = 1;

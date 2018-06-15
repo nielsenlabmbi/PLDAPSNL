@@ -1,19 +1,31 @@
-function s = ori_FBAA7Settings
+function s = ori_FBAB0Settings
 % turn saving off
 % s.pldaps.nosave = 1;
-
 %set reward amounts
-s. behavior.   reward. amount = [0.03 0.08 0.08];
+s. behavior.   reward. amount = [0.02 0.07 0.07];
+s.behavior.reward.pulseFreq = 3;
+s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
+s. behavior.reward. manualAmount = 0.05;
+%set viewing parameters
+s.stimulus.baseline = 0.1;
+s.stimulus.lickdelay = 1.5;
+s.stimulus.forceCorrect_delay = 0.75;
+s.stimulus.duration.ITI = 1.7;
+s.stimulus.stimON = 0.2;
+s.stimulus.waitTime = 0;
+s.stimulus.trialdur = 300;
 
+%set instructive trials
+s.stimulus.fracInstruct = 0.4;
 
 %set orientation and offsets
-s.stimulus.offsets{1} = [45];
+s.stimulus.offsets = horzcat({[25, 20]},{[25,20,17,11]},{[25 17 14 11]},{[25 20 17 9]});
 s.stimulus.angle = 45;
-s.stimulus.sf = 0.25;
+s.stimulus.sf = 0.2;
 s.stimulus.range = 121;
 s.stimulus.runtype = 'pseudo';
-s.stimulus.fullField = 1;
+s.stimulus.fullField =zeros(1,length(s.stimulus.offsets));
 %set viewing parameters
 s.stimulus.baseline = 0.2;
 s.stimulus.trialdur = 300;
@@ -23,14 +35,6 @@ s.stimulus.sigma=2*s.stimulus.radius/16.5;
 s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential function
 
 
-s.stimulus.lickdelay = 1.6;
-s.stimulus.forceCorrect_delay = 0.5;
-s.stimulus.duration.ITI = 1.0;
-s.stimulus.stimON = 0.3;
-s.stimulus.waitTime = 0.5;
-
-%set instructive trials
-s.stimulus.fracInstruct = 1;
 
 %set up the viewing distance
 s.display.viewdist = 45; 

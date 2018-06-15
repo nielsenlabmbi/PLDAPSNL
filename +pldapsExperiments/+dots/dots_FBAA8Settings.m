@@ -5,6 +5,7 @@ s. behavior.   reward. amount = [0.01 0.04 0.08];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
+s. behavior.reward. manualAmount = 0.05;
 
 s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 250;
@@ -14,18 +15,20 @@ s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = [240];
 s.stimulus.durStim = 480;
 s.stimulus.frameRate = 120;
+s.stimulus.direction = [0 180];
 
-%set viewing parameters
+%set viewing parameterses
 s.stimulus.baseline = 0.1;
-s.stimulus.lickdelay = 1;
-s.stimulus.forceCorrect_delay = 0.5;
-s.stimulus.duration.ITI = 1.5;
+s.stimulus.lickdelay = 1.7;
+s.stimulus.forceCorrect_delay = 0.75;
+s.stimulus.duration.ITI = 2;
 s.stimulus.stimON = 0.3;
-s.stimulus.waitTime = 0;
-s.stimulus.trialdur = 3;
+s.stimulus.waitTime = 0.8;
+s.stimulus.trialdur = 30;
+s.stimulus.timeout = 3; 
 
 %set instructive trials
-s.stimulus.fracInstruct = 0.35;
+s.stimulus.fracInstruct = 0.5;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
