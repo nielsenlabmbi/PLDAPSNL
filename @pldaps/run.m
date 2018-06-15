@@ -221,7 +221,7 @@ try
                 ListenChar(0);
                 ShowCursor;
                 p.trial
-                disp('Ready to begin trials. Type return to start first trial...')
+                disp('Ready to begin trials. Type "dbcont" to start first trial...')
                 keyboard %#ok<MCKBD>
                 p.trial.pldaps.quit = 0;
                 ListenChar(2);
