@@ -92,10 +92,12 @@ switch p.trial.state
         if p.trial.ttime > p.trial.stimulus.timeTrialWait + p.trial.stimulus.waitTime;
                 p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.STIMON;
+                p.trial.iFrame0 = p.trial.iFrame;
+                p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
         end
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
-        
+        p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
          %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
@@ -162,6 +164,7 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
+         p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial
             
             %retract incorrect spout
@@ -328,7 +331,11 @@ switch p.trial.type
         
         %shift per frame
         p.trial.stimulus.pCycle=deg2pix(p,1/p.trial.stimulus.sf,'none',2);
-        p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.t_period;
+        if p.trial.t_period >0 
+            p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.t_period;
+        else
+            p.trial.stimulus.dFrame = 0;
+        end
 
     case 2 %dots
         DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
@@ -404,7 +411,7 @@ function showStimulus(p)
 switch p.trial.type
     case 1 %gratings/plaids
         %determine offset
-        xoffset = mod((p.trial.iFrame-1)*p.trial.stimulus.dFrame+p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle);
+        xoffset = mod((p.trial.iFrame2)*p.trial.stimulus.dFrame+p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle*1.1);
         stimSrc=[xoffset 0 xoffset + p.trial.stimulus.sN-1 p.trial.stimulus.sN-1];
         
         Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
