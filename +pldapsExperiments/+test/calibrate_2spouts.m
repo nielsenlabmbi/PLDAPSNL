@@ -56,21 +56,22 @@ switch p.trial.state
     case p.trial.stimulus.states.LICKDELAY
         switch p.trial.stimulus.switchVAR
             case 1
+                %.trial.count = 0;
             %give reward
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT... 
-                    & activePort == p.trial.side
+                    & activePort == p.trial.side %& p.trial.count < 3
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-                    
+                    %p.trial.count = p.trial.count + 1;
                 end
                 
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT ...
-                    & activePort == p.trial.side
+                    & activePort == p.trial.side %& p.trial.count < 3
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-                    
+                    %p.trial.count = p.trial.count + 1;
                 end
                 
                 if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay;
@@ -90,9 +91,9 @@ switch p.trial.state
                 end
                 p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                 p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
-                p.trial.state=p.trial.stimulus.states.FINALRESP;
+                p.trial.state=p.trial.stimulus.states.FINALRESP; 
             end
-            
+          
         end
         
     case p.trial.stimulus.states.WAIT
@@ -225,6 +226,10 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.FINALRESP
+        
+                pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
         %wait for ITI
         if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI
             %trial done

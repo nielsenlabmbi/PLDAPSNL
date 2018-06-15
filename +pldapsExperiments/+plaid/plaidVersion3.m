@@ -163,7 +163,7 @@ end
 function p=trialSetup(p)
  
 %get side for condition
-swi
+
 if p.conditions{p.trial.pldaps.iTrial}.side==3
     p.trial.side=p.trial.stimulus.side.MIDDLE;
 end

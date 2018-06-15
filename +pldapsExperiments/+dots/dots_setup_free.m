@@ -28,8 +28,9 @@ p.conditions=c;
 p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
-p.trialMem.stats.cond={'dotCoherence'}; %conditions to display
-p.trialMem.stats.val=cond.dotCoherence; %values for the conditions
+p.trialMem.stats.cond={'direction', 'dotCoherence'}; %conditions to display
+[A,B] = ndgrid(cond.direction,cond.dotCoherence);
+p.trialMem.stats.val = [A(:),B(:)]';
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);
 p.trialMem.stats.count.incorrect=zeros(1,nCond);
