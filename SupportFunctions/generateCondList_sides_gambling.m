@@ -1,4 +1,4 @@
-function c=generateCondList_sides(cond,side,randType,nrBlocks,varargin)
+function c=generateCondList_sides_gambling(cond,side,randType,nrBlocks,varargin)
 
 %input:
 %cond: structure with basic conditions (1 field per condition)

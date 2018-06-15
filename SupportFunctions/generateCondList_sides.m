@@ -46,7 +46,7 @@ if strcmp(randType,'pseudo')
     if size(combCond,2) < 2;
         %increase the number of conditions artificially, for greater
         %randomness
-        combCond = repmat(combCond, 1, 5);
+        combCond = repmat(combCond, 1, 4);
     end
     allConds = [];
     for i=1:nrBlocks
@@ -57,11 +57,10 @@ if strcmp(randType,'pseudo')
         end
         
         %permute side, in batches
-        %do this with reasonable batches
-        batches = max(factor(length(condPerm)));
-        if batches < 3
-            batches = batches*2;
-        end
+        batches = min(factor(length(condPerm)));
+%         if batches < 3
+%             batches = batches*2;
+%         end
         sides = repmat(side.match,1,batches);
         
         %shuffle side assignment
