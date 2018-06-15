@@ -77,20 +77,26 @@ switch p.trial.state
                 p.trial.state=p.trial.stimulus.states.WAIT;
                 end
             case 1
+                p.trial.pldaps.licks = [];
             %give reward
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT...
-                        & activePort == p.trial.side %active port is the correct port
+                       & activePort == p.trial.side %active port is the correct port
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-                    
+
+                    %note timepoint
+                    p.trial.pldaps.licks = [p.trial.pldaps.licks p.trial.ttime];
                 end
                 
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT...
-                        & activePort == p.trial.side %active port is the correct port
+                        & activePort == p.trial.side %active port is the correct port 
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+
+                    %note timepoint
+                    p.trial.pldaps.licks = [p.trial.pldaps.licks p.trial.ttime];
                     
                 end
                 
@@ -127,11 +133,11 @@ switch p.trial.state
          %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
-            if p.trial.stimulus.displacement >=20;
+%             if p.trial.stimulus.displacement >=20;
                 pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
-            else
-                pds.ports.movePort(1+mod(p.trial.side,2),1,p);
-            end
+%             else
+%                 pds.ports.movePort(1+mod(p.trial.side,2),1,p);
+%             end
         end
         
         
@@ -174,7 +180,8 @@ switch p.trial.state
             else
                 %play tone
                 pds.audio.playDatapixxAudio(p,'breakfix');
-                
+                %note bad trial
+                p.trial.pldaps.goodtrial = 0;
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
@@ -251,7 +258,7 @@ switch p.trial.state
         
     case p.trial.stimulus.states.FINALRESP
         %wait for ITI
-        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI
+        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI + p.trial.stimulus.timeout*(~p.trial.pldaps.goodtrial)
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
@@ -306,24 +313,24 @@ p.trial.stimulus.displacement=p.conditions{p.trial.pldaps.iTrial}.displacement;
 p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
 p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
 p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle + p.trial.stimulus.rotation*p.trial.stimulus.displacement;
-p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase;
+p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
+%p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase; % phase is pseudorandom
 p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
 p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
 %make grating
-    %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
-    %PixPerDeg = 1/DegPerPix;
 
     % GET GRATING SPECIFICATIONS
-%     nCycles = 24*p.trial.stimulus.sf;
-%     DegPerCyc = 1/p.trial.stimulus.sf;
-    ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
+    ApertureDeg = 2*p.trial.stimulus.radius;
 
     % CREATE A MESHGRID THE SIZE OF THE GRATING
-    x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);
+    x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth)-p.trial.stimulus.shift(p.trial.side);
     y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
     [x,y] = meshgrid(x,y);
 
-
+%     x=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2-p.trial.stimulus.shift(p.trial.side);
+%     y=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
+%     [x,y] = meshgrid(x,y);
+    
     % Transform to account for orientation
     sdom=x*cos(p.trial.stimulus.angle*pi/180)-y*sin(p.trial.stimulus.angle*pi/180);
 
