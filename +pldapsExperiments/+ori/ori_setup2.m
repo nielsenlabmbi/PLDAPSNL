@@ -15,29 +15,38 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 
 
 %% conditions:
-cond.displacement = p.defaultParameters.stimulus.offsets; %use squares of 2 colors
-cond.phase = [0 180];
-cond.rotation = [-1 1];
-cond.sf = p.defaultParameters.stimulus.sf;
-cond.angle = p.defaultParameters.stimulus.angle;
-cond.range = p.defaultParameters.stimulus.range;
 side.par = 'rotation';
 side.match=[-1 1];
 
-if strcmp(p.defaultParameters.stimulus.runtype,'block')
-    c=generateCondList(cond,side,'block',ceil(700/(p.defaultParameters.stimulus.blockLength)), p.defaultParameters.stimulus.blockLength);
-else
-    c=generateCondList(cond,side,'pseudo',ceil(700/(length(cond.displacement)*2)));
+for i = 1:length(p.trial.stimulus.offsets)
+cond(i).displacement = p.defaultParameters.stimulus.offsets{i};
+%cond(i).phase = [0 180];
+cond(i).rotation = [-1 1];
+cond(i).sf = p.defaultParameters.stimulus.sf;
+cond(i).angle = p.defaultParameters.stimulus.angle;
+cond(i).range = p.defaultParameters.stimulus.range;
+cond(i).fullField = p.defaultParameters.stimulus.fullField(i); 
+cond(i).type = i; 
+c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
 end
 
-p.conditions=c;
+p.trial.allconditions = c;
+p.trialMem.whichConditions = 0;
+p.conditions=p.trial.allconditions{p.trialMem.whichConditions + 1};
 
 p.trial.pldaps.finish = length(p.conditions);
 
+
 %% display stats
-p.trialMem.stats.cond={'displacement', 'rotation'}; %conditions to display
-[A,B] = ndgrid(cond.displacement,cond.rotation);
-p.trialMem.stats.val = [A(:),B(:)]';
+p.trialMem.stats.cond={'rotation','displacement','type'}; %conditions to display
+A = []; B = []; C = [];
+for i = 1:length(p.trial.stimulus.offsets)
+    [aa,bb] = ndgrid(cond(i).rotation,cond(i).displacement);
+    A = [A; aa(:)]; B = [B; bb(:)];
+    C = [C; cond(i).type*ones(length(aa(:)),1)];
+end
+
+p.trialMem.stats.val = [A(:),B(:),C(:)]';
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);
 p.trialMem.stats.count.incorrect=zeros(1,nCond);

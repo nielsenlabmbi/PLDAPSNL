@@ -20,14 +20,14 @@ side.match=[-1 1];
 
 for i = 1:length(p.trial.stimulus.offsets)
 cond(i).displacement = p.defaultParameters.stimulus.offsets{i};
-cond(i).phase = [0 180];
+%cond(i).phase = [0 180];
 cond(i).rotation = [-1 1];
 cond(i).sf = p.defaultParameters.stimulus.sf;
 cond(i).angle = p.defaultParameters.stimulus.angle;
 cond(i).range = p.defaultParameters.stimulus.range;
 cond(i).fullField = p.defaultParameters.stimulus.fullField(i); 
 cond(i).type = i; 
-c{i}=generateCondList(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
+c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
 end
 
 p.trial.allconditions = c;
