@@ -68,7 +68,11 @@ switch p.trial.state
             %advance state
             p.trial.state = p.trial.stimulus.states.LICKDELAY;
             p.trial.stimulus.switchVAR = 0;
-            
+                    
+                pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
         end
         
     case p.trial.stimulus.states.LICKDELAY
@@ -92,18 +96,22 @@ switch p.trial.state
                 end
                 
             case 1
+                  p.trial.pldaps.licks = [];
                 %give reward
-                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT %start port activated
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT & activePort == p.trial.side %active port is the correct port 
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-                    
+                    %note timepoint
+                    p.trial.pldaps.licks = [p.trial.pldaps.licks p.trial.ttime];
                 end
                 
-                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT %start port activated
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT & activePort == p.trial.side %active port is the correct port
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                   %note timepoint
+                    p.trial.pldaps.licks = [p.trial.pldaps.licks p.trial.ttime]; 
                     
                 end
                 
@@ -126,13 +134,22 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.WAIT
+                
+                pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
         if p.trial.ttime > p.trial.stimulus.timeTrialWait + p.trial.stimulus.waitTime;
             p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
             p.trial.state=p.trial.stimulus.states.STIMON;
         end
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
-        
+                
+                pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
         %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
@@ -185,7 +202,7 @@ switch p.trial.state
             else
                 %play tone
                 pds.audio.playDatapixxAudio(p,'breakfix');
-                
+                p.trial.pldaps.goodtrial = 0;
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
@@ -252,8 +269,13 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.FINALRESP
+                
+                pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+                pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
         %wait for ITI
-        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI
+        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI + p.trial.stimulus.timeout*(~p.trial.pldaps.goodtrial)
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
@@ -431,11 +453,11 @@ disp(p.trial.stimulus.fracInstruct);
 
 %+/- frac instruct
 if p.trial.userInput==1
-    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.1;
     disp('decreased fracInstruct')
 end
 if p.trial.userInput==2
-    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.05;
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.1;
     disp('increased fracInstruct')
 end
 
