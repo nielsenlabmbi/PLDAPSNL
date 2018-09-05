@@ -11,10 +11,10 @@ s. behavior.reward. manualAmount = 0.02;
 %s.stimulus.offsets{1} = [20];
 % s.stimulus.offsets{1} = [20];
 % s.stimulus.offsets{2} = [18 14 10 6];
-s.stimulus.offsets = horzcat({20},{8},{7});
+s.stimulus.offsets = horzcat({20});
 s.stimulus.shift = [0 0];
 s.stimulus.angle = 45;
-s.stimulus.sf = 0.25;
+s.stimulus.sf = 0.2;
 s.stimulus.range = 121;
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = zeros(1,length(s.stimulus.offsets));
@@ -35,7 +35,7 @@ s.stimulus.stimON = 0.2;
 s.stimulus.waitTime = 0.75;
 
 %set instructive trials
-s.stimulus.fracInstruct = 0.4;
+s.stimulus.fracInstruct = 1;
 
 %set up the viewing distance
 s.display.viewdist = 45; 

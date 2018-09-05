@@ -1,7 +1,7 @@
 function s = drifting_FBAA8Settings
 
 %set reward amounts
-s. behavior.   reward. amount = [0.03 0.08 0.08];
+s. behavior.   reward. amount = [0.015 0.03 0.08];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -10,13 +10,15 @@ s.behavior.reward.amountDelta = 0.01;
 s.stimulus.baseline = 0.1;
 s.stimulus.lickdelay = 1.7;
 s.stimulus.forceCorrect_delay = 0.75;
-s.stimulus.duration.ITI = 1.7;
-s.stimulus.stimON = 0.2;
-s.stimulus.waitTime = 0;
-s.stimulus.trialdur = 300;
+s.stimulus.duration.ITI = 1;
+s.stimulus.stimON = 0.3;
+s.stimulus.waitTime = 0.8;
+s.stimulus.trialdur = 120;
+s.stimulus.timeout = 2; 
+s.stimulus.shift = [400 -400];
 
 %set instructive trials
-s.stimulus.fracInstruct = 0.4;
+s.stimulus.fracInstruct =1;
 
 %dots parameters
 s.stimulus.dotSize = 1.5;
@@ -41,7 +43,7 @@ s.stimulus.phase=0; %phase
 %run/condition specific parameters
 s.stimulus.runtype='pseudo'; %or block
 s.stimulus.blocklength=2; %only used in blocks
-s.stimulus.stimtype = [2 2 2 2];
+s.stimulus.stimtype = [1];
 
 % %configure ports
  s.ports.use = true;
@@ -52,6 +54,7 @@ s.stimulus.stimtype = [2 2 2 2];
  %turn mouse input off
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
+
 % % Debugging
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;

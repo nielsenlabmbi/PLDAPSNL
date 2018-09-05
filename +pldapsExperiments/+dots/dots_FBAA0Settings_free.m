@@ -11,7 +11,7 @@ s.behavior.reward.amountDelta = 0.03;
 s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 100;
 s.stimulus.fractionBlack = 0.5;
-s.stimulus.dotCoherence = 1;%[0.2 0.4 0.6 0.8 1];
+s.stimulus.dotCoherence = [0.2 0.4 0.6 0.8 1];
 s.stimulus.dotSpeed = 0.4;
 s.stimulus.dotLifetime = [240];
 s.stimulus.durStim = 240;
@@ -21,17 +21,20 @@ s.stimulus.frameRate = 120;
 s.display.viewdist = 75; 
 % %add camera
 s.camera.use=1;
-% %%% Debugging
-% turn adc channels off
-s.datapixx.useAsPorts = 0;
-% s.datapixx.adc.channels = [];
 
-%turn mouse input on
-s.mouse.useAsPort = 1;
-s.mouse.use = 1;
-
-%turn saving off
-s.pldaps.nosave = 1;
-
+% % %%% Debugging
+% % turn adc channels off
+% s.datapixx.useAsPorts = 0;
+% % s.datapixx.adc.channels = [];
+% 
+% %turn mouse input on
+% s.mouse.useAsPort = 1;
+% s.mouse.use = 1;
+% 
+% % %turn saving off
+% % s.pldaps.nosave = 1;
+% 
+% %don't use syringe pump
+%  s.	newEraSyringePump.	use = [0 0 0 0];
 % %turn off camera
 % s.camera.use = 0;

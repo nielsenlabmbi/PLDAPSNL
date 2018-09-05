@@ -5,6 +5,7 @@ function s = plain_calibrate_settings
 %set reward amounts
 s. behavior.   reward. amount = [0.04 0.07 0.07];
 s.behavior.reward.amountDelta = 0.01;
+s.stimulus.Ntrials = 30;
 
 
 %set orientation and offsets

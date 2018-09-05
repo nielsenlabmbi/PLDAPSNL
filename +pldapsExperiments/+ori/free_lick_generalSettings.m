@@ -19,7 +19,7 @@ s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.03 0.03 0.03 0.02];
+s. behavior.   reward. amount = [0.07 0.07 0.07 0.02];
 
 %turn saving off
 s.pldaps.nosave = 1;

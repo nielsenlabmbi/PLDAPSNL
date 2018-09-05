@@ -17,12 +17,13 @@ s.stimulus.waitTime = 0;
 s.stimulus.trialdur = 300;
 
 %set instructive trials
-s.stimulus.fracInstruct = 0.4;
+s.stimulus.fracInstruct = 1;
+s.stimulus.fracInstructTrue = [1 0];
 
 %set orientation and offsets
-s.stimulus.offsets = horzcat({[25, 20]},{[25,20,17,11]},{[25 17 14 11]},{[25 20 17 9]});
+s.stimulus.offsets = horzcat({45},{[45,45,35,25,15]});%horzcat({[25]},{[22]},{[25,25,20,17,14,9]});
 s.stimulus.angle = 45;
-s.stimulus.sf = 0.2;
+s.stimulus.sf = 0.125;
 s.stimulus.range = 121;
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField =zeros(1,length(s.stimulus.offsets));
@@ -49,7 +50,7 @@ s.display.viewdist = 45;
  %turn mouse input off
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
-% 
+% % 
 % %%% Debugging settings
 % 
 % %turn adc channels off
