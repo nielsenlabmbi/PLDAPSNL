@@ -258,7 +258,7 @@ p.trial.stimulus.randpos = randpos;
 p.trial.stimulus.randdir = randdir;
 p.trial.stimulus.deltaF = deltaF;
 p.trial.stimulus.lifetime = lifetime;
-
+%%
 %set state
 p.trial.state=p.trial.stimulus.states.START;
 if p.trial.camera.use;

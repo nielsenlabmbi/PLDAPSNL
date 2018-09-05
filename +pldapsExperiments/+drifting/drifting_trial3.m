@@ -1,4 +1,4 @@
-function drifting_trial2(p,state)
+function drifting_trial3(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -39,15 +39,43 @@ activePort=find(p.trial.ports.status==1);
 
 switch p.trial.state
     case p.trial.stimulus.states.START 
+                
+        if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
+            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        end
         
-        if p.trial.ttime > p.trial.stimulus.baseline
-            p.trial.stimulus.timeTrialWait = p.trial.ttime;
-            p.trial.state=p.trial.stimulus.states.WAIT;
+        if activePort==p.trial.stimulus.port.START %start port activated
             
+            %note timepoint
+            p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
+            p.trial.stimulus.frameTrialStartResp = p.trial.iFrame;
+            
+            %advance state
+            p.trial.state = p.trial.stimulus.states.LICKDELAY;
+            p.trial.stimulus.switchVAR = 0;
         end
         
     case p.trial.stimulus.states.LICKDELAY
         switch p.trial.stimulus.switchVAR
+            
+            case 0
+                
+                if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + 0.5 & activePort==p.trial.stimulus.port.START %start port activated
+                    %deliver reward
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
+                    
+                end
+                
+                
+                if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + 0.5;
+                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                end
+                p.trial.stimulus.timeTrialWait = p.trial.ttime;
+                p.trial.state=p.trial.stimulus.states.WAIT;
+                end
+                
             case 1
             %give reward
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT...
@@ -149,7 +177,8 @@ switch p.trial.state
             else
                 %play tone
                 pds.audio.playDatapixxAudio(p,'breakfix');
-                
+                % note bad trial
+                p.trial.pldaps.goodtrial = 0;
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
@@ -224,7 +253,7 @@ switch p.trial.state
         
     case p.trial.stimulus.states.FINALRESP
         %wait for ITI
-        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI
+        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI + p.trial.stimulus.timeout*(~p.trial.pldaps.goodtrial)
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
@@ -287,8 +316,12 @@ switch p.trial.type
         %shorthand to make rest easier
         p.trial.ori=p.conditions{p.trial.pldaps.iTrial}.direction;
         p.trial.t_period = p.conditions{p.trial.pldaps.iTrial}.t_period;
+        p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
+        if ~isfield(p.trial.stimulus,'shift')
+            p.trial.stimulus.shift = 0;
+        end
         %generate mask
-        xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2;
+        xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2-p.trial.stimulus.shift(p.trial.side);
         ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
         [xdom,ydom] = meshgrid(xdom,ydom); %this results in a matrix of dimension height x width
         r = sqrt(xdom.^2 + ydom.^2);
