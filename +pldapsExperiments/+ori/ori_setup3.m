@@ -26,7 +26,6 @@ cond(i).sf = p.defaultParameters.stimulus.sf;
 cond(i).angle = p.defaultParameters.stimulus.angle;
 cond(i).range = p.defaultParameters.stimulus.range;
 cond(i).fullField = p.defaultParameters.stimulus.fullField(i); 
-cond(i).type = i; 
 c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
 end
 
@@ -37,16 +36,16 @@ p.conditions=p.trial.allconditions{p.trialMem.whichConditions + 1};
 p.trial.pldaps.finish = length(p.conditions);
 
 
+
 %% display stats
-p.trialMem.stats.cond={'rotation','displacement','type'}; %conditions to display
-A = []; B = []; C = [];
+p.trialMem.stats.cond={'rotation','displacement'}; %conditions to display
+A = []; B = []; 
 for i = 1:length(p.trial.stimulus.offsets)
     [aa,bb] = ndgrid(cond(i).rotation,cond(i).displacement);
     A = [A; aa(:)]; B = [B; bb(:)];
-    C = [C; cond(i).type*ones(length(aa(:)),1)];
 end
 
-p.trialMem.stats.val = [A(:),B(:),C(:)]';
+p.trialMem.stats.val = [A(:),B(:)]';
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);
 p.trialMem.stats.count.incorrect=zeros(1,nCond);
