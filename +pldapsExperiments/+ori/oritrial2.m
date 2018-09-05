@@ -60,6 +60,7 @@ switch p.trial.state
     case p.trial.stimulus.states.LICKDELAY
         switch p.trial.stimulus.switchVAR
             case 1
+                p.trial.pldaps.licks = [];
             %give reward
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT...
                         & activePort == p.trial.side %active port is the correct port
@@ -67,6 +68,8 @@ switch p.trial.state
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     
+                    %note timepoint
+                    p.trial.pldaps.licks = [p.trial.pldaps.licks p.trial.ttime];
                 end
                 
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT...
@@ -75,6 +78,8 @@ switch p.trial.state
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                     
+                    %note timepoint
+                    p.trial.pldaps.licks = [p.trial.pldaps.licks p.trial.ttime];
                 end
                 
                 if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay;
@@ -110,12 +115,25 @@ switch p.trial.state
          %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
-%             if p.trial.stimulus.displacement >=20;
+            if isfield(p.trial,'fracInstructTrue')
+                if p.trial.fracInstructTrue | p.trial.stimulus.displacement > 20;
+                    
+                    pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
+                else
+                    
+                    pds.ports.movePort(1+mod(p.trial.side,2),1,p);
+                    p.trial.ports.moveBool = 1;
+                end
+                    
+            else
+            %if p.trial.stimulus.displacement >20;
                 pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
-%             else
-%                 pds.ports.movePort(1+mod(p.trial.side,2),1,p);
-%             end
+            %else
+              %  pds.ports.movePort(1+mod(p.trial.side,2),1,p);
+               % p.trial.ports.moveBool = 1;
+            %end
             %             pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
+            end
         end
         
         
@@ -273,6 +291,9 @@ end
 %determine which spouts are presented when stimulus is presented
 %p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
 
+if isfield(p.conditions{p.trial.pldaps.iTrial},'fracInstructTrue')
+    p.trial.fracInstructTrue = p.conditions{p.trial.pldaps.iTrial}.fracInstructTrue;
+end
 
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=0;
@@ -284,6 +305,7 @@ p.trial.stimulus.dstRect = CenterRectOnPointd(dstRect,960,540);
 % p.trial.stimulus.iniSize=[910 490 1010 590];
 
 p.trial.stimulus.waitColor = 0.5;
+
 
 %set up stimulus
 p.trial.stimulus.refangle = p.conditions{p.trial.pldaps.iTrial}.angle;
