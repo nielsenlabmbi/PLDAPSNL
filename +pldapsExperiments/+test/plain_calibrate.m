@@ -19,7 +19,7 @@ cond.color=[0 1]; %use squares of 2 colors
 side.par='color';
 side.match=[0 1];
 
-c=generateCondList(cond,side,'pseudo',10);
+c=generateCondList(cond,side,'pseudo',30);
 
 p.conditions=c;
 
