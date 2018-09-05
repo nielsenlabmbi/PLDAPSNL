@@ -114,6 +114,11 @@ try
     %-------------------------------------------------------------------------%
     p = pds.behavcam.setupcam(p);
     
+    
+    % Two-photon
+    %-------------------------------------------------------------------------%
+    p = pds.sbserver.setup2P(p);
+    
     % Keyboard
     %-------------------------------------------------------------------------%
     pds.keyboard.setup(p);
@@ -222,6 +227,7 @@ try
                 ShowCursor;
                 p.trial
                 disp('Ready to begin trials. Type "dbcont" to start first trial...')
+                pds.sbserver.blank2P(p,'0'); %if collecting two photon data, blank the laser
                 keyboard %#ok<MCKBD>
                 p.trial.pldaps.quit = 0;
                 ListenChar(2);
@@ -270,6 +276,9 @@ try
     
     %close camera (if used)
     pds.behavcam.closecam(p);
+    
+    %close laser (if used)
+    pds.sbserver.close2P(p);
     
     if ~p.defaultParameters.pldaps.nosave
         [structs,structNames] = p.defaultParameters.getAllStructs();
