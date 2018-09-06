@@ -37,14 +37,16 @@ s.display.viewdist = 45;
 
 %%%%%% Timing 
 %set viewing parameters
-s.stimulus.baseline = 0.1;
+s.stimulus.baseline = 0.5;
+s.stimulus.reference_baseline = 0.5;
 s.stimulus.lickdelay = 1.7;
 s.stimulus.forceCorrect_delay = 0.75;
 s.stimulus.duration.ITI = 1;
-s.stimulus.stimON = 0.3;
-s.stimulus.waitTime = 0.8;
+s.stimulus.stimON = 1;
+s.stimulus.waitTime = 0.5;
 s.stimulus.trialdur = 120;
 s.stimulus.timeout = 1.5; 
+s.stimulus.extratime = 1.5;
 
 %%%%% Debugging settings
 %turn adc channels off

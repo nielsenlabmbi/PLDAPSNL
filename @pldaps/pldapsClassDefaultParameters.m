@@ -30,8 +30,11 @@ function s=pldapsClassDefaultParameters(s)
  s. twoP.       IP = '';
  s. twoP.       udpRemortPort = 7000;
  %s.dac
- s. dac.        use = 0;
- s. dac.        trigger. channel = 0;
+ s. daq.        use = 0;
+ s. daq.        trigger. port = 0;
+ s. daq.        trigger.trialstart = 1;
+ s. daq.        trigger.stimon = 3;
+ s. daq.        trigger.trialfinish = 1;
 
 %s.	datapixx.
  s.	datapixx.	enablePropixxCeilingMount = false;

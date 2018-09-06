@@ -1,4 +1,4 @@
-function p = blank2P(p,state)
+function p = shutter2P(p,state)
 %used to blank the laser when imaging is unnecessary
 %state is a string, where '0' blanks the laser
 

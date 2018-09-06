@@ -25,12 +25,14 @@ if p.trial.twoP.use
     
     %update file name
     pds.sbserver.send_sbserver(p,sprintf('A%s',p.defaultParameters.session.subject));
-    pds.sbserver.send_sbserver(p,sprintf('D%s',['C:\2pdata\' datestr(p.defaultParameters.session.initTime, 'yyyymmdd')]));
-
+    pds.sbserver.send_sbserver(p,sprintf('U%s',p.defaultParameters.session.unit));
+    pds.sbserver.send_sbserver(p,sprintf('E%s',p.defaultParameters.session.expt));
+    
+    
     %start the laser
     pds.sbserver.send_sbserver(p,'G');
     %blank the laser until trial initiation
-    pds.sbserver.blank2P(p,'0');
+    pds.sbserver.shutter2P(p,'0');
     
 
 end

@@ -46,3 +46,4 @@ p.defaultParameters.stimulus.states.FINALRESP = 5;
 p.defaultParameters.stimulus.states.TRIALCOMPLETE = 6;
 p.defaultParameters.stimulus.states.LICKDELAY = 7;
 p.defaultParameters.stimulus.states.WAIT = 8;
+p.defaultParameters.stimulus.states.BASELINE = 0;
