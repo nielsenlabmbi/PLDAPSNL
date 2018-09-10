@@ -230,7 +230,7 @@ try
                 ShowCursor;
                 p.trial
                 disp('Ready to begin trials. Type "dbcont" to start first trial...')
-                pds.sbserver.blank2P(p,'0'); %if collecting two photon data, blank the laser
+                pds.sbserver.shutter2P(p,'0'); %if collecting two photon data, blank the laser
                 keyboard %#ok<MCKBD>
                 p.trial.pldaps.quit = 0;
                 ListenChar(2);
