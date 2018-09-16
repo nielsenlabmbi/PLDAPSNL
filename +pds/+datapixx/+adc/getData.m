@@ -43,7 +43,7 @@ for imap=1:nMaps
     
     p=subsasgn(p,iSub,bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},:));
     
-    if p.trial.datapixx.useAsPorts
+    if p.trial.datapixx.useAsPorts && ~p.trial.datapixx.din.useFor.ports %make sure we want adc and not din
         %if using adc channels to monitor ports, save the last or average value of the
         %relevant channels (indicated in mapping) to  port.status for
         %easier monitoring

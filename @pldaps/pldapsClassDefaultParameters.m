@@ -25,16 +25,13 @@ function s=pldapsClassDefaultParameters(s)
  s. camera.     udpLocalPort = 9000;
  s. camera.     trigger. channel = 4;
  
- %s.twoP 
- s. twoP.       use = 0;
- s. twoP.       IP = '';
- s. twoP.       udpRemortPort = 7000;
- %s.dac
+ %s.daq
  s. daq.        use = 0;
- s. daq.        trigger. port = 0;
- s. daq.        trigger.trialstart = 1;
- s. daq.        trigger.stimon = 3;
- s. daq.        trigger.trialfinish = 1;
+ s. daq.        trigger.   port = 0;
+ s. daq.        trigger.   trialstart = 1;
+ s. daq.        trigger.   stimon = 3;
+ s. daq.        trigger.   trialfinish = 1;
+ s. daq.        din.       channelMapping = 'datapixx.din.daq';
 
 %s.	datapixx.
  s.	datapixx.	enablePropixxCeilingMount = false;
@@ -64,10 +61,13 @@ function s=pldapsClassDefaultParameters(s)
  s. datapixx.   dac.    sampleRate = 1000;
  
 %s. datapixx.   din.
-s.  datapixx.   din.    channelMapping = horzcat({'datapixx.din.ports'},{'datapixx.din.daq'});
-s.  datapixx.   din.    channels = [];
-s.  datapixx.   din.    useAsPorts = false;
- 
+%%% No channel mapping here,
+%%% Moved to datapixx.din.start
+%%% Based on useFor fields
+s.  datapixx.   din.    useFor.     ports = false;
+s.  datapixx.   din.    useFor.     daq  = false;
+s.  datapixx.   din.    channels.   ports = [2 4 6];
+s.  datapixx.   din.    channels.   daq = [];
 
 %s.	datapixx.	GetPreciseTime.
  s.	datapixx.	GetPreciseTime.	maxDuration = [ ];
@@ -215,6 +215,7 @@ s.  datapixx.   din.    useAsPorts = false;
  s. ports.   adc.  portMapping = 'datapixx.adc.ports'; %adc channels for port contact
  s. ports.   adc.  portThreshold = 2;
  s. ports.   adc.  portAvg = 0;
+ s. ports.   din.  channelMapping = 'datapixx.din.ports'; %din channels for port contact
  s. ports.   dio.  channel. LEFT = 2; %dio channels to move ports
  s. ports.   dio.  channel. MIDDLE = 3;
  s. ports.   dio.  channel. RIGHT = 1;
@@ -227,4 +228,10 @@ s.  datapixx.   din.    useAsPorts = false;
  s.	sound.	use = true;
  s. sound.  usePsychPortAudio = 0;
  s. sound.  volume = 0.25;
+
+ 
+ %s.twoP 
+ s. twoP.       use = 0;
+ s. twoP.       IP = '';
+ s. twoP.       udpRemortPort = 7000;
 end

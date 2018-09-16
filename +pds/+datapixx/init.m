@@ -158,16 +158,19 @@ if p.trial.datapixx.use
     Datapixx('StopAllSchedules');
     Datapixx('DisableDinDebounce');
     Datapixx('EnableAdcFreeRunning');
-    Datapixx('SetDinLog');
-    Datapixx('StartDinLog');
+    Datapixx('SetDinLog'); %default values, currently, coud have fields ('SetDinLog' [,bufferBaseAddress=12e6] [, numBufferFrames = 1000])
+    %Datapixx('StartDinLog'); %moved to pds.datapixx.din.start for timing
     Datapixx('SetDoutValues',0);
     Datapixx('RegWrRd');
     
-    %start audio (function checks whether this is necessary
+    %start audio (function checks whether this is necessary)
     pds.audio.setupDatapixxAudio(p);
     
     %start adc data collection if requested
     pds.datapixx.adc.start(p);
+    
+    %din channel mapping & start log
+    pds.datapixx.din.start(p);
 else
     if p.trial.display.useOverlay
         

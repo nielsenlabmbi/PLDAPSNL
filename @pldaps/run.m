@@ -264,8 +264,11 @@ try
     p = pds.eyelink.finish(p);
     p = pds.plexon.finish(p);
     if(p.defaultParameters.datapixx.use)
-        %start adc data collection if requested
+        %stop adc data collection if requested
         pds.datapixx.adc.stop(p);
+        
+        %stop din data collection
+        pds.datapixx.din.stop(p);
         
         status = PsychDataPixx('GetStatus');
         if status.timestampLogCount

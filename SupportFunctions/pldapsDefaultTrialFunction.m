@@ -71,6 +71,8 @@ if p.trial.mouse.use
 end
 %get analogData from Datapixx
 pds.datapixx.adc.getData(p);
+%get digitalData from Datapixx
+pds.datapixx.din.getData(p);
 %get eyelink data
 pds.eyelink.getQueue(p);
 %get plexon spikes
@@ -415,6 +417,9 @@ pds.datapixx.adc.cleanUpandSave(p);
 if p.trial.datapixx.use && p.trial.datapixx.useForStrobe
     p.trial.timing.datapixxTRIALEND = pds.datapixx.flipBit(p,p.trial.event.TRIALEND,p.trial.pldaps.iTrial);  % start of trial (Plexon)
 end
+
+%clean up dinData collection from Datapixx
+pds.datapixx.din.cleanUpandSave(p)
 
 if(p.trial.pldaps.draw.photodiode.use)
     p.trial.timing.photodiodeTimes(:,p.trial.pldaps.draw.photodiode.dataEnd:end)=[];
