@@ -63,6 +63,11 @@ function s=pldapsClassDefaultParameters(s)
 %s. datapixx.   dac.
  s. datapixx.   dac.    sampleRate = 1000;
  
+%s. datapixx.   din.
+s.  datapixx.   din.    channelMapping = horzcat({'datapixx.din.ports'},{'datapixx.din.daq'});
+s.  datapixx.   din.    channels = [];
+s.  datapixx.   din.    useAsPorts = false;
+ 
 
 %s.	datapixx.	GetPreciseTime.
  s.	datapixx.	GetPreciseTime.	maxDuration = [ ];
