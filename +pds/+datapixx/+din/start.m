@@ -30,11 +30,13 @@ if ~p.trial.datapixx.use
 end
 uses = fieldnames(p.trial.datapixx.din.useFor);
 maps = [];
+refs = [];
 for i = 1:length(uses)
     S.type = '.';
     S.subs = uses{i};
     if subsref(p.trial.datapixx.din.useFor,S)
-        maps = horzcat(maps,uses(i));
+        maps = horzcat(maps,{['datapixx.din.' uses{i}]});
+        refs = horzcat(refs,uses(i));
     end
 end
 p.trial.datapixx.din.channelMapping = maps;
@@ -50,8 +52,8 @@ T.subs = 'trial';
 
 for imap = 1:nMaps
     S.type = '.';
-    S.subs = p.trial.datapixx.din.channelMapping{imap};
-    p.trial.datapixx.din.channelMappingChannels{imap} = subsref(p.trial.datapixx.din.channels,S); %corrects indexing for 0 as first port
+    S.subs = refs{imap};
+    p.trial.datapixx.din.channelMappingChannels{imap} = subsref(p.trial.datapixx.din.channels,S); 
     %p.trial.datapixx.din.channelMappingChannelInds{imap} = imap;
     % get levels
     levels = textscan(maps{imap},'%s','delimiter','.');
