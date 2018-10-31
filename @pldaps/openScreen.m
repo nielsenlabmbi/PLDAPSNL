@@ -31,8 +31,8 @@ function p = openScreen(p)
 
 
 %account for 2 graphics cards
-PsychTweak('UseGPUIndex',1);
-Screen('Preference','ScreenToHead',1,0,0);
+%PsychTweak('UseGPUIndex',1);
+%Screen('Preference','ScreenToHead',1,0,0);
 
 InitializeMatlabOpenGL(0,0); %second 0: debug level =0 for speed
 % AssertOpenGL;
