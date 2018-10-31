@@ -36,7 +36,7 @@ for i=1:length(fn)-1
     str=[str 'cond.' fn{i} ','];
 end
 str=[str 'cond.' fn{end}];
-combCond=eval(['combvec(' str ')']);
+combCond=eval(['CombVec(' str ')']);
 
 %generate repeat structure
 condIdx=[];

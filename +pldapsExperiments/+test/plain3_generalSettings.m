@@ -1,6 +1,6 @@
 function s = plain3_generalSettings
 
-s.	newEraSyringePump.	use = [1 1 0];
+s.	newEraSyringePump.	use = [0 0 0];
 
 %view params
 % s.stimulus.baseline = 0;
