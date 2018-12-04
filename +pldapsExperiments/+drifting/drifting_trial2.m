@@ -38,6 +38,7 @@ activePort=find(p.trial.ports.status==1);
 
 
 switch p.trial.state
+
     case p.trial.stimulus.states.START 
         
         if p.trial.ttime > p.trial.stimulus.baseline
@@ -48,6 +49,25 @@ switch p.trial.state
         
     case p.trial.stimulus.states.LICKDELAY
         switch p.trial.stimulus.switchVAR
+            
+            case 0
+                
+                if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + 0.5 & activePort==p.trial.stimulus.port.START %start port activated
+                    %deliver reward
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
+                    
+                end
+                
+                
+                if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + 0.5;
+                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                end
+                p.trial.stimulus.timeTrialWait = p.trial.ttime;
+                p.trial.state=p.trial.stimulus.states.WAIT;
+                end
+                
             case 1
             %give reward
                 if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT...
@@ -127,17 +147,22 @@ switch p.trial.state
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
-                %retract incorrect spout
+                              %retract incorrect spout, deliver reward
                 if p.trial.side==p.trial.stimulus.side.LEFT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                     if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
                         pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
                     end
                 end
                 if p.trial.side==p.trial.stimulus.side.RIGHT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
                         pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
                     end
                 end
+                
                 
                 %advance state
                 p.trial.stimulus.switchVAR = 1;
@@ -149,7 +174,8 @@ switch p.trial.state
             else
                 %play tone
                 pds.audio.playDatapixxAudio(p,'breakfix');
-                
+                % note bad trial
+                p.trial.pldaps.goodtrial = 0;
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
@@ -224,7 +250,7 @@ switch p.trial.state
         
     case p.trial.stimulus.states.FINALRESP
         %wait for ITI
-        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI
+        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI + p.trial.stimulus.timeout*(~p.trial.pldaps.goodtrial)
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
@@ -287,15 +313,19 @@ switch p.trial.type
         %shorthand to make rest easier
         p.trial.ori=p.conditions{p.trial.pldaps.iTrial}.direction;
         p.trial.t_period = p.conditions{p.trial.pldaps.iTrial}.t_period;
+        p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
+        if ~isfield(p.trial.stimulus,'shift')
+            p.trial.stimulus.shift = 0;
+        end
         %generate mask
-        xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2;
+        xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2-p.trial.stimulus.shift(p.trial.side);
         ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
         [xdom,ydom] = meshgrid(xdom,ydom); %this results in a matrix of dimension height x width
         r = sqrt(xdom.^2 + ydom.^2);
         
         %transform mask parameters into pixel
-        sigmaN=deg2pix(p,p.trial.stimulus.sigma,'round',2);
-        mN=deg2pix(p,p.trial.stimulus.maskLimit,'round',2);
+        sigmaN=deg2pixNL(p,p.trial.stimulus.sigma,'round',2);
+        mN=deg2pixNL(p,p.trial.stimulus.maskLimit,'round',2);
         
         %compute mask
         maskT = exp(-.5*(r-mN).^2/sigmaN.^2);
@@ -309,11 +339,11 @@ switch p.trial.type
         %set up one line of grating 
         %stimuli will need to be larger to deal with rotation
         stimsize=2*sqrt(2*(p.trial.stimulus.radius).^2); %deg
-        p.trial.stimulus.sN=deg2pix(p,stimsize,'ceil',2); %pixel
+        p.trial.stimulus.sN=deg2pixNL(p,stimsize,'ceil',2); %pixel
         
         %add space for sliding window
         stimsize=stimsize+1/p.trial.stimulus.sf; %deg
-        stimsizeN=deg2pix(p,stimsize,'ceil',2);
+        stimsizeN=deg2pixNL(p,stimsize,'ceil',2);
         
         x_ecc=linspace(-stimsize/2,stimsize/2,stimsizeN); %deg
         sdom = x_ecc*p.trial.stimulus.sf*2*pi; %radians
@@ -330,7 +360,7 @@ switch p.trial.type
             x_pos+ceil(p.trial.stimulus.sN/2) y_pos+ceil(p.trial.stimulus.sN/2)]';
         
         %shift per frame
-        p.trial.stimulus.pCycle=deg2pix(p,1/p.trial.stimulus.sf,'none',2);
+        p.trial.stimulus.pCycle=deg2pixNL(p,1/p.trial.stimulus.sf,'none',2);
         if p.trial.t_period >0 
             p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.t_period;
         else

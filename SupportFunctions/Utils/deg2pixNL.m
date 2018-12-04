@@ -1,4 +1,4 @@
-function xN=deg2pix(p,xdeg,mstring,screenProfile)
+function xN=deg2pixNL(p,xdeg,mstring,screenProfile)
 %transform degrees into pixel
 %mstring specifies whether pixels should be computed using round, ceil, or
 %no rounding

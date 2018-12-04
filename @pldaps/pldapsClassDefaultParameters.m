@@ -44,6 +44,7 @@ function s=pldapsClassDefaultParameters(s)
  s. datapixx.   useForStrobe = false;
 
 %s.	datapixx.	adc.
+ s. datapixx.   adc.    useForReward = true;
  s.	datapixx.	adc.	bufferAddress = [ ];
  s.	datapixx.	adc.	channelGains = 1;
  s.	datapixx.	adc.	channelMapping = 'datapixx.adc.ports'; %alternatively: cell array
@@ -68,6 +69,10 @@ s.  datapixx.   din.    useFor.     ports = false;
 s.  datapixx.   din.    useFor.     daq  = false;
 s.  datapixx.   din.    channels.   ports = [2 4 6];
 s.  datapixx.   din.    channels.   daq = [];
+
+%s.datapixx.    dio
+s.  datapixx.   dio.    useForReward = 0; 
+
 
 %s.	datapixx.	GetPreciseTime.
  s.	datapixx.	GetPreciseTime.	maxDuration = [ ];

@@ -6,7 +6,7 @@ end
 
 maxDataSamplesPerTrial = size(p.trial.datapixx.din.dataSampleTimes,2);
 
-nMaps = length(p.trial.datapixx.din.channelMappingsChannels);
+nMaps = length(p.trial.datapixx.din.channelMappingChannels);
 if p.trial.datapixx.din.dataSampleCount < maxDataSamplesPerTrial/2
     inds=1:p.trial.datapixx.din.dataSampleCount;
         p.trial.datapixx.din.dataSampleTimes=p.trial.datapixx.din.dataSampleTimes(inds);

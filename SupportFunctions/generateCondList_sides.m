@@ -38,7 +38,7 @@ for i=1:length(fn)
     end
 end
 str= str(1:end-1);
-combCond=eval(['combvec(' str ')']);
+combCond=eval(['CombVec(' str ')']);
 
 %generate repeat structure
 condIdx=[]; 

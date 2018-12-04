@@ -209,8 +209,8 @@ ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
 r = sqrt(xdom.^2 + ydom.^2);
 
 %transform mask parameters into pixel
-sigmaN=deg2pix(p,p.trial.stimulus.sigma,'round',2);
-mN=deg2pix(p,p.trial.stimulus.maskLimit,'round',2);
+sigmaN=deg2pixNL(p,p.trial.stimulus.sigma,'round',2);
+mN=deg2pixNL(p,p.trial.stimulus.maskLimit,'round',2);
 
 %compute mask
 maskT = exp(-.5*(r-mN).^2/sigmaN.^2);
@@ -224,11 +224,11 @@ p.trial.masktxtr = Screen(p.trial.display.ptr, 'MakeTexture', mask,[],[],2);
 %set up one line of grating (one grating sufficient even for plaid)
 %stimuli will need to be larger to deal with rotation
 stimsize=2*sqrt(2*(p.trial.stimulus.radius).^2); %deg
-p.trial.stimulus.sN=deg2pix(p,stimsize,'ceil',2); %pixel
+p.trial.stimulus.sN=deg2pixNL(p,stimsize,'ceil',2); %pixel
 
 %add space for sliding window
 stimsize=stimsize+1/p.trial.stimulus.sf; %deg
-stimsizeN=deg2pix(p,stimsize,'ceil',2);
+stimsizeN=deg2pixNL(p,stimsize,'ceil',2);
 
 x_ecc=linspace(-stimsize/2,stimsize/2,stimsizeN); %deg
 sdom = x_ecc*p.trial.stimulus.sf*2*pi; %radians
@@ -245,7 +245,7 @@ p.trial.stimulus.sDst=[x_pos-floor(p.trial.stimulus.sN/2)+1 y_pos-floor(p.trial.
     x_pos+ceil(p.trial.stimulus.sN/2) y_pos+ceil(p.trial.stimulus.sN/2)]';
 
 %shift per frame
-p.trial.stimulus.pCycle=deg2pix(p,1/p.trial.stimulus.sf,'none',2);
+p.trial.stimulus.pCycle=deg2pixNL(p,1/p.trial.stimulus.sf,'none',2);
 p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.stimulus.t_period;
 
 

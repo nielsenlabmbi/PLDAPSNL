@@ -19,7 +19,31 @@ if p.trial.newEraSyringePump.use(logical(p.trial.ports.status))
     pds.newEraSyringePump.give(p,amount);
 elseif p.trial.datapixx.use
     if  p.trial.datapixx.useForReward
-        pds.datapixx.analogOutTime(amount, chan, p.trial.behavior.reward.dacAmp,p.trial.datapixx.dac.sampleRate);
+        if p.trial.datapixx.adc.useForReward
+           pds.datapixx.analogOutTime(amount, chan, p.trial.behavior.reward.dacAmp,p.trial.datapixx.dac.sampleRate);
+        elseif p.trial.datapixx.dio.useForReward
+            wordvec=zeros(1,24);
+            wordvec(chan)=1;
+            word=bi2de(wordvec);
+            
+            maskvec=zeros(1,24);
+            maskvec(chan)=1;
+            mask=bi2de(maskvec);
+            
+            %set digital channels, get duration
+            %t = p.trial.ttime + amount;
+            Datapixx('SetDoutValues', word,mask);
+            Datapixx('RegWrRd');
+            %wait pulse duration, close
+            pause(amount);
+            %if p.trial.ttime > t
+            wordvec(chan) = 0;
+            word=bi2de(wordvec);
+            Datapixx('SetDoutValues', word,mask);
+            Datapixx('RegWrRd');
+            %end
+            
+        end
     end
     %%flag
     pds.datapixx.flipBit(p,p.trial.event.REWARD,p.trial.pldaps.iTrial);

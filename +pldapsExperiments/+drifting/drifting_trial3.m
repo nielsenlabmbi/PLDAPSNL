@@ -46,6 +46,9 @@ switch p.trial.state
         
         if activePort==p.trial.stimulus.port.START %start port activated
             
+            %deliver reward
+            amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+            pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             %note timepoint
             p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
             p.trial.stimulus.frameTrialStartResp = p.trial.iFrame;
@@ -155,17 +158,22 @@ switch p.trial.state
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
-                %retract incorrect spout
+                              %retract incorrect spout, deliver reward
                 if p.trial.side==p.trial.stimulus.side.LEFT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                     if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
                         pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
                     end
                 end
                 if p.trial.side==p.trial.stimulus.side.RIGHT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
                         pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
                     end
                 end
+                
                 
                 %advance state
                 p.trial.stimulus.switchVAR = 1;
@@ -327,8 +335,8 @@ switch p.trial.type
         r = sqrt(xdom.^2 + ydom.^2);
         
         %transform mask parameters into pixel
-        sigmaN=deg2pix(p,p.trial.stimulus.sigma,'round',2);
-        mN=deg2pix(p,p.trial.stimulus.maskLimit,'round',2);
+        sigmaN=deg2pixNL(p,p.trial.stimulus.sigma,'round',2);
+        mN=deg2pixNL(p,p.trial.stimulus.maskLimit,'round',2);
         
         %compute mask
         maskT = exp(-.5*(r-mN).^2/sigmaN.^2);
@@ -342,11 +350,11 @@ switch p.trial.type
         %set up one line of grating 
         %stimuli will need to be larger to deal with rotation
         stimsize=2*sqrt(2*(p.trial.stimulus.radius).^2); %deg
-        p.trial.stimulus.sN=deg2pix(p,stimsize,'ceil',2); %pixel
+        p.trial.stimulus.sN=deg2pixNL(p,stimsize,'ceil',2); %pixel
         
         %add space for sliding window
         stimsize=stimsize+1/p.trial.stimulus.sf; %deg
-        stimsizeN=deg2pix(p,stimsize,'ceil',2);
+        stimsizeN=deg2pixNL(p,stimsize,'ceil',2);
         
         x_ecc=linspace(-stimsize/2,stimsize/2,stimsizeN); %deg
         sdom = x_ecc*p.trial.stimulus.sf*2*pi; %radians
@@ -363,7 +371,7 @@ switch p.trial.type
             x_pos+ceil(p.trial.stimulus.sN/2) y_pos+ceil(p.trial.stimulus.sN/2)]';
         
         %shift per frame
-        p.trial.stimulus.pCycle=deg2pix(p,1/p.trial.stimulus.sf,'none',2);
+        p.trial.stimulus.pCycle=deg2pixNL(p,1/p.trial.stimulus.sf,'none',2);
         if p.trial.t_period >0 
             p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.t_period;
         else

@@ -116,7 +116,7 @@ switch p.trial.state
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
             if isfield(p.trial,'fracInstructTrue')
-                if p.trial.fracInstructTrue | p.trial.stimulus.displacement > 20;
+                if p.trial.fracInstructTrue | p.trial.stimulus.displacement > 40;
                     
                     pds.ports.movePort(1 + mod(p.trial.side,2),p.trial.ports.moveBool,p);
                 else
@@ -153,14 +153,19 @@ switch p.trial.state
                 p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
-                
-                %retract incorrect spout
+                %retract incorrect spout, deliver reward
                 if p.trial.side==p.trial.stimulus.side.LEFT
+                    
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                     if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
                         pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
                     end
                 end
                 if p.trial.side==p.trial.stimulus.side.RIGHT
+                    
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
                         pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
                     end
@@ -329,7 +334,7 @@ p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
     ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
 
     % CREATE A MESHGRID THE SIZE OF THE GRATING
-    x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);
+    x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth)-p.trial.stimulus.shift(p.trial.side);
     y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
     [x,y] = meshgrid(x,y);
 
