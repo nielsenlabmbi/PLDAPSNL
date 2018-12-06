@@ -39,7 +39,7 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
 s.pldaps.nosave = 1;
  
 % %two-p settings
- s.datapixx.useForReward = 0;
+ s.datapixx.adc.useForReward = 0;
  s.datapixx.dio.useForReward = 1;
  s. behavior.   reward. channel. START = 7; %dio channel for reward delivery
  s. behavior.   reward. channel. LEFT = 6;
@@ -48,13 +48,10 @@ s.pldaps.nosave = 1;
 %  s. pldaps. nosave = 0;
 % 
 % %%% Debugging settings
-%turn adc channels off
-%s.datapixx.din.useFor.ports = 0;
-% %s.ports.movable = false;
-% 
-% %turn mouse input on
-% s.mouse.useAsPort = 1;
-% s.mouse.use = 1;
-% 
+
+%turn mouse input on
+s.mouse.useAsPort = 1;
+s.mouse.use = 1;
+
 % % turn saving off
 % s.pldaps.nosave = 1;

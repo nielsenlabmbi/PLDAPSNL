@@ -21,7 +21,8 @@ elseif p.trial.datapixx.use
     if  p.trial.datapixx.useForReward
         if p.trial.datapixx.adc.useForReward
            pds.datapixx.analogOutTime(amount, chan, p.trial.behavior.reward.dacAmp,p.trial.datapixx.dac.sampleRate);
-        elseif p.trial.datapixx.dio.useForReward
+        end
+        if p.trial.datapixx.dio.useForReward
             wordvec=zeros(1,24);
             wordvec(chan)=1;
             word=bi2de(wordvec);
