@@ -10,7 +10,8 @@ s.stimulus.offsets = {[0:22.5:90]};
 s.stimulus.angle = 0;
 s.stimulus.sf = 0.08;
 s.stimulus.range = 121;
-s.stimulus.baseline = 0.3;
+s.stimulus.baseline = 0.5;
+s.stimulus.reference_baseline = 0.5;
 s.stimulus.stimON = 1;
 s.stimulus.waitTime = 1;
 s.stimulus.runtype = 'pseudo';
@@ -45,13 +46,15 @@ s.pldaps.nosave = 1;
  s. behavior.   reward. channel. LEFT = 6;
  s. behavior.   reward. channel. RIGHT = 5;
  s.datapixx.adc.channels = [];
-%  s. pldaps. nosave = 0;
-% 
-% %%% Debugging settings
+ % s.daq.use = 1;
+ % s.twoP.use = 1;
+ % s. pldaps. nosave = 0;
+
+%%% Debugging settings
 
 %turn mouse input on
-s.mouse.useAsPort = 1;
-s.mouse.use = 1;
+% s.mouse.useAsPort = 1;
+% s.mouse.use = 1;
 
 % % turn saving off
 % s.pldaps.nosave = 1;
