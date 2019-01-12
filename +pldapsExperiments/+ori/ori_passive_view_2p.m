@@ -165,8 +165,6 @@ end
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
 
-
-
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];

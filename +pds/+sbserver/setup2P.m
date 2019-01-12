@@ -19,9 +19,11 @@ if p.trial.twoP.use
         disp([' Trouble opening connection to sbserver; cannot proceed']);
         p.trial.twoP.sbudp=[];
         return;
+    else
+        disp('UDP connection to sbserver established');
     end
     
-    disp('UDP connection to sbserver established');
+    
     
     %update file name
     pds.sbserver.send_sbserver(p,sprintf('A%s',p.defaultParameters.session.subject));

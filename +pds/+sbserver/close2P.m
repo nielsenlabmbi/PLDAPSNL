@@ -3,7 +3,7 @@ function p = close2P(p)
 if p.trial.twoP.use
     
 %stop data acquisition    
-pds.sbserver.shutter2P(p,'0');
+pds.sbserver.shutter2P(p,'1');
 pds.sbserver.send_sbserver(p,'S');
 
 %close the udp connection

@@ -237,6 +237,6 @@ s.  datapixx.   dio.    useForReward = 0;
  
  %s.twoP 
  s. twoP.       use = 0;
- s. twoP.       IP = '';
+ s. twoP.       IP = '172.30.11.132';
  s. twoP.       udpRemortPort = 7000;
 end
