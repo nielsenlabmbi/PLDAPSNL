@@ -226,14 +226,14 @@ switch p.trial.state
                     %give (small) reward                
                     if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay & activePort==p.trial.stimulus.port.RIGHT 
                         %deliver reward
-                        amount=2*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                        amount= 0.05; %p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                         
                     end
                     
                     if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay & activePort==p.trial.stimulus.port.LEFT 
                         %deliver reward
-                        amount=2*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                        amount= 0.05; %p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                         
                     end
@@ -544,7 +544,11 @@ if p.trial.userInput==2
     p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.1;
     disp('increased fracInstruct')
 end
-
+if p.trial.userInput==3
+    p.trialMem.fracInstruct = 1;
+    p.trialMem.count = 0;
+    disp('increased fracInstruct to 1')
+end
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);

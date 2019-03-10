@@ -55,7 +55,10 @@ switch p.trial.state
             %note timepoint
             p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
             p.trial.stimulus.frameTrialStartResp = p.trial.iFrame;
-            
+            %deliver reward
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
+              
             %advance state
             p.trial.state = p.trial.stimulus.states.LICKDELAY;
             p.trial.stimulus.switchVAR = 0;
@@ -170,6 +173,17 @@ switch p.trial.state
                         pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
                     end
                 end
+                
+                %deliver reward
+                if p.trial.side==p.trial.stimulus.side.LEFT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                end
+                if p.trial.side==p.trial.stimulus.side.RIGHT
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                end
+                    
                 
                 %advance state
                 p.trial.stimulus.switchVAR = 1;

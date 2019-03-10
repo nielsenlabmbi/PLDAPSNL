@@ -1,5 +1,6 @@
 function s = plain3_generalSettings
 
+<<<<<<< Updated upstream
 s.	newEraSyringePump.	use = [0 0 0];
 
 %view params
@@ -11,6 +12,8 @@ s.	newEraSyringePump.	use = [0 0 0];
 % s.stimulus.waitTime = 0;
 % s.stimulus.fracInstruct = 1;
 
+=======
+>>>>>>> Stashed changes
 %turn adc channels off
 s.datapixx.useAsPorts = 0;
 % s.datapixx.useAsEyePos = 1;

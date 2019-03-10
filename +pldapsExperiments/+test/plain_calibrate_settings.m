@@ -15,11 +15,14 @@ s.stimulus.sf = 0.25;
 s.stimulus.range = 121;
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 1;
+
+s.stimulus.show = 0; 
+
 %set viewing parameters
 s.stimulus.baseline = 0.2;
 s.stimulus.trialdur = 180;
 
-s.stimulus.lickdelay = 1.5;
+s.stimulus.lickdelay = 1.7;
 s.stimulus.forceCorrect_delay = 0.5;
 s.stimulus.duration.ITI = 2;
 s.stimulus.stimON = 0.3;

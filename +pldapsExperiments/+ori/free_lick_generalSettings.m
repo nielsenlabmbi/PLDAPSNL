@@ -19,8 +19,8 @@ s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.07 0.07 0.07 0.02];
-
+s. behavior.   reward. amount = [0.02 0.07 0.07 0.02];
+s.behavior.reward.amountDelta = 0.01;
 %turn saving off
 s.pldaps.nosave = 1;
 
@@ -31,3 +31,5 @@ s.stimulus.fracInstruct = 0;
 
 %ports
  s. ports.   nPorts = 3;
+ 
+ s.datapixx.din.useFor.ports = 1;

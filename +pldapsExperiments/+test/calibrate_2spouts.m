@@ -127,13 +127,19 @@ switch p.trial.state
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
-                %retract incorrect spout
+               %retract incorrect spout, deliver reward
                 if p.trial.side==p.trial.stimulus.side.LEFT
+                    
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                     if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
                         pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
                     end
                 end
                 if p.trial.side==p.trial.stimulus.side.RIGHT
+                    
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
                         pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
                     end

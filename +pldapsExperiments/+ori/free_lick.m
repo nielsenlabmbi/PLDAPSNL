@@ -47,14 +47,6 @@ switch p.trial.state
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
         end
         pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
-%         if p.trial.side == p.trial.stimulus.side.RIGHT && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
-%                 pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,1,p);
-%                 pds.ports.movePort(p.trial.ports.dio.channel.LEFT,p.trial.ports.moveBool,p);
-%         end
-        if p.trial.side == p.trial.stimulus.side.LEFT && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
-                pds.ports.movePort(p.trial.ports.dio.channel.LEFT,1,p);
-                pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,p.trial.ports.moveBool,p);
-        end
         
         if any(p.trial.ports.position) %port activated
             
@@ -75,15 +67,25 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.LICKDELAY
-        
-        if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT %start port activated
+        if length(activePort) > 1 %if more than one port is activated
+            
+            %play tone
+                pds.audio.playDatapixxAudio(p,'breakfix');
+            %retract spouts
+            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+            %wait
+            WaitSecs(4);
+            %present spouts again
+            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
+        end
+        if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT & length(activePort)==1 %start port activated
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                     
         end
         
-        if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT %start port activated
+        if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT & length(activePort)==1 %start port activated
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
