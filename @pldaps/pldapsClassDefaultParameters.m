@@ -107,6 +107,13 @@ s.  datapixx.   dio.    useForReward = 0;
  s.	display.	movie.	options = ':CodecType=x264enc :EncodingQuality=1.0';
  s.	display.	movie.	width = [ ];
 
+%s. ephys.      
+ s. ephys.       use = 0;
+ s. ephys.       IP = '172.30.11.145';
+ s. ephys.       role = 'client';
+ s. ephys.       localPort = 1234;
+ s. ephys.       tcpRemortPort = 1234;
+ 
 %s.	eyelink.
  s.	eyelink.	buffereventlength = 30;
  s.	eyelink.	buffersamplelength = 31;
