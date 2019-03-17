@@ -42,9 +42,11 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
 % %turn saving off
 s.pldaps.nosave = 1;
  
- % s.daq.use = 1;
- % s.twoP.use = 1;
- % s. pldaps. nosave = 0;
+s.daq.use = 1;
+s.ephys.use = 1;
+s.session.subject = 'fbab6';
+s.session.unit = '000';
+s.session.expt = '000';
 
 %%% Debugging settings
 
