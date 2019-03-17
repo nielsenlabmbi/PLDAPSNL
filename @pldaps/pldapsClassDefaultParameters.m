@@ -31,6 +31,7 @@ function s=pldapsClassDefaultParameters(s)
  s. daq.        trigger.   trialstart = 1;
  s. daq.        trigger.   stimon = 3;
  s. daq.        trigger.   trialfinish = 1;
+ s. daq.        trigger.   spouts = 7; 
  s. daq.        din.       channelMapping = 'datapixx.din.daq';
 
 %s.	datapixx.
