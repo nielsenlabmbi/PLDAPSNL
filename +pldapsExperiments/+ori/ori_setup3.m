@@ -26,10 +26,11 @@ cond(i).sf = p.defaultParameters.stimulus.sf;
 cond(i).angle = p.defaultParameters.stimulus.angle;
 cond(i).range = p.defaultParameters.stimulus.range;
 cond(i).fullField = p.defaultParameters.stimulus.fullField(i); 
-c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
+cond(i).type = i; 
 if isfield(p.trial.stimulus,'fracInstructTrue')
 cond(i).fracInstructTrue = p.trial.stimulus.fracInstructTrue(i);
 end
+c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
 end
 
 p.trial.allconditions = c;

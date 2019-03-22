@@ -428,19 +428,23 @@ disp(p.trial.stimulus.fracInstruct);
 %+/- frac instruct
 if p.trial.userInput==1
     p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.1;
-    p.trialMem.count = 0;
+%     p.trialMem.count = 0;
     disp('decreased fracInstruct')
 end
 if p.trial.userInput==2
     p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.1;
-    p.trialMem.count = 0;
+%     p.trialMem.count = 0;
     disp('increased fracInstruct')
 end
-
+if p.trial.userInput==3
+    p.trialMem.fracInstruct = 1;
+    p.trialMem.count = 0;
+    disp('increased fracInstruct to 1')
+end
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
-    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
+    round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)))
 
 
 % disp(['C: ' num2str(p.trialMem.stats.val)])
