@@ -5,6 +5,7 @@ function s = opticFlow_generalSettings
 s. behavior.   reward. amount = [0.35 0.35 0.35];
 
 %set orientation and offsets
+s.	display.	bgColor = [ 0    0   0 ];
 s.stimulus.frameRate = 120;
 s.stimulus.stim_time = 360;
 s.stimulus.x_pos = 960;
@@ -12,8 +13,8 @@ s.stimulus.y_pos = 540;
 s.stimulus.stimDir = [1];
 s.stimulus.stimRadius = 50;
 s.stimulus.stimType = 4; 'Rand, Tx, Ty, C, R';
-s.stimulus.dotDensity = 60;
-s.stimulus.sizeDots = 0.3;
+s.stimulus.dotDensity = 40;
+s.stimulus.sizeDots = 0.7;
 s.stimulus.speedDots = 20;
 s.stimulus.dotLifetime = 240;
 s.stimulus.dotCoherence = 100;

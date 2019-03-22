@@ -1,4 +1,4 @@
-function s = ori_FBAA8Settings
+function s = ori_FBAB3Settings
 % turn saving off
 % s.pldaps.nosave = 1;
 
@@ -9,7 +9,6 @@ s.behavior.reward.amountDelta = 0.01;
 
 %set orientation and offsets
 s.stimulus.offsets = {[45]};
-%s.stimulus.direction = 90 + [195 75];
 s.stimulus.shift = [15 -15];
 s.stimulus.angle = 45;
 s.stimulus.sf = 0.125;
@@ -26,16 +25,16 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
 
 %set viewing parameters
 s.stimulus.baseline = 0.1;
-s.stimulus.lickdelay = 1.7;
-s.stimulus.forceCorrect_delay = 0.75;
-s.stimulus.duration.ITI = 1.5;
+s.stimulus.lickdelay = 1.5;
+s.stimulus.forceCorrect_delay = 0.5;
+s.stimulus.duration.ITI = 1.7;
 s.stimulus.stimON = 0.3;
-s.stimulus.waitTime = 0.8;
-s.stimulus.trialdur = 120;
-s.stimulus.timeout = 0;%1.5; 
+s.stimulus.waitTime = 0.5;
+s.stimulus.trialdur = 300;
+s.stimulus.timeout = 0; 
 
 %set instructive trials
-s.stimulus.fracInstruct = 1; %0.5;
+s.stimulus.fracInstruct = 0.9; %0.5;
 s.stimulus.fracInstructTrue = ones(size(s.stimulus.offsets));
 s.stimulus.instructCutoff = 45;
 
@@ -55,11 +54,12 @@ s.display.viewdist = 45;
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
-% %%% Debugging settings
+%%% Debugging settings
 % 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
 % s.datapixx.adc.channels = [];
+% s.datapixx.din.useFor.ports = 0;
 % 
 % %turn mouse input on
 % s.mouse.useAsPort = 1;

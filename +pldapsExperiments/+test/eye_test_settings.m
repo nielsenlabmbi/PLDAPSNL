@@ -1,32 +1,40 @@
-function s = ori_passive_viewSettings
+function s = eye_test_settings
 
 
 %set reward amounts
-s. behavior.   reward. amount = [0.08 0.16 0.16];
+s. behavior.   reward. amount = [0.04 0.08 0.08];
 s.behavior.reward.amountDelta = 0.01;
 
 %set orientation and offsets
-s.stimulus.offsets = {[0:22.5:90]};
-s.stimulus.angle = 0;
-s.stimulus.sf = 0.08;
-s.stimulus.range = 121;
+% s.stimulus.offsets = {[0:22.5:90]};
+% s.stimulus.angle = 0;
+% s.stimulus.sf = 0.08;
+% s.stimulus.range = 121;
+s.	display.	bgColor = [ 0    0   0 ];
+s.stimulus.color = 1;
+%s.stimulus.size = [-40 -40 40 40];%[920 500 1000 580];
+% s.stimulus.position = [{[960 540 960 540]} {1880 540 1880 540} {40 540 40 540} ...
+%     {1880 1040 1880 1040} {960 1040 960 1040} {40 1040 40 1040} {1880 40 1880 40}...
+%     {960 40 960 40} {40 40 40 40}];
+s.stimulus.direction = [0 90 180 270];
+s.stimulus.pursuit = [1 0];
+s.stimulus.dFrame = 10;
+
 s.stimulus.baseline = 0.5;
 s.stimulus.reference_baseline = 0.5;
 s.stimulus.stimON = 1;
+s.stimulus.stimdur = 1;
 s.stimulus.waitTime = 1;
 s.stimulus.runtype = 'pseudo';
 s.stimulus.lickdelay = 1.5;
 s.stimulus.duration.ITI = 2;
 %set up the viewing distance
-s.display.viewdist = 30; 
+s.display.viewdist = 45; 
 % 
-s.stimulus.fullField = zeros(1,length(s.stimulus.offsets));
-
-
-s.stimulus.radius=30; %stimulus radius in deg
-s.stimulus.sigma=2*s.stimulus.radius/16.5;
-s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential function
-
+% s.datapixx.useAsEyepos = 1;
+%  s.	pldaps.	draw.	eyepos.	use = 1;
+%  s.	pldaps.	draw.	eyepos.	show = 1;
+ 
 
 % %configure ports
  s.ports.use = true;
