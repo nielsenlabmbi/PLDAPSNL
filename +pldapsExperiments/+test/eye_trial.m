@@ -164,6 +164,7 @@ p.trial.stimulus.color = p.conditions{p.trial.pldaps.iTrial}.color;
 %p.trial.stimulus.position=p.conditions{p.trial.pldaps.iTrial}.position;
 p.trial.stimulus.frameI = 0;
 p.trial.stimulus.pursuit = p.conditions{p.trial.pldaps.iTrial}.pursuit;
+p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
@@ -181,10 +182,11 @@ if p.trial.stimulus.pursuit == 1
     p.trial.stimulus.frameI = p.trial.stimulus.frameI+1;
     xproj=cos(p.trial.stimulus.direction*pi/180);
     yproj=-sin(p.trial.stimulus.direction*pi/180);
-    randpos = randpos + p.trial.stimulus.dFrame*xproj + p.trial.stimulus.dFrame*yproj;
+    shift = repmat([p.trial.stimulus.dFrame*xproj p.trial.stimulus.dFrame*yproj],1,2);
+    randpos = randpos + shift;
 
-    if randpos(1) < 0 || randpos(3) > 1080 || randpos(2) < 0 || randpos(4) > 1080
-        randpos = randpos - p.trial.stimulus.dFrame*xproj - p.trial.stimulus.dFrame*yproj;
+    if randpos(1) < 420 || randpos(3) > 1500 || randpos(2) < 0 || randpos(4) > 1080
+        randpos = randpos - shift;
     end
     p.trial.stimulus.pos{p.trial.stimulus.frameI} = randpos;
     Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.color,p.trial.stimulus.pos{p.trial.stimulus.frameI});
@@ -193,7 +195,8 @@ else
     randpos = p.trial.stimulus.iniSize;
     xproj=cos(p.trial.stimulus.direction*pi/180);
     yproj=-sin(p.trial.stimulus.direction*pi/180);
-    randpos = randpos + p.trial.stimulus.dFrame*xproj + p.trial.stimulus.dFrame*yproj;
+    shift = repmat([p.trial.stimulus.dFrame*xproj p.trial.stimulus.dFrame*yproj],1,2);
+    randpos = randpos + shift;
 
     p.trial.stimulus.pos{1} = randpos;
     p.trial.stimulus.pos{p.trial.stimulus.frameI} = randpos;
