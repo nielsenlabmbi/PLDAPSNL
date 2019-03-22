@@ -5,7 +5,12 @@ function p=countTrial(p,respCorr)
 % respCorr: 1 - correct trial
 
 nCond=size(p.trialMem.stats.val,2);
-currCond=p.conditions{p.trial.pldaps.iTrial};
+if p.trial.userInput == -1;
+    whichConditions = mod(p.trialMem.whichConditions-1,length(p.trial.allconditions));
+    currCond = p.trial.allconditions{whichConditions + 1}{p.trial.pldaps.iTrial};
+else
+    currCond=p.conditions{p.trial.pldaps.iTrial};
+end
 
 %determine index for trial condition
 condIdx=[1:nCond];
