@@ -1,11 +1,12 @@
 function s = dots_FBAA4Settings_free
 % % turn saving off
 % s.pldaps.nosave = 1;
+s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 
-s.	newEraSyringePump.	use = [1 1 0 0];
+%s.	newEraSyringePump.	use = [1 1 0 0];
 %set reward amounts
-s. behavior.   reward. amount = [0.1 0.2 0.2 0.2];
-s.behavior.reward.amountDelta = 0.03;
+%s. behavior.   reward. amount = [0.1 0.2 0.2 0.2];
+%s.behavior.reward.amountDelta = 0.03;
 %[0.1 0.3 0.3 0.3];
 
 %set orientation and offsets
@@ -28,7 +29,7 @@ s.stimulus.waitTime = 0;
 %set up the viewing distance
 s.display.viewdist = 75; 
 % %add camera
-s.camera.use=1;
+%s.camera.use=1;
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
 % s.datapixx.adc.channels = [];

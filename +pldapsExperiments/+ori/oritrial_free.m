@@ -308,7 +308,7 @@ end
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
-    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
+    round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
 if p.trial.stimulus.step > 0
 %staircase 

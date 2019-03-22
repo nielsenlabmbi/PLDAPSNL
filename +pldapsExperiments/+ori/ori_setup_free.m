@@ -55,10 +55,9 @@ p.trial.pldaps.finish = length(p.conditions);
 
 
 %% display stats
-p.trialMem.stats.cond={'angle'}; %conditions to display
-A = cond.angle;
-
-p.trialMem.stats.val = A(:)';%[A(:),B(:)]';
+p.trialMem.stats.cond={'angle','fullField','sf_list'}; %conditions to display
+[A,B,C] = ndgrid(unique(horzcat(cond.angle)),unique(horzcat(cond.fullField)),unique(horzcat(cond.sf_list)));
+p.trialMem.stats.val = [A(:),B(:),C(:)]';
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);
 p.trialMem.stats.count.incorrect=zeros(1,nCond);

@@ -24,7 +24,7 @@ s.stimulus.duration.ITI = 2;
 %set up the viewing distance
 s.display.viewdist = 75; 
 
-% %%
+%%
 % % Debugging settings
 % 
 % %turn adc channels off
