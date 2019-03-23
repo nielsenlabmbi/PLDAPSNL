@@ -1,4 +1,4 @@
-function send_intan(channel,digword)
+function p = send_intan(channel,digword)
 % this function is used to send digital pulses to intan as trial event
 % markers
 if p.trial.ephys.use

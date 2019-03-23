@@ -1,4 +1,4 @@
-function setupIntan(p)
+function p = setupIntan(p)
 
 if p.trial.ephys.use
     msg = tcpip(p.trial.ephys.IP,p.trial.ephys.tcpRemotePort, 'NetworkRole',p.trial.ephys.role);

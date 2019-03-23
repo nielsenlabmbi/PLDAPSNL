@@ -5,6 +5,9 @@ function p=movePort(port,position,p)
 %TTL signal low: port extended
 
 if p.trial.ports.use && p.trial.ports.movable
+    %first set port status
+    p.trial.ports.position(port)=position;
+    
     digword = 1-position;
     digital_out(port,digword);
 %     
