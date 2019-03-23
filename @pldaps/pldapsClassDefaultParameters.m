@@ -113,7 +113,11 @@ s.  datapixx.   dio.    useForReward = 0;
  s. ephys.       IP = '172.30.11.145';
  s. ephys.       role = 'client';
  s. ephys.       localPort = 1234;
- s. ephys.       tcpRemortPort = 1234;
+ s. ephys.       tcpRemotePort = 1234;
+ s. ephys.       dataRoot = '/home/data/';
+ s. ephys.       trigger.   trialstart = 1;
+ s. ephys.       trigger.   stimon = 2;
+ s. ephys.       trigger.   spouts = 3; 
  
 %s.	eyelink.
  s.	eyelink.	buffereventlength = 30;

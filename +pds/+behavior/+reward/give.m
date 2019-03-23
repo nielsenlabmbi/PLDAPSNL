@@ -23,26 +23,30 @@ elseif p.trial.datapixx.use
            pds.datapixx.analogOutTime(amount, chan, p.trial.behavior.reward.dacAmp,p.trial.datapixx.dac.sampleRate);
         end
         if p.trial.datapixx.dio.useForReward
+            digital_out(chan,1);
+            pause(amount);
+            digital_out(chan,0);
+            
             wordvec=zeros(1,24);
             wordvec(chan)=1;
             word=bi2de(wordvec);
             
-            maskvec=zeros(1,24);
-            maskvec(chan)=1;
-            mask=bi2de(maskvec);
-            
-            %set digital channels, get duration
-            %t = p.trial.ttime + amount;
-            Datapixx('SetDoutValues', word,mask);
-            Datapixx('RegWrRd');
-            %wait pulse duration, close
-            pause(amount);
-            %if p.trial.ttime > t
-            wordvec(chan) = 0;
-            word=bi2de(wordvec);
-            Datapixx('SetDoutValues', word,mask);
-            Datapixx('RegWrRd');
-            %end
+%             maskvec=zeros(1,24);
+%             maskvec(chan)=1;
+%             mask=bi2de(maskvec);
+%             
+%             %set digital channels, get duration
+%             %t = p.trial.ttime + amount;
+%             Datapixx('SetDoutValues', word,mask);
+%             Datapixx('RegWrRd');
+%             %wait pulse duration, close
+%             pause(amount);
+%             %if p.trial.ttime > t
+%             wordvec(chan) = 0;
+%             word=bi2de(wordvec);
+%             Datapixx('SetDoutValues', word,mask);
+%             Datapixx('RegWrRd');
+%             %end
             
         end
     end

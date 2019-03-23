@@ -117,9 +117,14 @@ try
     
     % Two-photon
     %-------------------------------------------------------------------------%
-    p = pds.sbserver.setup2P(p);
+    p = pds.sbserver.setup2P(p);  
+    
+    % intan
+    %-------------------------------------------------------------------------%
+    p = pds.intan.setupIntan(p);
     
     % DAQ
+    %-------------------------------------------------------------------------%
     p = pds.daq_com.initialize_daq(p);
     
     % Keyboard
@@ -285,6 +290,9 @@ try
     
     %close laser (if used)
     pds.sbserver.close2P(p);
+    
+    %stop recording (if used)
+    pds.intan.stopIntan(p);
     
     if ~p.defaultParameters.pldaps.nosave
         [structs,structNames] = p.defaultParameters.getAllStructs();
