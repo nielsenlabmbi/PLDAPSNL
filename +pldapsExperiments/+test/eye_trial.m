@@ -192,6 +192,7 @@ if p.trial.stimulus.pursuit == 1
     Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.color,p.trial.stimulus.pos{p.trial.stimulus.frameI});
 else
     p.trial.stimulus.dFrame = 500;
+    p.trial.stimulus.frameI = 1;
     randpos = p.trial.stimulus.iniSize;
     xproj=cos(p.trial.stimulus.direction*pi/180);
     yproj=-sin(p.trial.stimulus.direction*pi/180);
@@ -209,7 +210,7 @@ function cleanUpandSave(p)
 tic
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
-disp(['Condition: ' num2str(p.trial.stimulus.displacement*p.trial.stimulus.rotation)])
+disp(['Condition: ' num2str(p.trial.stimulus.direction)])
 %show reward amount
 if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S1';'S2'})
