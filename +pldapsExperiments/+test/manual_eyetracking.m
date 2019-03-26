@@ -127,6 +127,81 @@ s.iniColor= s.color;
 s.ctr = [960 540 960 540];
 s.iniSize = s.ctr + s.size;
 timeNow = now;
+Screen('FillRect',s.display.ptr,s.iniColor,s.iniSize);
+Screen('Flip',s.display.ptr);
+if now > timeNow + s.wait;
+    s.state = 2;
+end
+% move
+timeNow = now;
+while s.state == 2
+    if s.pursuit == 1
+        %might need a while look here? unclear
+        if s.frameI == 0
+            randpos = s.iniSize;
+        else
+            randpos = s.pos{s.stimulus.frameI};
+        end
+        s.frameI = s.frameI+1;
+        xproj=cos(s.direction*pi/180);
+        yproj=-sin(s.direction*pi/180);
+        shift = repmat([s.dFrame*xproj s.dFrame*yproj],1,2);
+        randpos = randpos + shift;
+        limits = s.limits;
+        
+        if randpos(1) < limits(1) || randpos(2) < limits(2) || randpos(3) > limits(3) || randpos(4) > limits(4)
+            %randpos = randpos - shift;
+            s.state = 3;
+        end
+        
+        %     if randpos(1) < 420 || randpos(3) > 1500 || randpos(2) < 0 || randpos(4) > 1080
+        %         randpos = randpos - shift;
+        %     end
+        s.pos{s.stimulus.frameI} = randpos;
+        Screen('FillRect',s.display.ptr,s.color,s.pos{s.stimulus.frameI+1});
+        Screen('Flip',s.display.ptr);
+        
+    else
+        %s.stimulus.dFrame = 500;
+        s.dFrame = (s.limits(4) - s.limits(2))/2 - unique(abs(s.size));
+        s.frameI = 1;
+        randpos = s.iniSize;
+        xproj=cos(s.direction*pi/180);
+        yproj=-sin(s.direction*pi/180);
+        shift = repmat([s.dFrame*xproj s.dFrame*yproj],1,2);
+        randpos = randpos + shift;
+        
+        s.pos{1} = randpos;
+        s.pos{s.frameI} = randpos;
+        Screen('FillRect',s.display.ptr,s.color,s.pos{s.frameI});
+        Screen('Flip',s.display.ptr);
+        if now > timeNow + s.stimdur;
+            s.state = 3;
+        end
+    end
+    if s.state == 3
+        Screen('FillRect',s.overlay,0);
+        Screen('FillRect',s.display.ptr,0);
+        Screen('Flip',s.display.ptr);
+    end
+end
+
+
+%% close datapixx, close screen
+sca
+if(s.datapixx.use)
+    %stop adc data collection if requested
+    pds.datapixx.adc.stop(p);
+    
+    %stop din data collection
+    pds.datapixx.din.stop(p);
+    
+    status = PsychDataPixx('GetStatus');
+    if status.timestampLogCount
+        s.datapixx.timestamplog = PsychDataPixx('GetTimestampLog', 1);
+    end
+end
+%%
 switch s.state
     case 1
         Screen('FillRect',s.display.ptr,s.iniColor,s.iniSize);
@@ -189,18 +264,3 @@ switch s.state
         Screen('Flip',s.display.ptr);
         
 end
-
-%% close datapixx
-if(s.datapixx.use)
-    %stop adc data collection if requested
-    pds.datapixx.adc.stop(p);
-    
-    %stop din data collection
-    pds.datapixx.din.stop(p);
-    
-    status = PsychDataPixx('GetStatus');
-    if status.timestampLogCount
-        s.datapixx.timestamplog = PsychDataPixx('GetTimestampLog', 1);
-    end
-end
-%%

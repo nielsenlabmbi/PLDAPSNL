@@ -191,7 +191,7 @@ if p.trial.stimulus.pursuit == 1
     randpos = randpos + shift;
     limits = p.trial.stimulus.limits;
     
-    if randpos(1) > limits(1) || randpos(2) > limits(2) || randpos(3) > limits(3) || randpos(4) > limits(4)
+    if randpos(1) < limits(1) || randpos(2) < limits(2) || randpos(3) > limits(3) || randpos(4) > limits(4)
         randpos = randpos - shift;
     end
     
