@@ -9,16 +9,7 @@ if p.trial.ephys.use
     p.ephys.msg = msg;
     
     %update file name - launch iteractive dialog box
-    p.session.subject = input('Enter the animal ID:','s');
-    p.session.unit = input('Enter the unit #','s');
-    p.session.expt = input('Enter the experiment #','s');
-    
-    name = [p.session.subject '_u' p.session.unit '_' p.session.expt];
-    
-    dd = fullfile(p.trial.ephys.dataRoot,p.session.subject,name);
-    
-    name = ['basefilename ' dd];
-    fwrite(p.ephys.msg, name)
+    p = updateIntanName(p);
     
     %start recording
     fwrite(p.ephys.msg,'record');

@@ -23,20 +23,9 @@ if p.trial.twoP.use
         disp('UDP connection to sbserver established');
     end
     
-    %update file name - launch iteractive dialog box
-    p.trial.session.subject = input('Enter the animal ID:','s');
-    p.trial.session.unit = input('Enter the unit #','s');
-    p.trial.session.expt = input('Enter the experiment #','s');
-    
-    pds.sbserver.send_sbserver(p,sprintf('A%s',p.trial.session.subject));
-    pds.sbserver.send_sbserver(p,sprintf('U%s',p.trial.session.unit));
-    pds.sbserver.send_sbserver(p,sprintf('E%s',p.trial.session.expt));
-%     
-%     pds.sbserver.send_sbserver(p,sprintf('A%s',p.defaultParameters.session.subject));
-%     pds.sbserver.send_sbserver(p,sprintf('U%s',p.defaultParameters.session.unit));
-%     pds.sbserver.send_sbserver(p,sprintf('E%s',p.defaultParameters.session.expt));
-    
-    
+    %update file name
+    p = updateSBname(p);
+
     %start the laser
     pds.sbserver.send_sbserver(p,'G');
     %blank the laser until trial initiation
