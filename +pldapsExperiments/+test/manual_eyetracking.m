@@ -27,7 +27,7 @@ PsychColorCorrection('SetEncodingGamma',s.display.ptr,1/2.2);
 % Get the frame refresh rate of the stimulus window
 s.frameRate = FrameRate(s.display.ptr);
 % Get color look up tables for an overlay window
-s.controlColors = [
+s.controlsColors = [
 0      0      0      ;  % 0 first row does not count
 1      1      1      ;  % 1 white
 0.5    0.5    0.5    ;  % 2 gray
@@ -43,8 +43,8 @@ s.subjectColors = [
 0      0      0      ;  % 4 background
 0      0      0      ;  % 5 background
 0      0      0      ]; % 6 background
-s.controlsCLUT = [s.controlsColors; zeros(256-size(S.controlsColors,1),3)];
-s.subjectCLUT = [s.subjectColors; zeros(256-size(S.subjectColors,1),3)];
+s.controlsCLUT = [s.controlsColors; zeros(256-size(s.controlsColors,1),3)];
+s.subjectCLUT = [s.subjectColors; zeros(256-size(s.subjectColors,1),3)];
 % A COMBINED COLOR LOOK UP TABLE (CLUT) FOR THE VPIXX 2-CLUT SYSTEM
 s.combinedCLUT = [s.subjectCLUT; s.controlsCLUT];
 % Open the overlay window for writing to the window using the clut
@@ -79,7 +79,7 @@ Datapixx('WriteAudioBuffer',sin(2*pi*(1:64)/64));
 % Write these changes to the Viewpixx
 Datapixx('RegWrRd');
 
-Screen('FillRect',A.overlay,0);
+Screen('FillRect',s.overlay,0);
 Screen('FillRect',s.display.ptr,0);
 Screen('Flip',s.display.ptr);
 
@@ -88,7 +88,7 @@ Screen('Flip',s.display.ptr);
 s.color = 1;
 s.size = [-40 -40 40 40];
 s.direction = 0;%[0 90 180 270];
-s.viewdist = 45;
+s.viewdist = 25;
 s.distDeg = 5;
 s.pursuit = 1;% 0 is flash
 s.speed = 0.2;%pursuit speed in degrees
@@ -102,6 +102,7 @@ s.stimdur = 1;
 s.ports.use = 0;
 s.ports.movable = 0;
 s.datapixx.use = 1;
+
 %% conversions
 s.ctr = [960 540 960 540];
 s.screenwidth = 52;
@@ -110,11 +111,11 @@ s.screenwidthpix = 1920;
 s.degperpix = s.screenwidthdeg/s.screenwidthpix;
 s.pixperdeg = 1/s.degperpix;
 
-s.dFrame = s.speed*s.pixperdeg;
-s.limits = (s.ctr + s.size) + (s.pixperdeg*s.distdeg).*[-1 -1 1 1];
+s.dFrame = round(s.speed*s.pixperdeg);
+s.limits = round((s.ctr + s.size) + (s.pixperdeg*s.distDeg).*[-1 -1 1 1]);
 
 limits = [420 0 1500 1080];
-if s.limits(1) > limits(1) || s.limits(2) > limits(2) || s.limits(3) > limits(3) || s.limits(4) > limits(4)
+if s.limits(1) < limits(1) || s.limits(2) < limits(2) || s.limits(3) > limits(3) || s.limits(4) > limits(4)
     warning('End value is off-screen');
 end
 %% run stimulus
@@ -125,12 +126,11 @@ s.state = 1;
 s.iniColor= s.color;
 s.ctr = [960 540 960 540];
 s.iniSize = s.ctr + s.size;
-
+timeNow = now;
 switch s.state
     case 1
         Screen('FillRect',s.display.ptr,s.iniColor,s.iniSize);
         Screen('Flip',s.display.ptr);
-        timeNow = now;
         if now > timeNow + s.wait;
             s.state = 2;
         end
@@ -184,6 +184,9 @@ switch s.state
         end
     case 3
         Screen('DrawingFinished', s.display.ptr,0,0);
+        Screen('FillRect',s.overlay,0);
+        Screen('FillRect',s.display.ptr,0);
+        Screen('Flip',s.display.ptr);
         
 end
 
