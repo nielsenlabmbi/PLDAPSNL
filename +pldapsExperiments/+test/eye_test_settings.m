@@ -12,11 +12,13 @@ s.behavior.reward.amountDelta = 0.01;
 % s.stimulus.range = 121;
 s.	display.	bgColor = [ 0    0   0 ];
 s.stimulus.color = 1;
-%s.stimulus.size = [-40 -40 40 40];%[920 500 1000 580];
+s.stimulus.size = {[-40 -40 40 40]};
 % s.stimulus.position = [{[960 540 960 540]} {1880 540 1880 540} {40 540 40 540} ...
 %     {1880 1040 1880 1040} {960 1040 960 1040} {40 1040 40 1040} {1880 40 1880 40}...
 %     {960 40 960 40} {40 40 40 40}];
 s.stimulus.direction = [0 90 180 270];
+s.stimulus.limits = {[420 0 1500 1080]};
+
 s.stimulus.pursuit = [1 0];
 s.stimulus.dFrame = 10;
 
@@ -31,9 +33,9 @@ s.stimulus.duration.ITI = 2;
 %set up the viewing distance
 s.display.viewdist = 45; 
 % 
-% s.datapixx.useAsEyepos = 1;
-%  s.	pldaps.	draw.	eyepos.	use = 1;
-%  s.	pldaps.	draw.	eyepos.	show = 1;
+s.datapixx.useAsEyepos = 1;
+ s.	pldaps.	draw.	eyepos.	use = 1;
+ s.	pldaps.	draw.	eyepos.	show = 1;
  
 
 % %configure ports
@@ -44,28 +46,12 @@ s.display.viewdist = 45;
  
  s.datapixx.din.useFor.ports = 1;
  
- 
-% %two-p room settings
-%  s.datapixx.adc.useForReward = 0;
-%  s.datapixx.dio.useForReward = 1;
-%  s. behavior.   reward. channel. START = 7; %dio channel for reward delivery
-%  s. behavior.   reward. channel. LEFT = 6;
-%  s. behavior.   reward. channel. RIGHT = 5;
-%  s.datapixx.adc.channels = [];
- 
- %two-p use settings
-%  s.daq.use = 1;
-%  s.twoP.use = 1;
-%  s.session.subject = 'test';
-%  s.session.unit = '000';
-%  s.session.expt = '002';
-%  % s. pldaps. nosave = 0;
 
 %%% Debugging settings
 
-%turn mouse input on
-s.mouse.useAsPort = 1;
-s.mouse.use = 1;
-s.datapixx.useAsPorts = 0;
-% % turn saving off
-s.pldaps.nosave = 1;
+% %turn mouse input on
+% s.mouse.useAsPort = 1;
+% s.mouse.use = 1;
+% s.datapixx.useAsPorts = 0;
+% % % turn saving off
+% s.pldaps.nosave = 1;

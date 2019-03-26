@@ -23,6 +23,8 @@ cond.color = p.defaultParameters.stimulus.color;
 cond.direction = p.defaultParameters.stimulus.direction;
 cond.pursuit = p.defaultParameters.stimulus.pursuit;
 cond.dFrame = p.defaultParameters.stimulus.dFrame;
+cond.size = p.defaultParameters.stimulus.size;
+cond.limits = p.defaultParameters.stimulus.limits;
 c=generateCondList_sides(cond,side,'pseudo',ceil(500/(length(cond.direction)*2)));
 
 p.conditions=c;

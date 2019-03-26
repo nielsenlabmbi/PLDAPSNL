@@ -153,8 +153,7 @@ function p=trialSetup(p)
 
 
 %set up initialization stimulus (this could be in settings file)
-p.trial.stimulus.iniColor=1;
-p.trial.stimulus.iniSize=[920 500 1000 580];
+
 p.trial.stimulus.ctr = [960 540 960 540];
 
 p.trial.stimulus.waitColor = 1;
@@ -165,6 +164,12 @@ p.trial.stimulus.color = p.conditions{p.trial.pldaps.iTrial}.color;
 p.trial.stimulus.frameI = 0;
 p.trial.stimulus.pursuit = p.conditions{p.trial.pldaps.iTrial}.pursuit;
 p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+p.trial.stimulus.size = p.conditions{p.trial.pldaps.iTrial}.size{1};
+p.trial.stimulus.limits = p.conditions{p.trial.pldaps.iTrial}.limits{1};
+
+p.trial.stimulus.iniColor= p.trial.stimulus.color;
+p.trial.stimulus.iniSize = p.trial.stimulus.ctr + p.trial.stimulus.size;
+%p.trial.stimulus.iniSize=[920 500 1000 580];
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
@@ -184,14 +189,20 @@ if p.trial.stimulus.pursuit == 1
     yproj=-sin(p.trial.stimulus.direction*pi/180);
     shift = repmat([p.trial.stimulus.dFrame*xproj p.trial.stimulus.dFrame*yproj],1,2);
     randpos = randpos + shift;
-
-    if randpos(1) < 420 || randpos(3) > 1500 || randpos(2) < 0 || randpos(4) > 1080
+    limits = p.trial.stimulus.limits;
+    
+    if randpos(1) > limits(1) || randpos(2) > limits(2) || randpos(3) > limits(3) || randpos(4) > limits(4)
         randpos = randpos - shift;
     end
+    
+%     if randpos(1) < 420 || randpos(3) > 1500 || randpos(2) < 0 || randpos(4) > 1080
+%         randpos = randpos - shift;
+%     end
     p.trial.stimulus.pos{p.trial.stimulus.frameI} = randpos;
     Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.color,p.trial.stimulus.pos{p.trial.stimulus.frameI});
 else
-    p.trial.stimulus.dFrame = 500;
+    %p.trial.stimulus.dFrame = 500;
+    p.trial.stimulus.dFrame = (p.trial.stimulus.limits(4) - p.trial.stimulus.limits(3))/2 - unique(abs(p.trial.stimulus.size));
     p.trial.stimulus.frameI = 1;
     randpos = p.trial.stimulus.iniSize;
     xproj=cos(p.trial.stimulus.direction*pi/180);
