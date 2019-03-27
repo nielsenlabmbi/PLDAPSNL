@@ -39,7 +39,7 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
  
  s.datapixx.din.useFor.ports = 1;
 
-s.ephys.use = 1;
+%s.ephys.use = 1;
 
 % s.session.subject = 'fbab6';
 % s.session.unit = '000';

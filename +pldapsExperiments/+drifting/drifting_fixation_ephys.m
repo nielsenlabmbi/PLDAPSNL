@@ -46,7 +46,7 @@ switch p.trial.state
             p = pds.sbserver.shutter2P(p,'1');
         % send trigger, note time
             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
-            p = pds.intan.send_intan(p.trial.ephys.trigger.trialstart,1); %for intan
+            p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
             p.trial.TrialStartTrigger = p.trial.ttime;
             p.trial.triggerState = p.trial.daq.trigger.trialstart;
         end
@@ -58,6 +58,12 @@ switch p.trial.state
         
         if p.trial.ttime > p.trial.stimulus.reference_baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
             pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+            if p.trial.triggerState ~= p.trial.daq.trigger.startspout
+                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.justspouts);
+                p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,1); 
+                p.trial.StimOnTrigger = p.trial.ttime;
+                p.trial.triggerState = p.trial.daq.trigger.justspouts;
+            end
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
@@ -70,13 +76,6 @@ switch p.trial.state
             p.trial.state = p.trial.stimulus.states.LICKDELAY;
             p.trial.stimulus.switchVAR = 0;
             
-            %trigger
-            if p.trial.triggerState ~= p.trial.daq.trigger.spouts
-                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.spouts);
-                p = pds.intan.send_intan(p.trial.ephys.trigger.spouts,1); %for intan
-                p.trial.StimOnTrigger = p.trial.ttime;
-                p.trial.triggerState = p.trial.daq.trigger.spouts;
-            end
         end
         
     case p.trial.stimulus.states.LICKDELAY
@@ -95,11 +94,11 @@ switch p.trial.state
                 if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
                     pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
                 end
-                if p.trial.triggerState ~= p.trial.daq.trigger.spouts
-                    p = pds.daq_com.send_daq(p,p.trial.daq.trigger.spouts);
-                    p = pds.intan.send_intan(p.trial.ephys.trigger.spouts,0); %for intan
+                if p.trial.triggerState ~= p.trial.daq.trigger.trialstart
+                    p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart);
+                    p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,0); %for intan
                     p.trial.StimOnTrigger = p.trial.ttime;
-                    p.trial.triggerState = p.trial.daq.trigger.spouts;
+                    p.trial.triggerState = p.trial.daq.trigger.trialstart;
                 end
                 p.trial.stimulus.timeTrialWait = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.WAIT;
@@ -117,13 +116,9 @@ switch p.trial.state
                 if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.lickdelay;
                 if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
                     pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                    p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,0); %for intan
                 end
-                if p.trial.triggerState ~= p.trial.daq.trigger.spouts
-                    p = pds.daq_com.send_daq(p,p.trial.daq.trigger.spouts);
-                    p = pds.intan.send_intan(p.trial.ephys.trigger.spouts,0); %for intan
-                    p.trial.StimOnTrigger = p.trial.ttime;
-                    p.trial.triggerState = p.trial.daq.trigger.spouts;
-                end
+                
                 p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                 p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                 p.trial.state=p.trial.stimulus.states.FINALRESP;
@@ -135,20 +130,32 @@ switch p.trial.state
         if p.trial.ttime > p.trial.stimulus.timeTrialWait + p.trial.stimulus.waitTime;
                 p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.STIMON;
+                
+            p.trial.iFrame0 = p.trial.iFrame;
+                p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
         end
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
-         % trigger 
+          p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
+   
+        % trigger 
         if p.trial.triggerState ~= p.trial.daq.trigger.stimon
             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon);
-            p = pds.intan.send_intan(p.trial.ephys.trigger.stimon,1); %for intan
+            p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1); %for intan
             p.trial.StimOnTrigger = p.trial.ttime;
             p.trial.triggerState = p.trial.daq.trigger.stimon;
         end
          %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
             pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+            if p.trial.triggerState ~= p.trial.daq.trigger.choicespouts
+                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.choicespouts);
+                p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,1); %for intan
+                p.trial.StimOnTrigger = p.trial.ttime;
+                p.trial.triggerState = p.trial.daq.trigger.choicespouts;
+            end
         end
+        
         
         
         %check whether any port chosen
@@ -162,7 +169,7 @@ switch p.trial.state
                 %shutter laser, trigger daq
                 if p.trial.triggerState ~= p.trial.daq.trigger.trialfinish
                     p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialfinish);
-                    p = pds.intan.send_intan(p.trial.ephys.trigger.stimon,0); %for intan
+                    p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0); %for intan
                     p = pds.sbserver.shutter2P(p,'0');
                     p.trial.triggerState = p.trial.daq.trigger.trialfinish;
                     p.trial.TriggerTrialFinish = p.trial.ttime;
@@ -260,9 +267,9 @@ p.trial.state=p.trial.stimulus.states.BASELINE;
 %wake daq
 p = pds.daq_com.send_daq(p,0);
 %make sure all triggers low
-p = pds.intan.send_intan(p.trial.ephys.trigger.trialstart,0); 
-p = pds.intan.send_intan(p.trial.ephys.trigger.stimon,0); %for intan
-p = pds.intan.send_intan(p.trial.ephys.trigger.spouts,0); %for intan
+p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,0); 
+p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0); %for intan
+p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,0); %for intan
 
 %set ports correctly
 pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
@@ -289,14 +296,14 @@ function cleanUpandSave(p)
 tic
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
-disp(['Condition: ' num2str(p.trial.stimulus.displacement*p.trial.stimulus.rotation)])
+disp(['Condition: ' num2str(p.trial.ori)])
 %show reward amount
 if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S1';'S2'})
 end
 %set triggers to low
 p = pds.daq_com.send_daq(p,0);
-p = pds.intan.send_intan(p.trial.ephys.trigger.trialstart,0); %for intan
+p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,0); %for intan
 %(stimon and spouts should already be low)%
 
 

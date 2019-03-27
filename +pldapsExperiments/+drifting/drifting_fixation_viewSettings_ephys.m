@@ -1,4 +1,4 @@
-function s = drifting_passive_viewSettings_ephys
+function s = drifting_fixation_viewSettings_ephys
 
 
 %set reward amounts
@@ -14,7 +14,7 @@ s.stimulus.sf = 0.08;
 s.stimulus.range = 121;
 s.stimulus.baseline = 0.5;
 s.stimulus.reference_baseline = 1; %0.5;
-s.stimulus.stimON = 1;
+s.stimulus.stimON = 2;
 s.stimulus.stimdur = 1;
 s.stimulus.waitTime = 1;
 s.stimulus.runtype = 'pseudo';

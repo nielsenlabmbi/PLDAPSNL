@@ -5,7 +5,7 @@ function p=drifting_setup_fixation_ephys(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.drifting.drifting_fixation_view_ephys';
+p.trial.pldaps.trialFunction='pldapsExperiments.drifting.drifting_fixation_ephys';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;

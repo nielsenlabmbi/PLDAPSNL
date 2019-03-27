@@ -24,7 +24,7 @@ if p.trial.twoP.use
     end
     
     %update file name
-    p = updateSBname(p);
+    p = pds.sbserver.updateSBname(p);
 
     %start the laser
     pds.sbserver.send_sbserver(p,'G');

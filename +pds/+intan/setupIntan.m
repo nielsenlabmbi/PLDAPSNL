@@ -6,12 +6,12 @@ if p.trial.ephys.use
         fprintf(['\nTcpMessenger connecting to ' p.trial.ephys.IP '\n']);
         fopen(msg);
     end
-    p.ephys.msg = msg;
+    p.trial.ephys.msg = msg;
     
     %update file name - launch iteractive dialog box
-    p = updateIntanName(p);
+    p = pds.intan.updateIntanName(p);
     
     %start recording
-    fwrite(p.ephys.msg,'record');
+    fwrite(p.trial.ephys.msg,'record');
     
 end

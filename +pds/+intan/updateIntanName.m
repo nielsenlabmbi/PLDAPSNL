@@ -11,5 +11,5 @@ function p = updateIntanName(p)
     dd = fullfile(p.trial.ephys.dataRoot,p.defaultParameters.session.subject,name);
     
     name = ['basefilename ' dd];
-    fwrite(p.ephys.msg, name)
+    fwrite(p.trial.ephys.msg, name)
 end
