@@ -58,26 +58,26 @@ s.priorityLevel = MaxPriority(s.display.ptr);
 % Set alpha blending functions for antialiasing
 Screen(s.display.ptr,'BlendFunction',GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-% INITIALIZE THE VIEWPIXX FOR STIMULUS CONTROL AND DATA COLLECTION
-% Open the viewpixx device for communication with Matlab
-if ~Datapixx('isReady'), Datapixx('Open'); pause(.1); end
-% Stop any pre-existing schedules, none should be running, just to be safe
-Datapixx('StopAllSchedules');
-% Enable the scanning backlight, in this mode back light modules sweep
-% across the monitor similar to the way a CRT sweeps across a TV screen,
-% briefly illuminating the LCD when at the correct color and hiding
-% the LCD as it transitions from one color to another.
-Datapixx('EnableVideoScanningBacklight');
-% Enable the ability to query ADC voltages realtime, this reduces
-% accuracy of scheduled collection by 5 micro-seconds, but is worth the
-% small trade-off in accuracy for real-time beam detection
-Datapixx('EnableAdcFreeRunning');
-% Initializes audio output of the Viewpixx
-Datapixx('InitAudio');
-% 64-sample sinewave in audio buffer--all tones will be sinewaves
-Datapixx('WriteAudioBuffer',sin(2*pi*(1:64)/64));
-% Write these changes to the Viewpixx
-Datapixx('RegWrRd');
+% % INITIALIZE THE VIEWPIXX FOR STIMULUS CONTROL AND DATA COLLECTION
+% % Open the viewpixx device for communication with Matlab
+% if ~Datapixx('isReady'), Datapixx('Open'); pause(.1); end
+% % Stop any pre-existing schedules, none should be running, just to be safe
+% Datapixx('StopAllSchedules');
+% % Enable the scanning backlight, in this mode back light modules sweep
+% % across the monitor similar to the way a CRT sweeps across a TV screen,
+% % briefly illuminating the LCD when at the correct color and hiding
+% % the LCD as it transitions from one color to another.
+% Datapixx('EnableVideoScanningBacklight');
+% % Enable the ability to query ADC voltages realtime, this reduces
+% % accuracy of scheduled collection by 5 micro-seconds, but is worth the
+% % small trade-off in accuracy for real-time beam detection
+% Datapixx('EnableAdcFreeRunning');
+% % Initializes audio output of the Viewpixx
+% Datapixx('InitAudio');
+% % 64-sample sinewave in audio buffer--all tones will be sinewaves
+% Datapixx('WriteAudioBuffer',sin(2*pi*(1:64)/64));
+% % Write these changes to the Viewpixx
+% Datapixx('RegWrRd');
 
 Screen('FillRect',s.overlay,0);
 Screen('FillRect',s.display.ptr,0);
@@ -86,12 +86,12 @@ Screen('Flip',s.display.ptr);
 
 %% set parameters
 s.color = 1;
-s.size = [-40 -40 40 40];
-s.direction = 0;%[0 90 180 270];
-s.viewdist = 25;
-s.distDeg = 5;
+s.size = 25.*[-1 -1 1 1];%[-40 -40 40 40];
+s.direction = 270;%[0 90 180 270];
+s.viewdist = 35;
+s.distDeg = 7.5;
 s.pursuit = 1;% 0 is flash
-s.speed = 0.2;%pursuit speed in degrees
+s.speed = 0.4;%pursuit speed in degrees
 
 s.wait = 1;
 s.stimdur = 1;
@@ -101,7 +101,7 @@ s.stimdur = 1;
 %  s.	pldaps.	draw.	eyepos.	show = 1;
 s.ports.use = 0;
 s.ports.movable = 0;
-s.datapixx.use = 1;
+s.datapixx.use = 0;
 
 %% conversions
 s.ctr = [960 540 960 540];
@@ -126,21 +126,22 @@ s.state = 1;
 s.iniColor= s.color;
 s.ctr = [960 540 960 540];
 s.iniSize = s.ctr + s.size;
-timeNow = now;
 Screen('FillRect',s.display.ptr,s.iniColor,s.iniSize);
 Screen('Flip',s.display.ptr);
-if now > timeNow + s.wait;
-    s.state = 2;
-end
+WaitSecs(s.wait);
+s.state = 2;
+% if now > timeNow + s.wait;
+%     s.state = 2;
+% end
 % move
-timeNow = now;
+% timeNow = now;
 while s.state == 2
     if s.pursuit == 1
         %might need a while look here? unclear
         if s.frameI == 0
             randpos = s.iniSize;
         else
-            randpos = s.pos{s.stimulus.frameI};
+            randpos = s.pos{s.frameI};
         end
         s.frameI = s.frameI+1;
         xproj=cos(s.direction*pi/180);
@@ -151,18 +152,19 @@ while s.state == 2
         
         if randpos(1) < limits(1) || randpos(2) < limits(2) || randpos(3) > limits(3) || randpos(4) > limits(4)
             %randpos = randpos - shift;
+            WaitSecs(0.5);
             s.state = 3;
         end
         
         %     if randpos(1) < 420 || randpos(3) > 1500 || randpos(2) < 0 || randpos(4) > 1080
         %         randpos = randpos - shift;
         %     end
-        s.pos{s.stimulus.frameI} = randpos;
-        Screen('FillRect',s.display.ptr,s.color,s.pos{s.stimulus.frameI+1});
+        s.pos{s.frameI} = randpos;
+        Screen('FillRect',s.display.ptr,s.color,s.pos{s.frameI});
         Screen('Flip',s.display.ptr);
         
     else
-        %s.stimulus.dFrame = 500;
+        %s.dFrame = 500;
         s.dFrame = (s.limits(4) - s.limits(2))/2 - unique(abs(s.size));
         s.frameI = 1;
         randpos = s.iniSize;
@@ -175,9 +177,11 @@ while s.state == 2
         s.pos{s.frameI} = randpos;
         Screen('FillRect',s.display.ptr,s.color,s.pos{s.frameI});
         Screen('Flip',s.display.ptr);
-        if now > timeNow + s.stimdur;
-            s.state = 3;
-        end
+        WaitSecs(s.stimdur);
+        s.state = 3;
+%         if now > timeNow + s.stimdur;
+%             s.state = 3;
+%         end
     end
     if s.state == 3
         Screen('FillRect',s.overlay,0);
@@ -187,80 +191,11 @@ while s.state == 2
 end
 
 
-%% close datapixx, close screen
+%% close screen
 sca
-if(s.datapixx.use)
-    %stop adc data collection if requested
-    pds.datapixx.adc.stop(p);
-    
-    %stop din data collection
-    pds.datapixx.din.stop(p);
-    
-    status = PsychDataPixx('GetStatus');
-    if status.timestampLogCount
-        s.datapixx.timestamplog = PsychDataPixx('GetTimestampLog', 1);
-    end
-end
-%%
-switch s.state
-    case 1
-        Screen('FillRect',s.display.ptr,s.iniColor,s.iniSize);
-        Screen('Flip',s.display.ptr);
-        if now > timeNow + s.wait;
-            s.state = 2;
-        end
-    case 2
-        % include a tone to indicate stimulus moved?
-        % pds.audio.playDatapixxAudio(p,'reward_short');
-        if s.pursuit == 1
-            %might need a while look here? unclear
-            if s.frameI == 0
-                randpos = s.iniSize;
-            else
-                randpos = s.pos{s.stimulus.frameI};
-            end
-            s.frameI = s.frameI+1;
-            xproj=cos(s.direction*pi/180);
-            yproj=-sin(s.direction*pi/180);
-            shift = repmat([s.dFrame*xproj s.dFrame*yproj],1,2);
-            randpos = randpos + shift;
-            limits = s.limits;
-            
-            if randpos(1) > limits(1) || randpos(2) > limits(2) || randpos(3) > limits(3) || randpos(4) > limits(4)
-                %randpos = randpos - shift;
-                s.state = 3;
-            end
-            
-            %     if randpos(1) < 420 || randpos(3) > 1500 || randpos(2) < 0 || randpos(4) > 1080
-            %         randpos = randpos - shift;
-            %     end
-            s.pos{s.stimulus.frameI} = randpos;
-            Screen('FillRect',s.display.ptr,s.color,s.pos{s.stimulus.frameI});
-            Screen('Flip',s.display.ptr);
-
-        else
-            %s.stimulus.dFrame = 500;
-            s.dFrame = (s.limits(4) - s.limits(2))/2 - unique(abs(s.size));
-            s.frameI = 1;
-            randpos = s.iniSize;
-            xproj=cos(s.direction*pi/180);
-            yproj=-sin(s.direction*pi/180);
-            shift = repmat([s.dFrame*xproj s.dFrame*yproj],1,2);
-            randpos = randpos + shift;
-            
-            s.pos{1} = randpos;
-            s.pos{s.frameI} = randpos;
-            Screen('FillRect',s.display.ptr,s.color,s.pos{s.frameI});
-            Screen('Flip',s.display.ptr);
-            timeNow = now;
-            if now > timeNow + s.stimdur;
-                s.state = 3;
-            end
-        end
-    case 3
-        Screen('DrawingFinished', s.display.ptr,0,0);
-        Screen('FillRect',s.overlay,0);
-        Screen('FillRect',s.display.ptr,0);
-        Screen('Flip',s.display.ptr);
-        
-end
+%% move middle spout forward
+digital_out(3,1)
+% move spout back
+digital_out(3,0)
+%% give reward
+pds.datapixx.analogOutTime(0.1, 3, 10, 1000);
