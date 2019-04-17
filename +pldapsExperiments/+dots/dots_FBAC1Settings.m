@@ -1,8 +1,11 @@
 function s = dots_FBAC1Settings
-
+% add eye tracking
+s.datapixx.useAsEyepos = 1;
+ s.	pldaps.	draw.	eyepos.	use = 1;
+ s.	pldaps.	draw.	eyepos.	show = 1;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.02 0.08 0.06];
+s. behavior.   reward. amount = [0.02 0.07 0.07];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -32,7 +35,7 @@ s.stimulus.trialdur = 300;
 s.stimulus.timeout = 1.5;
 
 %set instructive trials
-s.stimulus.fracInstruct = 0.8;
+s.stimulus.fracInstruct = 1.0;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
@@ -42,7 +45,7 @@ s.display.viewdist = 45;
  s.ports.nports = 3;
  s.ports.movable = true;
  s.datapixx.adc.channels = [1 3 5]; %[1 3 5 10 11];
- s.datapixx.useAsEyepos = 0;
+ %s.datapixx.useAsEyepos = 0;
  %use din?
  s.datapixx.din.useFor.ports = 1;
  %turn mouse input off

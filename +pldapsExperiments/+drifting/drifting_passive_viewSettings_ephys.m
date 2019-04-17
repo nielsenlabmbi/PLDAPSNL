@@ -23,7 +23,7 @@ s.stimulus.duration.ITI = 1;
 %set up the viewing distance
 s.display.viewdist = 45; 
 % 
-s.stimulus.fullField = zeros(1,length(s.stimulus.offsets));
+s.stimulus.fullField = ones(1,length(s.stimulus.offsets));
 
 
 s.stimulus.radius=30; %stimulus radius in deg

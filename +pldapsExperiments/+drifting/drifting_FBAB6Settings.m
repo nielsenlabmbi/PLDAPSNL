@@ -1,7 +1,7 @@
 function s = drifting_FBAB6Settings
 
 %set reward amounts
-s. behavior.   reward. amount = [0.02 0.07 0.04];
+s. behavior.   reward. amount = [0.02 0.06 0.06];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;

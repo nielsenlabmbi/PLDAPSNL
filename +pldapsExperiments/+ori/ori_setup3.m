@@ -30,9 +30,9 @@ cond(i).type = i;
 if isfield(p.trial.stimulus,'fracInstructTrue')
 cond(i).fracInstructTrue = p.trial.stimulus.fracInstructTrue(i);
 end
-if isfield(p.trial.stimulus, 'shift') & iscell(p.trial.stimulus.shift)
-    cond(i).shift = p.trial.stimulus.shift(i);
-end
+% if isfield(p.trial.stimulus, 'shift') & iscell(p.trial.stimulus.shift)
+%     cond(i).shift = p.trial.stimulus.shift;
+% end
 c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
 end
 

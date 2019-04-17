@@ -1,6 +1,8 @@
 function s = ori_FBAB0Settings
-% turn saving off
-% s.pldaps.nosave = 1;
+% add eye tracking
+s.datapixx.useAsEyepos = 1;
+ s.	pldaps.	draw.	eyepos.	use = 1;
+ s.	pldaps.	draw.	eyepos.	show = 1;
 %set reward amounts
 s. behavior.   reward. amount = [0.02 0.07 0.07];
 % s.behavior.reward.pulseFreq = 3;
@@ -28,14 +30,14 @@ s.stimulus.timeout = 0;
 % s.stimulus.timeout = 0; 
 
 % %set instructive trials
-s.stimulus.fracInstruct = 0.5;
+s.stimulus.fracInstruct = 1;%0.3;
 s.stimulus.fracInstructTrue = [1 0];%[1 0];
 s.stimulus.instructCutoff = 25;
 
 %set orientation and offsets
-s.stimulus.offsets = horzcat({45},{45});%horzcat({[25]},{[25 25 20 18 12 6 2]});
+s.stimulus.offsets = {45};%horzcat({45},{45});%horzcat({[25]},{[25 25 20 18 12 6 2]});
 %s.stimulus.offsets = horzcat({[25]},{[25 25 22 16 10 4 1]});
-s.stimulus.shift = horzcat({[0 0]},{[300 -300]});
+s.stimulus.shift = [0 -0];
 s.stimulus.angle = 45;
 s.stimulus.sf = 0.125;
 s.stimulus.range = 121;
@@ -60,22 +62,22 @@ s.display.viewdist = 45;
  s.ports.nPorts = 3;
  s.ports.movable = true;
  s.datapixx.adc.channels = [1 3 5]; %[1 3 5 10 11];
- s.datapixx.useAsEyepos = 0;
+ %s.datapixx.useAsEyepos = 0;
  %use din?
  s.datapixx.din.useFor.ports = 1;
  %turn mouse input off
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 % 
-% %%% Debugging settings
+%%% Debugging settings
 % 
-% %turn adc channels off
-% s.datapixx.useAsPorts = 0;
-% s.datapixx.adc.channels = [];
-% 
-% %turn mouse input on
-% s.mouse.useAsPort = 1;
-% s.mouse.use = 1;
-% 
-% % turn saving off
-% s.pldaps.nosave = 1;
+%turn adc channels off
+s.datapixx.useAsPorts = 0;
+s.datapixx.adc.channels = [];
+
+%turn mouse input on
+s.mouse.useAsPort = 1;
+s.mouse.use = 1;
+
+% turn saving off
+s.pldaps.nosave = 1;

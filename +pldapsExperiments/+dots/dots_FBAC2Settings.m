@@ -1,8 +1,8 @@
-function s = dots_FBAB5Settings
+function s = dots_FBAC2Settings
 
 
 %set reward amounts
-s. behavior.   reward. amount = [0.02 0.04 0.07];
+s. behavior.   reward. amount = [0.02 0.07 0.07];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -23,16 +23,16 @@ s.stimulus.frameRate = 120;
 
 %set viewing parameterses
 s.stimulus.baseline = 0.1;
-s.stimulus.lickdelay = 1.5;%[1 2];
+s.stimulus.lickdelay = 1.5;
 s.stimulus.forceCorrect_delay = 0.75;
-s.stimulus.duration.ITI = 2.7;
-s.stimulus.stimON = 0.8;
+s.stimulus.duration.ITI = 2;
+s.stimulus.stimON = 0.5;
 s.stimulus.waitTime = 0.5;
 s.stimulus.trialdur = 300;
-s.stimulus.timeout = 2.5;
+s.stimulus.timeout = 1.5;
 
 %set instructive trials
-s.stimulus.fracInstruct = 1;
+s.stimulus.fracInstruct = 1.0;
 
 %set up the viewing distance
 s.display.viewdist = 45; 

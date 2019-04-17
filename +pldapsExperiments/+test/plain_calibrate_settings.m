@@ -3,7 +3,7 @@ function s = plain_calibrate_settings
 % s.pldaps.nosave = 1;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.02 0.07 0.07];
+s. behavior.   reward. amount = [0.01 0.07 0.07];
 s.behavior.reward.amountDelta = 0.01;
 s.stimulus.Ntrials = 30;
 
