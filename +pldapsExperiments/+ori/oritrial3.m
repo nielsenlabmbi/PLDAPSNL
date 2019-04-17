@@ -353,7 +353,10 @@ p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 o
 %p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase; % phase is pseudorandom
 p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
 p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
-
+try 
+    p.trial.stimulus.shift = p.conditions{p.trial.pldaps.iTrial}.shift;
+catch
+end
 %make grating
 %make grating
     %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;

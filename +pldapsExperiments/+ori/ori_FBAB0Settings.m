@@ -33,9 +33,9 @@ s.stimulus.fracInstructTrue = [1 0];%[1 0];
 s.stimulus.instructCutoff = 25;
 
 %set orientation and offsets
-s.stimulus.offsets = {45};%horzcat({[25]},{[25 25 20 18 12 6 2]});
+s.stimulus.offsets = horzcat({45},{45});%horzcat({[25]},{[25 25 20 18 12 6 2]});
 %s.stimulus.offsets = horzcat({[25]},{[25 25 22 16 10 4 1]});
-s.stimulus.shift = [0 0];
+s.stimulus.shift = horzcat({[0 0]},{[300 -300]});
 s.stimulus.angle = 45;
 s.stimulus.sf = 0.125;
 s.stimulus.range = 121;
