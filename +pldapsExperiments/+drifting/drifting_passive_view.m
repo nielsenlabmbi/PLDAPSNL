@@ -116,6 +116,7 @@ p.trial.stimulus.waitColor = 0.5;
         if ~isfield(p.trial.stimulus,'shift')
             p.trial.stimulus.shift = 0;
         end
+        p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
         %generate mask
         xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2;
         ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
@@ -181,8 +182,10 @@ function showStimulus(p)
         Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
         Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.ori,[],0.5);
         
-        Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        Screen('DrawTexture', p.trial.display.ptr, p.trial.masktxtr);
+        if ~p.trial.stimulus.fullfield
+            Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            Screen('DrawTexture', p.trial.display.ptr, p.trial.masktxtr);
+        end
 
 
 
