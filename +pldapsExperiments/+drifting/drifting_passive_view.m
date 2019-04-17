@@ -1,4 +1,4 @@
-function drifting_passive_view_ephys(p,state)
+function drifting_passive_view(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -37,9 +37,6 @@ end
 %check port status and set events accordingly
 function p=checkState(p)
 
-activePort=find(p.trial.ports.status==1);
-
-
 switch p.trial.state
     case p.trial.stimulus.states.BASELINE
         if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.TRIALSTART;
@@ -63,6 +60,12 @@ switch p.trial.state
             p.trial.stimulus.frameTrialStimOn = p.trial.iFrame;
             
             %advance state
+            if p.trial.triggerState ~= p.trial.trigger.states.STIMON
+                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
+                p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1); %for intan
+                p.trial.StimOnTrigger = p.trial.ttime;
+                p.trial.triggerState = p.trial.trigger.states.STIMON;
+            end
             p.trial.state = p.trial.stimulus.states.STIMON;
             p.trial.iFrame0 = p.trial.iFrame;
                 p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
@@ -71,14 +74,6 @@ switch p.trial.state
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
-        
-        if p.trial.triggerState ~= p.trial.trigger.states.STIMON
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1); %for intan
-            p.trial.StimOnTrigger = p.trial.ttime;
-            p.trial.triggerState = p.trial.trigger.states.STIMON;
-        end
-        
         
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimdur
             p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0); %for intan

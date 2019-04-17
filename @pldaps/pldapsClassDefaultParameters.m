@@ -31,8 +31,6 @@ function s=pldapsClassDefaultParameters(s)
  s. daq.        trigger.   trialstart = 1;
  s. daq.        trigger.   stimon = 3;
  s. daq.        trigger.   trialfinish = 1;
- s. daq.        trigger.   choicespouts = 7; 
- s. daq.        trigger.   justspouts = 5;
  s. daq.        din.       channelMapping = 'datapixx.din.daq';
 
 %s.	datapixx.
@@ -119,6 +117,9 @@ s.  datapixx.   dio.    useForReward = 0;
  s. ephys.       trigger.   trialstart = 11;
  s. ephys.       trigger.   stimon = 13;
  s. ephys.       trigger.   spouts = 15; 
+ s. ephys.       trigger.   reference = 12;
+ s. ephys.       trigger.   wait = 14;
+ s. ephys.       trigger.   lickdelay = 16;
  
 %s.	eyelink.
  s.	eyelink.	buffereventlength = 30;

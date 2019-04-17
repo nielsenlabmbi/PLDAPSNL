@@ -17,9 +17,9 @@ s.stimulus.stimdur = 1;
 s.stimulus.waitTime = 1;
 s.stimulus.runtype = 'pseudo';
 s.stimulus.lickdelay = 1.5;
-s.stimulus.duration.ITI = 2;
+s.stimulus.duration.ITI = 1;
 %set up the viewing distance
-s.display.viewdist = 30; 
+s.display.viewdist = 45; 
 % 
 s.stimulus.fullField = zeros(1,length(s.stimulus.offsets));
 
@@ -35,16 +35,11 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
  s.ports.movable = true;
  s.datapixx.adc.channels = [1 3 5];
  
- s.datapixx.din.useFor.ports = 1;
+ s.datapixx.din.useFor.ports = 1;[
  
-% % %turn saving off
-% s.pldaps.nosave = 1;
  
-% %two-p settings
- % s.daq.use = 1;
- % s.twoP.use = 1;
- % s. pldaps. nosave = 0;
-
+%s.ephys.use = 1;
+ 
 %%% Debugging settings
 
 %turn mouse input on

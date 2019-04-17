@@ -14,9 +14,8 @@ switch state
         checkState(p);
         
     case p.trial.pldaps.trialStates.frameDraw
-         if p.trial.state==p.trial.stimulus.states.START
-            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
-            %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
+        if p.trial.state==p.trial.stimulus.states.START
+            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
             %Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
         elseif p.trial.state==p.trial.stimulus.states.STIMON 
             Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
@@ -33,64 +32,104 @@ end
 
 
 %-------------------------------------------------------------------%
+%check port status and set events accordingly
+%check port status and set events accordingly
 function p=checkState(p)
 
+activePort=find(p.trial.ports.status==1);
+
+
 switch p.trial.state
-    case p.trial.stimulus.states.BASELINE
-        if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.TRIALSTART;
-        % open laser shutter
-            p = pds.sbserver.shutter2P(p,'1');
-        % send trigger, note time
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
-            p.trial.TrialStartTrigger = p.trial.ttime;
-            p.trial.triggerState = p.trial.trigger.states.TRIALSTART;
+    case p.trial.stimulus.states.START %trial RIGHTed
+        
+        if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
+            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
         end
         
-        if p.trial.ttime > p.trial.stimulus.baseline
-            p.trial.state = p.trial.stimulus.states.START;
-        end
-    case p.trial.stimulus.states.START 
-
-        if p.trial.ttime > p.trial.stimulus.reference_baseline
+        if activePort==p.trial.stimulus.port.START %start port activated
+            
             %note timepoint
-            p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
-            p.trial.stimulus.frameTrialStimOn = p.trial.iFrame;
+            p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
+            p.trial.stimulus.frameTrialStartResp = p.trial.iFrame;
             
             %advance state
-        if p.trial.triggerState ~= p.trial.trigger.states.STIMON
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1); %for intan
-            p.trial.StimOnTrigger = p.trial.ttime;
-            p.trial.triggerState = p.trial.trigger.states.STIMON;
-        end
-            p.trial.state = p.trial.stimulus.states.STIMON;
-            p.trial.iFrame0 = p.trial.iFrame;
-                p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
+            p.trial.state = p.trial.stimulus.states.LICKDELAY;
+            p.trial.stimulus.switchVAR = 0;
         end
         
+    case p.trial.stimulus.states.LICKDELAY
+        switch p.trial.stimulus.switchVAR
+            case 0
+                
+                if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + 0.5 & activePort==p.trial.stimulus.port.START %start port activated
+                    %deliver reward
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
+                    
+                end
+                
+                if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + 0.5;
+                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                end
+                p.trial.stimulus.timeTrialWait = p.trial.ttime;
+                p.trial.state=p.trial.stimulus.states.WAIT;
+                end
+            case 1
+                p.trial.pldaps.licks = [];
+            %give reward
+                if p.trial.ttime < p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.START %start port activated
+                    %deliver reward
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
+                    
+                end
+                
+                if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.lickdelay;
+                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
+                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                end
+                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                p.trial.state=p.trial.stimulus.states.FINALRESP;
+                end
+            
+        end
+        
+    case p.trial.stimulus.states.WAIT
+        if p.trial.ttime > p.trial.stimulus.timeTrialWait + p.trial.stimulus.waitTime;
+                p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
+                p.trial.state=p.trial.stimulus.states.STIMON;
+        end
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
-        p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
-       
-        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimdur
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0); %for intan
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
-            p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-            p.trial.state = p.trial.stimulus.states.FINALRESP;
+        
+         %wait to make ports available
+        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
+            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
         end
         
+        
+        %check whether any port chosen
+       if activePort==p.trial.stimulus.port.START %start port activated
+            %note time
+                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                %play tone
+                pds.audio.playDatapixxAudio(p,'reward_short');
+                
+                %advance state
+                p.trial.stimulus.switchVAR = 1;
+                p.trial.state=p.trial.stimulus.states.LICKDELAY;
+                p.trial.stimulus.timeResp = p.trial.ttime;
+           
+       end
+  
     case p.trial.stimulus.states.FINALRESP
         %wait for ITI
-        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI
+        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI 
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
-            if p.trial.triggerState ~= p.trial.trigger.states.TRIALCOMPLETE
-                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialfinish);
-                p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,0); %for intan
-                p.trial.triggerState = p.trial.daq.trigger.trialfinish;
-                p.trial.TriggerTrialFinish = p.trial.ttime;
-            end
             p.trial.flagNextTrial = true;
         end
         
@@ -158,10 +197,9 @@ p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
     p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
     p.trial.gratPos = [0 0 1920 1080];
 
-%wake daq
-p = pds.daq_com.send_daq(p,0);
 %set state
-p.trial.state=p.trial.stimulus.states.BASELINE;
+p.trial.state=p.trial.stimulus.states.START;
+
 %set ports correctly
 pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
 

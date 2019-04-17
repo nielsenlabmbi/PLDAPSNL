@@ -47,3 +47,13 @@ p.defaultParameters.stimulus.states.TRIALCOMPLETE = 6;
 p.defaultParameters.stimulus.states.LICKDELAY = 7;
 p.defaultParameters.stimulus.states.WAIT = 8;
 p.defaultParameters.stimulus.states.BASELINE = 0;
+
+%-------------------------------------------------------------------------%
+% Trigger States
+p.defaultParameters.trigger.states.TRIALSTART = 1;
+p.defaultParameters.trigger.states.REFERENCE = 2;
+p.defaultParameters.trigger.states.WAIT = 3;
+p.defaultParameters.trigger.states.STIMON = 4;
+p.defaultParameters.trigger.states.SPOUTS = 5;
+p.defaultParameters.trigger.states.LICKDELAY = 6;
+p.defaultParameters.trigger.states.TRIALCOMPLETE = 7;

@@ -12,11 +12,12 @@ s.stimulus.sf = 0.08;
 s.stimulus.range = 121;
 s.stimulus.baseline = 0.5;
 s.stimulus.reference_baseline = 0.5;
+s.stimulus.post_delay = 0.5;
 s.stimulus.stimON = 1;
 s.stimulus.waitTime = 1;
 s.stimulus.runtype = 'pseudo';
 s.stimulus.lickdelay = 1.5;
-s.stimulus.duration.ITI = 2;
+s.stimulus.duration.ITI = 1;
 %set up the viewing distance
 s.display.viewdist = 30; 
 % 
@@ -48,16 +49,13 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
  %two-p use settings
 %  s.daq.use = 1;
 %  s.twoP.use = 1;
-%  s.session.subject = 'test';
-%  s.session.unit = '000';
-%  s.session.expt = '002';
 %  % s. pldaps. nosave = 0;
 
 %%% Debugging settings
-
-%turn mouse input on
-s.mouse.useAsPort = 1;
-s.mouse.use = 1;
-s.datapixx.useAsPorts = 0;
-% % turn saving off
-s.pldaps.nosave = 1;
+% 
+% %turn mouse input on
+% s.mouse.useAsPort = 1;
+% s.mouse.use = 1;
+% s.datapixx.useAsPorts = 0;
+% % % turn saving off
+% s.pldaps.nosave = 1;
