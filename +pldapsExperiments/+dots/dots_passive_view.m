@@ -247,7 +247,7 @@ disp(['Coherence: ' num2str(p.trial.stimulus.dotCoherence)])
 %show reward amount
 if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S1';'S2'})
-
+end
 
 % disp(['C: ' num2str(p.trialMem.stats.val)])
 % disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])

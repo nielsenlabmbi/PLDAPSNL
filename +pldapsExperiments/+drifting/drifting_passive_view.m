@@ -182,7 +182,7 @@ function showStimulus(p)
         Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
         Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.ori,[],0.5);
         
-        if ~p.trial.stimulus.fullfield
+        if ~p.trial.stimulus.fullField
             Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             Screen('DrawTexture', p.trial.display.ptr, p.trial.masktxtr);
         end
