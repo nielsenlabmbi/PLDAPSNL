@@ -75,7 +75,7 @@ switch p.trial.state
        
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimdur
             p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0); %for intan
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
+            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialfinish); %for 2P
             p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
             p.trial.state = p.trial.stimulus.states.FINALRESP;
         end
@@ -86,9 +86,10 @@ switch p.trial.state
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             if p.trial.triggerState ~= p.trial.trigger.states.TRIALCOMPLETE
-                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialfinish);
+                p = pds.daq_com.send_daq(p,0);
+                p = pds.sbserver.shutter2P(p,'0');
                 p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,0); %for intan
-                p.trial.triggerState = p.trial.daq.trigger.trialfinish;
+                p.trial.triggerState = p.trial.trigger.states.TRIALCOMPLETE;
                 p.trial.TriggerTrialFinish = p.trial.ttime;
             end
             p.trial.flagNextTrial = true;
