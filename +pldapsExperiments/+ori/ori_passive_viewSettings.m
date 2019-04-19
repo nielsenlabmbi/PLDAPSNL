@@ -6,7 +6,7 @@ s. behavior.   reward. amount = [0.08 0.16 0.16];
 s.behavior.reward.amountDelta = 0.01;
 
 %set orientation and offsets
-s.stimulus.offsets = {[0:22.5:90]};
+s.stimulus.offsets = {[-1 0:22.5:90]};
 s.stimulus.angle = 0;
 s.stimulus.sf = 0.08;
 s.stimulus.range = 121;

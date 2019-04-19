@@ -18,9 +18,9 @@ switch state
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
             %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
             %Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
-        elseif p.trial.state==p.trial.stimulus.states.STIMON 
+        elseif p.trial.state==p.trial.stimulus.states.STIMON & p.trial.stimulus.displacement >= 0
             Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
-        elseif p.trial.state == p.trial.stimulus.states.WAIT
+        elseif p.trial.state == p.trial.stimulus.states.WAIT | p.trial.state == p.trial.stimulus.states.STIMON & p.trial.stimulus.displacement < 0
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
         
@@ -65,13 +65,13 @@ switch p.trial.state
             p.trial.triggerState = p.trial.trigger.states.STIMON;
         end
             p.trial.state = p.trial.stimulus.states.STIMON;
-            p.trial.iFrame0 = p.trial.iFrame;
-                p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
+            %p.trial.iFrame0 = p.trial.iFrame;
+               % p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
         end
         
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
-        p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
+        %p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
        
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimdur
             p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0); %for intan
