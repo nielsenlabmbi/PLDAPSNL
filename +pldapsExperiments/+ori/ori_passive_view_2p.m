@@ -136,10 +136,10 @@ switch p.trial.state
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
                 %shutter laser, trigger daq
-                if p.trial.triggerState ~= p.trial.daq.trigger.trialfinish
-                    p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialfinish);
+                if p.trial.triggerState ~= p.trial.trigger.states.LICKDELAY
+                    p = pds.daq_com.send_daq(p,0);
                     p = pds.sbserver.shutter2P(p,'0');
-                    p.trial.triggerState = p.trial.daq.trigger.trialfinish;
+                    p.trial.triggerState = p.trial.trigger.states.LICKDELAY;
                     p.trial.TriggerTrialFinish = p.trial.ttime;
                 end
                 

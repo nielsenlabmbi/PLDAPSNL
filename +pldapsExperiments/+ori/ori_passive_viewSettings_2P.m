@@ -38,15 +38,15 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
  s.datapixx.din.useFor.ports = 1;
  
  
-% %two-p room settings
-%  s.datapixx.adc.useForReward = 0;
-%  s.datapixx.dio.useForReward = 1;
-%  s. behavior.   reward. channel. START = 7; %dio channel for reward delivery
-%  s. behavior.   reward. channel. LEFT = 6;
-%  s. behavior.   reward. channel. RIGHT = 5;
-%  s.datapixx.adc.channels = [];
+%two-p room settings
+ s.datapixx.adc.useForReward = 0;
+ s.datapixx.dio.useForReward = 1;
+ s. behavior.   reward. channel. START = 7; %dio channel for reward delivery
+ s. behavior.   reward. channel. LEFT = 6;
+ s. behavior.   reward. channel. RIGHT = 5;
+ s.datapixx.adc.channels = [];
  
- %two-p use settings
+%%two-p use settings
 %  s.daq.use = 1;
 %  s.twoP.use = 1;
 %  % s. pldaps. nosave = 0;

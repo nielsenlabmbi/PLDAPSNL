@@ -2,7 +2,7 @@ function s = dots_passive_viewSettings_2P
 
 
 %set reward amounts
-s. behavior.   reward. amount = [0.02 0.08 0.06];
+s. behavior.   reward. amount = [0.05 0.15 0.15];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -12,7 +12,7 @@ s.behavior.reward.amountDelta = 0.01;
 s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 250;
 s.stimulus.fractionBlack = 0.5;
-s.stimulus.direction = {[0:22.5:360]};
+s.stimulus.direction = [0:22.5:360];
 s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
@@ -44,13 +44,14 @@ s.display.viewdist = 45;
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
-% 2P room settings
-%  s.datapixx.dio.useForReward = 1; 
-%  s.datapixx.adc.useForReward = 0;
-%  s. behavior.   reward. channel. START = 7; %dio channel for reward delivery
-%  s. behavior.   reward. channel. LEFT = 6;
-%  s. behavior.   reward. channel. RIGHT = 5;
- %two-p use settings
+%2P room settings
+s.datapixx.adc.channels = [];
+s.datapixx.dio.useForReward = 1;
+s.datapixx.adc.useForReward = 0;
+s. behavior.   reward. channel. START = 7; %dio channel for reward delivery
+s. behavior.   reward. channel. LEFT = 6;
+s. behavior.   reward. channel. RIGHT = 5;
+%%two-p use settings
 %  s.daq.use = 1;
 %  s.twoP.use = 1;
 %  % s. pldaps. nosave = 0;
