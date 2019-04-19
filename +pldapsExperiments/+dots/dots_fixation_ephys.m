@@ -1,4 +1,4 @@
-function ori_fixation_ephys(p,state)
+function dots_fixation_ephys(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -15,11 +15,12 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
+            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
+            %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
             %Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
         elseif p.trial.state==p.trial.stimulus.states.STIMON 
-            Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
-        elseif p.trial.state == p.trial.stimulus.states.WAIT || p.trial.state == p.trial.stimulus.states.BASELINE 
+           showStimulus(p)
+        elseif p.trial.state == p.trial.stimulus.states.WAIT
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
         
@@ -183,89 +184,156 @@ switch p.trial.state
         end
         
 end
-
-
 %------------------------------------------------------------------%
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
 
-%set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
 
 p.trial.stimulus.waitColor = 0.5;
 
-%set up stimulus
-p.trial.stimulus.refangle = p.conditions{p.trial.pldaps.iTrial}.angle;
-p.trial.stimulus.displacement=p.conditions{p.trial.pldaps.iTrial}.displacement;
-p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
-p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
-p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle + p.trial.stimulus.rotation*p.trial.stimulus.displacement;
-p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
-%p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase; % phase is pseudorandom
-p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
-p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
-%make grating
+%% set up stimulus
 
-    % GET GRATING SPECIFICATIONS
-    ApertureDeg = 2*p.trial.stimulus.radius;
+DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+PixPerDeg = 1/DegPerPix;
 
-    % CREATE A MESHGRID THE SIZE OF THE GRATING
-    x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);
-    y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
-    [x,y] = meshgrid(x,y);
+%dot size
+p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
+%dot coherence
+p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence;
+%dot speed
+p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
+%direction
+p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+%initialize frame
+p.trial.stimulus.frameI = 0;
+%lifetime
+p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
 
-%     x=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2-p.trial.stimulus.shift(p.trial.side);
-%     y=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
-%     [x,y] = meshgrid(x,y);
-    
-    % Transform to account for orientation
-    sdom=x*cos(p.trial.stimulus.angle*pi/180)-y*sin(p.trial.stimulus.angle*pi/180);
+%initialize dot positions - these need to be in pixels from center
+randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
+randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth;
+randpos(2,:)=(randpos(2,:)-0.5)*p.trial.display.pHeight;
 
-    % GRATING
-    sdom=sdom*p.trial.stimulus.sf*2*pi;
-    sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
 
-    if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
-        grating = sdom1;
-    else
-        % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
-        r = sqrt(x.^2 + y.^2);
-        sigmaDeg = ApertureDeg/16.5;
-        MaskLimit=.6*ApertureDeg/2;
-        maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
-        maskdom(r<MaskLimit) = 1;
-        grating = sdom1.*maskdom;
-    end
+%pick color for each dot
+p.trial.stimulus.dotcolor=ones(3,p.trial.stimulus.nrDots)*255;
+p.trial.stimulus.dotcolor(:,1:round(p.trial.stimulus.fractionBlack*p.trial.stimulus.nrDots))=0;
+p.trial.stimulus.dotcolor=p.trial.stimulus.dotcolor(:,randperm(p.trial.stimulus.nrDots));
 
-    % TRANSFER THE GRATING INTO AN IMAGE
-    grating = round(grating*p.trial.stimulus.range) + 127;
+%initialize noise vector
+nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
+noisevec=zeros(p.trial.stimulus.nrDots,1);
+noisevec(1:nrSignal)=1;
 
-    p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
-    p.trial.gratPos = [0 0 1920 1080];
+%initialize directions: correct displacement for signal, random for noise
+%side is either 1 or 2; 1 should equal ori=0, 2 ori=180
+randdir=zeros(p.trial.stimulus.nrDots,1);
+randdir(1:end)=p.trial.stimulus.direction;
+idx=find(noisevec==0);
+randdir(idx)=randi([0,359],length(idx),1);
 
+
+%initialize lifetime vector
+if p.trial.stimulus.dotLifetime>0
+    lifetime=randi(p.trial.stimulus.dotLifetime,p.trial.stimulus.nrDots,1);
+end
+
+%compute nr frames
+p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
+
+%compute speed
+deltaF=p.trial.stimulus.dotSpeed*PixPerDeg;
+
+
+%save misc variables
+p.trial.stimulus.randpos = randpos;
+p.trial.stimulus.randdir = randdir;
+p.trial.stimulus.deltaF = deltaF;
+p.trial.stimulus.lifetime = lifetime;
+%%
+%wake daq
+p = pds.daq_com.send_daq(p,0);
 %set state
 p.trial.state=p.trial.stimulus.states.BASELINE;
 
-%wake daq
-p = pds.daq_com.send_daq(p,0);
-
 %set ports correctly
 pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+
+function showStimulus(p)
+p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
+    f = p.trial.stimulus.frameI;
+    randpos = p.trial.stimulus.randpos;
+    randdir = p.trial.stimulus.randdir;
+    deltaF = p.trial.stimulus.deltaF;
+    lifetime = p.trial.stimulus.lifetime;
+    %compute vectors for necessary frames
+    %move all dots according to their direction
+    xproj=cos(randdir*pi/180);
+    yproj=-sin(randdir*pi/180);
+    
+    randpos(1,:)=randpos(1,:)+deltaF*xproj';
+    randpos(2,:)=randpos(2,:)+deltaF*yproj';
+    
+    %now deal with wrap around - we pick the axis on which to replot a dot
+    %based on the dots direction
+    idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
+    
+    rvec=rand(size(idx)); %btw 0 and 1
+    for i=1:length(idx)
+        if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
+            randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
+            randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
+        else
+            randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
+            randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
+        end
+    end
+    
+    
+    %if lifetime is expired, randomly assign new direction
+    if p.trial.stimulus.dotLifetime>0
+        idx=find(lifetime==0);
+        %directions are drawn based on coherence level
+        rvec=rand(size(idx));
+        for i=1:length(idx)
+            if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
+                randdir(idx(i))=p.trial.stimulus.direction;
+            else
+                randdir(idx(i))=randi([0,359],1,1);
+            end
+        end
+        
+        lifetime=lifetime-1;
+        lifetime(idx)=p.trial.stimulus.dotLifetime;
+    end
+    p.trial.stimulus.lifetime = lifetime;
+    p.trial.stimulus.dotpos{f}=randpos;
+    p.trial.stimulus.randpos = randpos;
+    p.trial.stimulus.randdir = randdir;
+    Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
+        p.trial.stimulus.dotSizePix, p.trial.stimulus.dotcolor, ...
+        [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+end
 
 
 
 %------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
+%display stats at end of trial
 tic
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
-disp(['Condition: ' num2str(p.trial.stimulus.displacement*p.trial.stimulus.rotation)])
+disp(['Condition: ' num2str(p.trial.stimulus.direction)])
+disp(['Coherence: ' num2str(p.trial.stimulus.dotCoherence)])
 %show reward amount
 if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S1';'S2'})
 end
+
 
 % disp(['C: ' num2str(p.trialMem.stats.val)])
 % disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
