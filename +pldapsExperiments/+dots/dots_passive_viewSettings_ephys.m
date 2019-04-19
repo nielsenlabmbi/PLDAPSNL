@@ -12,7 +12,7 @@ s.behavior.reward.amountDelta = 0.01;
 s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 250;
 s.stimulus.fractionBlack = 0.5;
-s.stimulus.direction = {[0:22.5:360]};
+s.stimulus.direction = [0:22.5:360];
 s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
@@ -44,7 +44,7 @@ s.display.viewdist = 45;
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
-%s.ephys.use = 1;
+s.ephys.use = 1;
 
 % %%% Debugging settings
 % 

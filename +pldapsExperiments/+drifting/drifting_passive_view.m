@@ -91,7 +91,7 @@ switch p.trial.state
                 p = pds.daq_com.send_daq(p,0);
                 p = pds.sbserver.shutter2P(p,'0');
                 p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,0); %for intan
-                p.trial.triggerState = p.trial.states.TRIALCOMPLETE;
+                p.trial.triggerState = p.trial.trigger.states.TRIALCOMPLETE;
                 p.trial.TriggerTrialFinish = p.trial.ttime;
             end
             p.trial.flagNextTrial = true;
