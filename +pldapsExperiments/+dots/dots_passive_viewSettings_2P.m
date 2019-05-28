@@ -9,10 +9,11 @@ s.behavior.reward.amountDelta = 0.01;
 
 
 %set orientation and offsets
-s.stimulus.dotSize = 1.5;
+s.stimulus.dotSize = 1;
+s.stimulus.dotDensity = 0.25;
 s.stimulus.nrDots = 250;
 s.stimulus.fractionBlack = 0.5;
-s.stimulus.direction = [0:22.5:360];
+s.stimulus.direction = [0:22.5:359];
 s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
@@ -22,7 +23,7 @@ s.stimulus.frameRate = 120;
 %set viewing parameters
 s.stimulus.baseline = 0.5;
 s.stimulus.reference_baseline = 0.5;
-s.stimulus.stimON = 1;
+s.stimulus.stimON = 2.5;
 s.stimulus.stimdur = 1;
 s.stimulus.waitTime = 1;
 s.stimulus.runtype = 'pseudo';
@@ -51,13 +52,13 @@ s.datapixx.adc.useForReward = 0;
 s. behavior.   reward. channel. START = 7; %dio channel for reward delivery
 s. behavior.   reward. channel. LEFT = 6;
 s. behavior.   reward. channel. RIGHT = 5;
-%%two-p use settings
-%  s.daq.use = 1;
-%  s.twoP.use = 1;
-%  % s. pldaps. nosave = 0;
+%two-p use settings
+ s.daq.use = 1;
+ s.twoP.use = 1;
+ s. pldaps. nosave = 0;
 
 % %%% Debugging settings
-% 
+
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
 % s.datapixx.adc.channels = [];
@@ -68,3 +69,7 @@ s. behavior.   reward. channel. RIGHT = 5;
 % 
 % % turn saving off
 % s.pldaps.nosave = 1;
+% 
+% % turn 2P off
+%  s.daq.use = 0;
+%  s.twoP.use = 0;

@@ -10,7 +10,7 @@ s.stimulus.direction = {[0:22.5:360]};
 s.stimulus.t_period = 20;
 s.stimulus.offsets = {[0:22.5:90]};
 s.stimulus.angle = 0;
-s.stimulus.sf = 0.08;
+s.stimulus.sf = 0.12;
 s.stimulus.range = 121;
 s.stimulus.baseline = 0.5;
 s.stimulus.reference_baseline = 0.5;
@@ -48,9 +48,9 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
  s.datapixx.adc.channels = [];
  
 %%two-p use settings
-%  s.daq.use = 1;
-%  s.twoP.use = 1;
-%  % s. pldaps. nosave = 0;
+ s.daq.use = 1;
+ s.twoP.use = 1;
+ s. pldaps. nosave = 0;
 
 
 %%% Debugging settings

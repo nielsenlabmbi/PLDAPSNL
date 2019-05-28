@@ -16,3 +16,6 @@ function p = updateSBname(p)
     pds.sbserver.send_sbserver(p,sprintf('A%s',p.defaultParameters.session.filename));
     pds.sbserver.send_sbserver(p,sprintf('U%s','000'));
     pds.sbserver.send_sbserver(p,sprintf('E%s','000'));
+    
+    % pause to allow response on sb machine
+    WaitSecs(5);

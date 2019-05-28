@@ -44,6 +44,8 @@ switch p.trial.state
             p = pds.sbserver.shutter2P(p,'1');
         % send trigger, note time
             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
+            % send a message about trial number
+            p = pds.sbserver.send_sbserver(p,sprintf('M%s',strcat('Trialno.',num2str(p.trial.pldaps.iTrial))));
             p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
             p.trial.TrialStartTrigger = p.trial.ttime;
             p.trial.triggerState = p.trial.trigger.states.TRIALSTART;
@@ -126,6 +128,8 @@ p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 p.trial.stimulus.frameI = 0;
 %lifetime
 p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
+% nr dots
+p.trial.stimulus.nrDots = round(p.trial.display.dWidth*p.trial.display.dHeight*p.trial.stimulus.dotDensity/p.trial.stimulus.dotSize);
 
 %initialize dot positions - these need to be in pixels from center
 randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1

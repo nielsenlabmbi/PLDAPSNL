@@ -1,4 +1,4 @@
-function dotstrial3(p,state)
+function dotstrial3_2P(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
