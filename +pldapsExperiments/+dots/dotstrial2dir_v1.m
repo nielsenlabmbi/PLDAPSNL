@@ -1,4 +1,4 @@
-function dotstrial_3ports_rotation(p,state)
+function dotstrial2dir_v1(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -38,14 +38,25 @@ activePort=find(p.trial.ports.status==1);
 
 
 switch p.trial.state
-    case p.trial.stimulus.states.START %trial start
+    case p.trial.stimulus.states.START %trial started
+        
+        if p.trial.led.state==0
+            %turn LED on
+            pds.LED.LEDOn(p);
+            p.trial.led.state=1;
+            %note timepoint
+            p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
+            p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+        end
         
         if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
             pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
-            
+            %deliver reward
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             %turn LED off
             if p.trial.led.state==1
                 pds.LED.LEDOff(p);
@@ -55,14 +66,15 @@ switch p.trial.state
             %note timepoint
             p.trial.stimulus.timeTrialStartResp = p.trial.ttime;
             p.trial.stimulus.frameTrialStartResp = p.trial.iFrame;
-            %deliver reward
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
-              
+            
             %advance state
             p.trial.state = p.trial.stimulus.states.LICKDELAY;
             p.trial.stimulus.switchVAR = 0;
-            
+%                     
+%                 pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+%                 pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+%                 pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
         end
         
     case p.trial.stimulus.states.LICKDELAY
@@ -86,20 +98,22 @@ switch p.trial.state
                 end
                 
             case 1
-            %give reward
-                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.RIGHT...
-                        & activePort == p.trial.side
+                  p.trial.pldaps.licks = [];
+                %give reward
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelayR & activePort==p.trial.stimulus.port.RIGHT & activePort == p.trial.side %active port is the correct port 
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-                    
+                    %note timepoint
+                    p.trial.pldaps.licks = [p.trial.pldaps.licks p.trial.ttime];
                 end
                 
-                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT...
-                        & activePort == p.trial.side
+                if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.lickdelayL & activePort==p.trial.stimulus.port.LEFT & activePort == p.trial.side %active port is the correct port
                     %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                   %note timepoint
+                    p.trial.pldaps.licks = [p.trial.pldaps.licks p.trial.ttime]; 
                     
                 end
                 
@@ -107,33 +121,38 @@ switch p.trial.state
                 if any(p.trial.ports.position)
                     pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
                 end
-                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                 p.trial.state=p.trial.stimulus.states.FINALRESP;
                 end
-            
+                
             case 2
-            
-            if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay;
-                if any(p.trial.ports.position)
-                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                
+                if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay;
+                    if any(p.trial.ports.position)
+                        pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                    end
+                    p.trial.state=p.trial.stimulus.states.FINALRESP;
                 end
-                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
-                p.trial.state=p.trial.stimulus.states.FINALRESP;
-            end
-            
+                
         end
         
     case p.trial.stimulus.states.WAIT
+%                 
+%                 pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+%                 pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+%                 pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
         if p.trial.ttime > p.trial.stimulus.timeTrialWait + p.trial.stimulus.waitTime;
-                p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
-                p.trial.state=p.trial.stimulus.states.STIMON;
+            p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
+            p.trial.state=p.trial.stimulus.states.STIMON;
         end
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
-        
-         %wait to make ports available
+%                 
+%                 pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+%                 pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+%                 pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
+        %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
             if p.trial.stimulus.dotCoherence == 1;
@@ -144,21 +163,40 @@ switch p.trial.state
             %             pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
         end
         
-        
         %check whether any port chosen
-        if activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT
+         if length(activePort) > 1 %if more than one port is activated
+            
+            %retract spouts
+            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+            %wait
+            WaitSecs(2);
+            %present spouts again
+            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
+            
+        elseif length(activePort) == 1 & activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT & p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
             p.trial.stimulus.frameTrialFirstResp = p.trial.iFrame;
-        
+            
             %note response
+            %p.trial.stimulus.respTrial=activePort;
             p.trial.stimulus.respTrial=p.trial.ports.status;
             
             %check whether correct port chosen
             correct=checkPortChoice(activePort,p);
             if correct==1
-                p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-                p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                    p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                    p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                    if  activePort==p.trial.stimulus.port.RIGHT & activePort == p.trial.side %active port is the correct port
+                        %deliver reward
+                        amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                    end
+                    if  activePort==p.trial.stimulus.port.LEFT & activePort == p.trial.side %active port is the correct port
+                        %deliver reward
+                        amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
+                    end
                 %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
                 
@@ -174,17 +212,6 @@ switch p.trial.state
                     end
                 end
                 
-                %deliver reward
-                if p.trial.side==p.trial.stimulus.side.LEFT
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-                end
-                if p.trial.side==p.trial.stimulus.side.RIGHT
-                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
-                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-                end
-                    
-                
                 %advance state
                 p.trial.stimulus.switchVAR = 1;
                 p.trial.state=p.trial.stimulus.states.LICKDELAY;
@@ -195,19 +222,12 @@ switch p.trial.state
             else
                 %play tone
                 pds.audio.playDatapixxAudio(p,'breakfix');
-                
+                p.trial.pldaps.goodtrial = 0;
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
-            
         end
-        %if ferret does not make a choice after trial duration, advance
-        %state
-        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.trialdur;
-             p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
-             p.trial.stimulus.timeoutFlag = 1;
-             p.trial.state = p.trial.stimulus.states.FINALRESP;
-        end
+        
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial
@@ -227,21 +247,22 @@ switch p.trial.state
             %check whether any port chosen
             if activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT
                 %check whether correct port chosen
-                correct=checkPortChoice(activePort,p);                
+                correct=checkPortChoice(activePort,p);
                 if correct==1 %now has chosen correct port
-                    
                     p.trial.stimulus.timeResp = p.trial.ttime;
-                    %give (small) reward                
+                    p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+                    p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                    
                     if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay & activePort==p.trial.stimulus.port.RIGHT 
                         %deliver reward
-                        amount=2*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
+                        amount=0.05; %p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                         
                     end
                     
                     if p.trial.ttime < p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay & activePort==p.trial.stimulus.port.LEFT 
                         %deliver reward
-                        amount=2*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
+                        amount= 0.05;%p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                         
                     end
@@ -249,10 +270,10 @@ switch p.trial.state
                     %advance state
                     p.trial.stimulus.switchVAR = 2;
                     p.trial.state=p.trial.stimulus.states.LICKDELAY;
-                
+                    
                 end
             end
-                
+            
         else %incorrect responses end trial immediately
             %retract spouts
             if any(p.trial.ports.position)
@@ -268,8 +289,13 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.FINALRESP
+%                 
+%                 pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
+%                 pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
+%                 pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
         %wait for ITI
-        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI
+        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI + p.trial.stimulus.timeout*(~p.trial.pldaps.goodtrial)
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
@@ -290,18 +316,34 @@ if p.conditions{p.trial.pldaps.iTrial}.side==2
 else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
+if isfield(p.trialMem,'fracInstruct');
+    p.trial.stimulus.fracInstruct = p.trialMem.fracInstruct;
+end
+% %determine which spouts are presented when stimulus is presented
+% p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
 
-if p.trial.side == p.trial.stimulus.rotationSide 
-    if isfield(p.trialMem,'direction');
-        p.trial.stimulus.direction = mod(p.trialMem.direction,360);
-    else
-        p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
-        p.trialMem.direction = p.trial.stimulus.direction;
-    end
+if isfield(p.trialMem,'fracInstruct');
+    p.trial.stimulus.fracInstruct = p.trialMem.fracInstruct;
 end
 
-p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
-    
+if ~isfield(p.trialMem,'count') || p.trialMem.count == 0;
+    p.trialMem.count = 1;
+    p.trialMem.moveBool = zeros(1,10);
+    p.trialMem.moveBool(1:round((1 - p.trial.stimulus.fracInstruct)*10)) = 1;
+    p.trialMem.moveBool = p.trialMem.moveBool(randperm(10));
+end
+
+p.trial.ports.moveBool = p.trialMem.moveBool(p.trialMem.count);
+p.trialMem.count = mod(p.trialMem.count+1,11);
+
+if length(p.trial.stimulus.lickdelay) > 1
+    p.trial.stimulus.lickdelayL = p.trial.stimulus.lickdelay(1);
+    p.trial.stimulus.lickdelayR = p.trial.stimulus.lickdelay(2);
+else
+    p.trial.stimulus.lickdelayL = p.trial.stimulus.lickdelay;
+    p.trial.stimulus.lickdelayR = p.trial.stimulus.lickdelay;
+end
+
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
@@ -319,7 +361,7 @@ p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence
 %dot speed
 p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
 %direction
-%p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 %initialize frame
 p.trial.stimulus.frameI = 0;
 %lifetime
@@ -327,7 +369,7 @@ p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
 
 %initialize dot positions - these need to be in pixels from center
 randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
-randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth; 
+randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth;
 randpos(2,:)=(randpos(2,:)-0.5)*p.trial.display.pHeight;
 
 
@@ -341,12 +383,14 @@ nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
 noisevec=zeros(p.trial.stimulus.nrDots,1);
 noisevec(1:nrSignal)=1;
 
-%initialize directions: correct displacement for signal, random for noise
+%initialize directions: correct displacement for signal, opponent for
+%"noise"
 %side is either 1 or 2; 1 should equal ori=0, 2 ori=180
 randdir=zeros(p.trial.stimulus.nrDots,1);
 randdir(1:end)=p.trial.stimulus.direction;
 idx=find(noisevec==0);
-randdir(idx)=randi([0,359],length(idx),1);
+%randdir(idx)=randi([0,359],length(idx),1);
+randdir(idx) = p.trial.stimulus.direction + 180;
 
 
 %initialize lifetime vector
@@ -367,6 +411,11 @@ p.trial.stimulus.randdir = randdir;
 p.trial.stimulus.deltaF = deltaF;
 p.trial.stimulus.lifetime = lifetime;
 
+% deal with legacy
+if ~isfield(p.trial.stimulus,'nStaticFrames');
+    p.trial.stimulus.nStaticFrames = 0;
+end
+
 %%
 
 %set state
@@ -378,61 +427,64 @@ pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIG
 
 %show stimulus - handles rotation and movement of grating
 function showStimulus(p)
-        p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
-        if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
-            f = p.trial.stimulus.frameI;
-            randpos = p.trial.stimulus.randpos;
-            randdir = p.trial.stimulus.randdir;
-            deltaF = p.trial.stimulus.deltaF;
-            lifetime = p.trial.stimulus.lifetime;
-            %compute vectors for necessary frames
-            %move all dots according to their direction
-            xproj=cos(randdir*pi/180);
-            yproj=-sin(randdir*pi/180);
-            
-            randpos(1,:)=randpos(1,:)+deltaF*xproj';
-            randpos(2,:)=randpos(2,:)+deltaF*yproj';
-            
-            %now deal with wrap around - we pick the axis on which to replot a dot
-            %based on the dots direction
-            idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
-            
-            rvec=rand(size(idx)); %btw 0 and 1
-            for i=1:length(idx)
-                if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
-                    randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
-                    randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
-                else
-                    randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
-                    randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
-                end
-            end
-            
-            
-            %if lifetime is expired, randomly assign new direction
-            if p.trial.stimulus.dotLifetime>0
-                idx=find(lifetime==0);
-                %directions are drawn based on coherence level
-                rvec=rand(size(idx));
-                for i=1:length(idx)
-                    if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
-                        randdir(idx(i))=p.trial.stimulus.direction;
-                    else
-                        randdir(idx(i))=randi([0,359],1,1);
-                    end
-                end
-                
-                lifetime=lifetime-1;
-                lifetime(idx)=p.trial.stimulus.dotLifetime;
-            end
-            p.trial.stimulus.lifetime = lifetime;
-            p.trial.stimulus.dotpos{f}=randpos;
-            p.trial.stimulus.randpos = randpos;
-            p.trial.stimulus.randdir = randdir;
-            Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
-                p.trial.stimulus.dotSizePix, p.trial.stimulus.dotcolor, ...
-                [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
+    f = p.trial.stimulus.frameI;
+    randpos = p.trial.stimulus.randpos;
+    randdir = p.trial.stimulus.randdir;
+    deltaF = p.trial.stimulus.deltaF;
+    lifetime = p.trial.stimulus.lifetime;
+    
+    if f > p.trial.stimulus.nStaticFrames;
+    %compute vectors for necessary frames
+    %move all dots according to their direction
+    xproj=cos(randdir*pi/180);
+    yproj=-sin(randdir*pi/180);
+    
+    randpos(1,:)=randpos(1,:)+deltaF*xproj';
+    randpos(2,:)=randpos(2,:)+deltaF*yproj';
+    
+    %now deal with wrap around - we pick the axis on which to replot a dot
+    %based on the dots direction
+    idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
+    
+    rvec=rand(size(idx)); %btw 0 and 1
+    for i=1:length(idx)
+        if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
+            randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
+            randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
+        else
+            randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
+            randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
         end
+    end
+    
+    
+    %if lifetime is expired, randomly assign new direction
+    if p.trial.stimulus.dotLifetime>0
+        idx=find(lifetime==0);
+        %directions are drawn based on coherence level
+        rvec=rand(size(idx));
+        for i=1:length(idx)
+            if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
+                randdir(idx(i))=p.trial.stimulus.direction;
+            else
+                randdir(idx(i))= p.trial.stimulus.direction + 180;%randi([0,359],1,1);
+            end
+        end
+        
+        lifetime=lifetime-1;
+        lifetime(idx)=p.trial.stimulus.dotLifetime;
+    end
+    end
+    p.trial.stimulus.lifetime = lifetime;
+    p.trial.stimulus.dotpos{f}=randpos;
+    p.trial.stimulus.randpos = randpos;
+    p.trial.stimulus.randdir = randdir;
+    Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
+        p.trial.stimulus.dotSizePix, p.trial.stimulus.dotcolor, ...
+        [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+end
 
 
 %------------------------------------------------------------------%
@@ -451,22 +503,25 @@ end
 disp(p.trial.stimulus.fracInstruct);
 
 
+%+/- frac instruct
+if p.trial.userInput==1
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct - 0.1;
+    disp('decreased fracInstruct')
+end
+if p.trial.userInput==2
+    p.trialMem.fracInstruct = p.trial.stimulus.fracInstruct + 0.1;
+    disp('increased fracInstruct')
+end
+if p.trial.userInput==3
+    p.trialMem.fracInstruct = 1;
+    p.trialMem.count = 0;
+    disp('increased fracInstruct to 1, effective immediately')
+end
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
-num2str(vertcat([0 p.trialMem.direction],p.trialMem.stats.count.Ntrial,...
+num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
-
-%+/- direction
-if p.trial.userInput==1
-    p.trialMem.direction = p.trialMem.direction - 15;
-    disp(['direction changed to ' num2str(p.trialMem.direction)])
-end
-if p.trial.userInput==2
-    p.trialMem.direction = p.trialMem.direction + 15;
-    disp(['direction changed to ' num2str(p.trialMem.direction)])
-end
-
 
 
 % disp(['C: ' num2str(p.trialMem.stats.val)])
@@ -489,9 +544,9 @@ switch p.trial.side
             p.trial.stimulus.switchVAR = 1;
         end
     case p.trial.stimulus.side.RIGHT
-        if activePort==p.trial.stimulus.port.RIGHT
+        if activePort==p.trial.stimulus.side.RIGHT
             correct=1;
-            p.trial.stimulus.switchVAR = 2; 
+            p.trial.stimulus.switchVAR = 2;
         end
 end
 

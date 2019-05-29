@@ -409,6 +409,11 @@ p.trial.stimulus.randdir = randdir;
 p.trial.stimulus.deltaF = deltaF;
 p.trial.stimulus.lifetime = lifetime;
 
+% deal with legacy
+if ~isfield(p.trial.stimulus,'nStaticFrames');
+    p.trial.stimulus.nStaticFrames = 0;
+end
+
 %%
 
 %set state
@@ -427,6 +432,8 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     randdir = p.trial.stimulus.randdir;
     deltaF = p.trial.stimulus.deltaF;
     lifetime = p.trial.stimulus.lifetime;
+    
+    if f > p.trial.stimulus.nStaticFrames;
     %compute vectors for necessary frames
     %move all dots according to their direction
     xproj=cos(randdir*pi/180);
@@ -466,6 +473,7 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
         
         lifetime=lifetime-1;
         lifetime(idx)=p.trial.stimulus.dotLifetime;
+    end
     end
     p.trial.stimulus.lifetime = lifetime;
     p.trial.stimulus.dotpos{f}=randpos;

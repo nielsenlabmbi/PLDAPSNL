@@ -1,11 +1,11 @@
-function p = dots_setup_3ports_rotation(p)
+function p = dots_setup2dir(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial_3ports_rotation';
+p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial2dir';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
@@ -15,29 +15,21 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 
 
 %% conditions:
-% cond.dotCoherence = 1;
-% cond.dotSpeed = p.defaultParameters.stimulus.dotSpeed;
-% cond.direction = [0 180];
-
 cond.dotCoherence = p.defaultParameters.stimulus.dotCoherence;
 cond.dotSpeed = p.defaultParameters.stimulus.dotSpeed;
-cond.direction = [0 180];
+cond.direction = p.defaultParameters.stimulus.direction;%[0 180];
 cond.dotLifetime = p.defaultParameters.stimulus.dotLifetime;
-cond.rotationSide = p.defaultParameters.stimulus.rotationSide;
-
 side.par = 'direction';
-side.match=[0 180];
-
-c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
-%c1=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
-
-%p.trial.allconditions = c1;%{c,c1};
-%p.trialMem.whichConditions = 0;
-
-p.conditions = c;%p.trial.allconditions{p.trialMem.whichConditions + 1};
+side.match=p.defaultParameters.stimulus.direction;
+if length(cond.dotCoherence) > 2
+   c=generateCondList_sides(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+else
+   c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+end
+ 
+p.conditions=c;
 
 p.trial.pldaps.finish = length(p.conditions);
-
 
 %% display stats
 p.trialMem.stats.cond={'direction', 'dotCoherence'}; %conditions to display

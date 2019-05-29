@@ -1,4 +1,4 @@
-function s = dots_FBAB0Settings
+function s = dots_2dirSettings
 
 
 %set reward amounts
@@ -16,24 +16,23 @@ s.stimulus.direction = [0 90];
 s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
-s.stimulus.durStim = 480;
+s.stimulus.durStim = 45;
 s.stimulus.frameRate = 120;
-s.stimulus.nStaticFrames = 180;
 
 %set viewing parameters
 
 %set viewing parameterses
 s.stimulus.baseline = 0.1;
-s.stimulus.lickdelay = 1.7;
+s.stimulus.lickdelay = 1.5;
 s.stimulus.forceCorrect_delay = 0.75;
 s.stimulus.duration.ITI = 2;
-s.stimulus.stimON = 1.5;
+s.stimulus.stimON = 0.5;
 s.stimulus.waitTime = 0.5;
 s.stimulus.trialdur = 300;
-s.stimulus.timeout = 2; 
+s.stimulus.timeout = 1.5;
 
 %set instructive trials
-s.stimulus.fracInstruct =1;
+s.stimulus.fracInstruct = 1.0;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
