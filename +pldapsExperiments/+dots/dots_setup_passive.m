@@ -26,7 +26,7 @@ side.match=p.defaultParameters.stimulus.direction;
 if length(cond.dotCoherence) > 2
    c=generateCondList_sides(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
 else
-   c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+   c=generateCondList(cond,side,'pseudo',2);
 end
  
 p.conditions=c;

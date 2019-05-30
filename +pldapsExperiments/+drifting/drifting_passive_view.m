@@ -18,9 +18,9 @@ switch state
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
             %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
             %Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
-        elseif p.trial.state==p.trial.stimulus.states.STIMON 
-           showStimulus(p)
-        elseif p.trial.state == p.trial.stimulus.states.WAIT
+        elseif p.trial.state==p.trial.stimulus.states.STIMON & p.trial.ori >=0
+            showStimulus(p)
+        elseif p.trial.state == p.trial.stimulus.states.WAIT | p.trial.state==p.trial.stimulus.states.STIMON & p.trial.ori< 0;
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
         
@@ -44,6 +44,8 @@ switch p.trial.state
             p = pds.sbserver.shutter2P(p,'1');
         % send trigger, note time
             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
+            p = pds.sbserver.send_sbserver(p,sprintf('M%s',strcat('Trialno.',num2str(p.trial.pldaps.iTrial))));
+
             p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
             p.trial.TrialStartTrigger = p.trial.ttime;
             p.trial.triggerState = p.trial.trigger.states.TRIALSTART;

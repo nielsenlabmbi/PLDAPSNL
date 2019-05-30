@@ -18,9 +18,9 @@ switch state
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
             %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
             %Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
-        elseif p.trial.state==p.trial.stimulus.states.STIMON 
+        elseif p.trial.state==p.trial.stimulus.states.STIMON & p.trial.stimulus.direction >=0
            showStimulus(p)
-        elseif p.trial.state == p.trial.stimulus.states.WAIT
+        elseif p.trial.state == p.trial.stimulus.states.WAIT | p.trial.state==p.trial.stimulus.states.STIMON & p.trial.stimulus.direction < 0;
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
         
@@ -190,6 +190,7 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     deltaF = p.trial.stimulus.deltaF;
     lifetime = p.trial.stimulus.lifetime;
     %compute vectors for necessary frames
+    if f > p.trial.stimulus.nStaticFrames;
     %move all dots according to their direction
     xproj=cos(randdir*pi/180);
     yproj=-sin(randdir*pi/180);
@@ -228,6 +229,7 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
         
         lifetime=lifetime-1;
         lifetime(idx)=p.trial.stimulus.dotLifetime;
+    end
     end
     p.trial.stimulus.lifetime = lifetime;
     p.trial.stimulus.dotpos{f}=randpos;
