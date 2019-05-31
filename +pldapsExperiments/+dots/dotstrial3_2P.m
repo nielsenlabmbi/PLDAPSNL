@@ -136,36 +136,35 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.WAIT
-        if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.WAIT;
-        % open laser shutter
-            p = pds.sbserver.shutter2P(p,'1');
-        % send trigger, note time
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
-            p.trial.triggerState = p.trial.trigger.states.WAIT;
-            p.trial.WaitTrigger = p.trial.ttime;
-        end
+%         if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.WAIT;
+%         % open laser shutter
+%             p = pds.sbserver.shutter2P(p,'1');
+%         % send trigger, note time
+%             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
+%             p.trial.triggerState = p.trial.trigger.states.WAIT;
+%             p.trial.WaitTrigger = p.trial.ttime;
+%         end
 %                 
-%                 pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
-%                 pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
-%                 pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
-
         if p.trial.ttime > p.trial.stimulus.timeTrialWait + p.trial.stimulus.waitTime;
+            if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.WAIT;
+                % open laser shutter
+                p = pds.sbserver.shutter2P(p,'1');
+                % send trigger, note time
+                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
+                p.trial.triggerState = p.trial.trigger.states.WAIT;
+                p.trial.WaitTrigger = p.trial.ttime;
+            end
             p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
             p.trial.state=p.trial.stimulus.states.STIMON;
         end
         
-    case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
-        %
-        %                 pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);
-        %                 pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);
-        %                 pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);
-        
-        %trigger
-        if p.trial.triggerState ~= p.trial.trigger.states.STIMON
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
-            p.trial.StimOnTrigger = p.trial.ttime;
-            p.trial.triggerState = p.trial.trigger.states.STIMON;
-        end
+    case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response        
+%         %trigger
+%         if p.trial.triggerState ~= p.trial.trigger.states.STIMON
+%             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
+%             p.trial.StimOnTrigger = p.trial.ttime;
+%             p.trial.triggerState = p.trial.trigger.states.STIMON;
+%         end
         %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
             
@@ -187,7 +186,15 @@ switch p.trial.state
         
         %check whether any port chosen
          if length(activePort) > 1 %if more than one port is activated
-            
+                        
+            %shutter the laser, trigger the daq - this counts as a choice
+                if p.trial.triggerState ~= p.trial.trigger.states.LICKDELAY
+                    p = pds.daq_com.send_daq(p,0);
+                    p = pds.sbserver.shutter2P(p,'0');
+                    p.trial.triggerState = p.trial.trigger.states.LICKDELAY;
+                    p.trial.TriggerTrialFinish = p.trial.ttime;
+                end
+                
             %retract spouts
             pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
             %wait
@@ -204,6 +211,14 @@ switch p.trial.state
             %p.trial.stimulus.respTrial=activePort;
             p.trial.stimulus.respTrial=p.trial.ports.status;
             
+            %shutter the laser, trigger the daq
+                if p.trial.triggerState ~= p.trial.trigger.states.LICKDELAY
+                    p = pds.daq_com.send_daq(p,0);
+                    p = pds.sbserver.shutter2P(p,'0');
+                    p.trial.triggerState = p.trial.trigger.states.LICKDELAY;
+                    p.trial.TriggerTrialFinish = p.trial.ttime;
+                end
+                
             %check whether correct port chosen
             correct=checkPortChoice(activePort,p);
             if correct==1
@@ -238,13 +253,6 @@ switch p.trial.state
                 p.trial.stimulus.switchVAR = 1;
                 p.trial.state=p.trial.stimulus.states.LICKDELAY;
                 p.trial.stimulus.timeResp = p.trial.ttime;
-                %shutter the laser, trigger the daq
-                if p.trial.triggerState ~= p.trial.trigger.states.LICKDELAY
-                    p = pds.daq_com.send_daq(p,0);
-                    p = pds.sbserver.shutter2P(p,'0');
-                    p.trial.triggerState = p.trial.trigger.states.LICKDELAY;
-                    p.trial.TriggerTrialFinish = p.trial.ttime;
-                end
                 %note good trial
                 p.trial.pldaps.goodtrial = 1;
                 
@@ -369,6 +377,9 @@ if ~isfield(p.trialMem,'count') || p.trialMem.count == 0;
 end
 
 p.trial.ports.moveBool = p.trialMem.moveBool(p.trialMem.count);
+if p.trial.stimulus.direction < 0 %always present both spouts on catch trials
+    p.trial.ports.moveBool = 1;
+end
 p.trialMem.count = mod(p.trialMem.count+1,11);
 
 if length(p.trial.stimulus.lickdelay) > 1
@@ -382,7 +393,9 @@ end
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
+if ~isfield(p.trial.stimulus,'waitColor')
 p.trial.stimulus.waitColor = 0.5;
+end
 
 %% set up stimulus
 
@@ -401,6 +414,10 @@ p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 p.trial.stimulus.frameI = 0;
 %lifetime
 p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
+% nr dots
+if isfield(p.trial.stimulus,'dotDensity')
+p.trial.stimulus.nrDots = round(p.trial.display.dWidth*p.trial.display.dHeight*p.trial.stimulus.dotDensity/p.trial.stimulus.dotSize);
+end
 
 %initialize dot positions - these need to be in pixels from center
 randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
@@ -464,6 +481,15 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     deltaF = p.trial.stimulus.deltaF;
     lifetime = p.trial.stimulus.lifetime;
     %compute vectors for necessary frames
+    
+    if f > p.trial.stimulus.nStaticFrames;
+        %trigger
+        if p.trial.triggerState ~= p.trial.trigger.states.STIMON
+            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
+            p.trial.StimOnTrigger = p.trial.ttime;
+            p.trial.triggerState = p.trial.trigger.states.STIMON;
+        end
+    if p.trial.stimulus.direction > 0
     %move all dots according to their direction
     xproj=cos(randdir*pi/180);
     yproj=-sin(randdir*pi/180);
@@ -502,6 +528,8 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
         
         lifetime=lifetime-1;
         lifetime(idx)=p.trial.stimulus.dotLifetime;
+    end
+    end
     end
     p.trial.stimulus.lifetime = lifetime;
     p.trial.stimulus.dotpos{f}=randpos;
@@ -562,7 +590,10 @@ num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
 function correct=checkPortChoice(activePort,p)
 
 correct=0;
-
+if p.trial.stimulus.direction < 0
+    correct = 1; %reward either choice 
+    p.trial.stimulus.lickdelay = 0.3; 
+else
 switch p.trial.side
     case p.trial.stimulus.side.LEFT
         if activePort==p.trial.stimulus.side.LEFT
@@ -574,5 +605,6 @@ switch p.trial.side
             correct=1;
             p.trial.stimulus.switchVAR = 2;
         end
+end
 end
 

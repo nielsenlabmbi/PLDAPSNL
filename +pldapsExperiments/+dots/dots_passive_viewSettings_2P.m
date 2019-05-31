@@ -7,12 +7,16 @@ s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
 
+%set background color, wait color, and dot color
+s.display.bgColor = [0 0 0];
+s.stimulus.waitColor = [0 0 0];
+s.stimulus.fractionBlack = 0;
+
 
 %set orientation and offsets
 s.stimulus.dotSize = 1;
-s.stimulus.dotDensity = 0.25;
+s.stimulus.dotDensity = 0.15;
 s.stimulus.nrDots = 250;
-s.stimulus.fractionBlack = 0.5;
 s.stimulus.direction = [0:22.5:359];
 s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
 s.stimulus.dotSpeed = 0.6;
@@ -22,9 +26,9 @@ s.stimulus.frameRate = 120;
 
 %set viewing parameters
 s.stimulus.baseline = 0.5;
-s.stimulus.reference_baseline = 0.5;
+s.stimulus.reference_baseline = 1;
 s.stimulus.stimON = 2.5;
-s.stimulus.stimdur = 1;
+s.stimulus.stimdur = 2.5;
 s.stimulus.waitTime = 1;
 s.stimulus.runtype = 'pseudo';
 s.stimulus.lickdelay = 1.5;

@@ -39,24 +39,37 @@ function p=checkState(p)
 
 switch p.trial.state
     case p.trial.stimulus.states.BASELINE
-        if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.TRIALSTART;
-        % open laser shutter
-            p = pds.sbserver.shutter2P(p,'1');
-        % send trigger, note time
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
-            p = pds.sbserver.send_sbserver(p,sprintf('M%s',strcat('Trialno.',num2str(p.trial.pldaps.iTrial))));
-
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
-            p.trial.TrialStartTrigger = p.trial.ttime;
-            p.trial.triggerState = p.trial.trigger.states.TRIALSTART;
-        end
-        
+%         if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.TRIALSTART;
+%         % open laser shutter
+%             p = pds.sbserver.shutter2P(p,'1');
+%         % send trigger, note time
+%             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
+%             p = pds.sbserver.send_sbserver(p,sprintf('M%s',strcat('Trialno.',num2str(p.trial.pldaps.iTrial))));
+% 
+%             p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
+%             p.trial.TrialStartTrigger = p.trial.ttime;
+%             p.trial.triggerState = p.trial.trigger.states.TRIALSTART;
+%         end
+%         
         if p.trial.ttime > p.trial.stimulus.baseline
             p.trial.state = p.trial.stimulus.states.START;
+            p.trial.startTime = p.trial.ttime;
+            if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.TRIALSTART;
+                % open laser shutter
+                p = pds.sbserver.shutter2P(p,'1');
+                % send trigger, note time
+                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
+                p = pds.sbserver.send_sbserver(p,sprintf('M%s',strcat('Trialno.',num2str(p.trial.pldaps.iTrial))));
+                
+                p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
+                p.trial.TrialStartTrigger = p.trial.ttime;
+                p.trial.triggerState = p.trial.trigger.states.TRIALSTART;
+            end
+            
         end
     case p.trial.stimulus.states.START 
 
-        if p.trial.ttime > p.trial.stimulus.reference_baseline
+        if p.trial.ttime > p.trial.startTime + p.trial.stimulus.reference_baseline
             %note timepoint
             p.trial.stimulus.timeTrialStimOn = p.trial.ttime;
             p.trial.stimulus.frameTrialStimOn = p.trial.iFrame;

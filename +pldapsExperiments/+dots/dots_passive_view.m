@@ -18,9 +18,9 @@ switch state
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
             %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
             %Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
-        elseif p.trial.state==p.trial.stimulus.states.STIMON & p.trial.stimulus.direction >=0
+        elseif p.trial.state==p.trial.stimulus.states.STIMON %& p.trial.stimulus.direction >=0
            showStimulus(p)
-        elseif p.trial.state == p.trial.stimulus.states.WAIT | p.trial.state==p.trial.stimulus.states.STIMON & p.trial.stimulus.direction < 0;
+        elseif p.trial.state == p.trial.stimulus.states.WAIT %| p.trial.state==p.trial.stimulus.states.STIMON & p.trial.stimulus.direction < 0;
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
         
@@ -38,22 +38,22 @@ end
 function p=checkState(p)
 
 switch p.trial.state
-    case p.trial.stimulus.states.BASELINE
-        if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.TRIALSTART;
-        % open laser shutter
-            p = pds.sbserver.shutter2P(p,'1');
-        % send trigger, note time
-            p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
-            % send a message about trial number
-            p = pds.sbserver.send_sbserver(p,sprintf('M%s',strcat('Trialno.',num2str(p.trial.pldaps.iTrial))));
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
-            p.trial.TrialStartTrigger = p.trial.ttime;
-            p.trial.triggerState = p.trial.trigger.states.TRIALSTART;
-        end
-        
-        if p.trial.ttime > p.trial.stimulus.baseline
-            p.trial.state = p.trial.stimulus.states.START;
-        end
+%     case p.trial.stimulus.states.BASELINE
+% %         if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.TRIALSTART;
+% %         % open laser shutter
+% %             p = pds.sbserver.shutter2P(p,'1');
+% %         % send trigger, note time
+% %             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
+% %             % send a message about trial number
+% %             p = pds.sbserver.send_sbserver(p,sprintf('M%s',strcat('Trialno.',num2str(p.trial.pldaps.iTrial))));
+% %             p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
+% %             p.trial.TrialStartTrigger = p.trial.ttime;
+% %             p.trial.triggerState = p.trial.trigger.states.TRIALSTART;
+% %         end
+%         
+%         if p.trial.ttime > p.trial.stimulus.baseline
+%             p.trial.state = p.trial.stimulus.states.START;
+%         end
     case p.trial.stimulus.states.START 
 
         if p.trial.ttime > p.trial.stimulus.reference_baseline
@@ -63,10 +63,21 @@ switch p.trial.state
             
             %advance state
             if p.trial.triggerState ~= p.trial.trigger.states.STIMON
-                p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
-                p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1); %for intan
-                p.trial.StimOnTrigger = p.trial.ttime;
-                p.trial.triggerState = p.trial.trigger.states.STIMON;
+                if ~isfield(p.trial,'triggerState') | p.trial.triggerState ~= p.trial.trigger.states.TRIALSTART;
+                    % open laser shutter
+                    p = pds.sbserver.shutter2P(p,'1');
+                    % send trigger, note time
+                    p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialstart); %for 2P
+                    % send a message about trial number
+                    p = pds.sbserver.send_sbserver(p,sprintf('M%s',strcat('Trialno.',num2str(p.trial.pldaps.iTrial))));
+                    p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
+                    p.trial.TrialStartTrigger = p.trial.ttime;
+                    p.trial.triggerState = p.trial.trigger.states.TRIALSTART;
+                end
+%                 p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
+%                 p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1); %for intan
+%                 p.trial.StimOnTrigger = p.trial.ttime;
+%                 p.trial.triggerState = p.trial.trigger.states.STIMON;
             end
             p.trial.state = p.trial.stimulus.states.STIMON;
             p.trial.iFrame0 = p.trial.iFrame;
@@ -80,6 +91,7 @@ switch p.trial.state
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimdur
             p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0); %for intan
             p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialfinish); %for 2P
+            
             p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
             p.trial.state = p.trial.stimulus.states.FINALRESP;
         end
@@ -109,7 +121,9 @@ function p=trialSetup(p)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
 
+if ~isfield(p.trial.stimulus,'waitColor')
 p.trial.stimulus.waitColor = 0.5;
+end
 
 %% set up stimulus
 
@@ -129,8 +143,9 @@ p.trial.stimulus.frameI = 0;
 %lifetime
 p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
 % nr dots
-p.trial.stimulus.nrDots = round(p.trial.display.dWidth*p.trial.display.dHeight*p.trial.stimulus.dotDensity/p.trial.stimulus.dotSize);
-
+if isfield(p.trial.stimulus,'dotDensity')
+p.trial.stimulus.nrDots = round(p.trial.display.dWidth*p.trial.display.dHeight*p.trial.stimulus.dotDensity/((p.trial.stimulus.dotSize/2)^2*pi));
+end
 %initialize dot positions - these need to be in pixels from center
 randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
 randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth;
@@ -166,7 +181,6 @@ p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
 %compute speed
 deltaF=p.trial.stimulus.dotSpeed*PixPerDeg;
 
-
 %save misc variables
 p.trial.stimulus.randpos = randpos;
 p.trial.stimulus.randdir = randdir;
@@ -176,7 +190,7 @@ p.trial.stimulus.lifetime = lifetime;
 %wake daq
 p = pds.daq_com.send_daq(p,0);
 %set state
-p.trial.state=p.trial.stimulus.states.BASELINE;
+p.trial.state=p.trial.stimulus.states.START;
 
 %set ports correctly
 pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
@@ -191,6 +205,13 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     lifetime = p.trial.stimulus.lifetime;
     %compute vectors for necessary frames
     if f > p.trial.stimulus.nStaticFrames;
+        if p.trial.triggerState ~= p.trial.trigger.states.STIMON
+        p = pds.daq_com.send_daq(p,p.trial.daq.trigger.stimon); %for 2P
+        p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1); %for intan
+        p.trial.StimOnTrigger = p.trial.ttime;
+        p.trial.triggerState = p.trial.trigger.states.STIMON;
+        end
+    if p.trial.stimulus.direction > 0 % -1 are blank trials (static dots)
     %move all dots according to their direction
     xproj=cos(randdir*pi/180);
     yproj=-sin(randdir*pi/180);
@@ -229,6 +250,7 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
         
         lifetime=lifetime-1;
         lifetime(idx)=p.trial.stimulus.dotLifetime;
+    end
     end
     end
     p.trial.stimulus.lifetime = lifetime;
