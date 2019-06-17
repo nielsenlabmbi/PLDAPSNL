@@ -6,6 +6,12 @@ function p = keyboardCmd(p)
 %format below would in principle allow multiple keys to have been pressed
 
 %%%%general command keys
+if  p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.oKey)   
+    pds.audio.playDatapixxAudio(p,'breakfix');
+    p.trial.pldaps.quit = 1;
+    ShowCursor;
+end
+
 if  p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.pKey)   % P = pause
     p.trial.pldaps.quit = 1;
     ShowCursor;
