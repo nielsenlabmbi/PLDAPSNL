@@ -19,6 +19,7 @@ cond.dotCoherence = p.defaultParameters.stimulus.dotCoherence;
 cond.dotSpeed = p.defaultParameters.stimulus.dotSpeed;
 cond.direction = p.defaultParameters.stimulus.direction;%[0 180];
 cond.dotLifetime = p.defaultParameters.stimulus.dotLifetime;
+cond.addition = p.defaultParameters.stimulus.addition;
 side.par = 'direction';
 side.match=p.defaultParameters.stimulus.direction;
 if length(cond.dotCoherence) > 2

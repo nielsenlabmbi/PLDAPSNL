@@ -366,6 +366,10 @@ p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 p.trial.stimulus.frameI = 0;
 %lifetime
 p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
+% nr dots
+if isfield(p.trial.stimulus,'dotDensity')
+p.trial.stimulus.nrDots = round(p.trial.display.dWidth*p.trial.display.dHeight*p.trial.stimulus.dotDensity/p.trial.stimulus.dotSize);
+end
 
 %initialize dot positions - these need to be in pixels from center
 randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
@@ -383,14 +387,15 @@ nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
 noisevec=zeros(p.trial.stimulus.nrDots,1);
 noisevec(1:nrSignal)=1;
 
-%initialize directions: correct displacement for signal, opponent for
-%"noise"
-%side is either 1 or 2; 1 should equal ori=0, 2 ori=180
+%randomly switch direction
+if rand > 0.5
+    p.trial.stimulus.direction = p.trial.stimulus.direction + 180;
+end
 randdir=zeros(p.trial.stimulus.nrDots,1);
 randdir(1:end)=p.trial.stimulus.direction;
 idx=find(noisevec==0);
 %randdir(idx)=randi([0,359],length(idx),1);
-
+randdir(idx) = p.trial.stimulus.direction + 180;
 
 %initialize lifetime vector
 if p.trial.stimulus.dotLifetime>0
@@ -431,6 +436,11 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     f = p.trial.stimulus.frameI;
     randpos = p.trial.stimulus.randpos;
     randdir = p.trial.stimulus.randdir;
+    direction = p.trial.stimulus.direction;
+    if mod(f-p.trial.stimulus.nStaticFrames,p.trial.stimulus.dirFrames) == 0
+        randdir = randdir+180;
+        p.trial.stimulus.direction = p.trial.stimulus.direction + 180;
+    end
     deltaF = p.trial.stimulus.deltaF;
     lifetime = p.trial.stimulus.lifetime;
     
