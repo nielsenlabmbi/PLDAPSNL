@@ -5,7 +5,7 @@ function p = dots_setup3_stair(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial3_multidir';
+p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial3_stair';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
@@ -44,8 +44,8 @@ p.conditions=p.trial.allconditions{p.trialMem.whichConditions + 1};
 p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
-p.trialMem.stats.cond={'offset', 'rotation'}; %conditions to display
-[A,B] = ndgrid(cond(end).offset,cond(end).rotation);
+p.trialMem.stats.cond={'reference', 'rotation'}; %conditions to display
+[A,B] = ndgrid(cond(end).reference,cond(end).rotation);
 p.trialMem.stats.val = [A(:),B(:)]';
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);

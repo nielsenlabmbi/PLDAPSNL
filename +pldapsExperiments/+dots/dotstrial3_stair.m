@@ -336,7 +336,7 @@ if isfield(p.trialMem,'fracInstruct');
     p.trial.stimulus.fracInstruct = p.trialMem.fracInstruct;
 end
 
-if ~isield(p.trialMem,'mshift')
+if ~isfield(p.trialMem,'mshift')
     p.trialMem.mshift = 0;
 end
 
@@ -367,8 +367,6 @@ p.trial.stimulus.waitColor = 0.5;
 
 DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
 PixPerDeg = 1/DegPerPix;
-%step size
-p.trial.stimulus.step = p.conditions{p.trial.pldaps.iTrial}.step;
 %dot size
 p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
 %dot coherence
@@ -379,11 +377,11 @@ p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
 p.trial.stimulus.constant = p.conditions{p.trial.pldaps.iTrial}.constant;
 p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
 p.trial.stimulus.reference = p.conditions{p.trial.pldaps.iTrial}.reference;
-p.trial.stimulus.targetThreshold = p.conditions{p.trial.pldaps.iTrial.targetThreshold;
+p.trial.stimulus.targetThreshold = p.conditions{p.trial.pldaps.iTrial}.targetThreshold;
 if isfield(p.trialMem,'offset')
-    p.trial.stimulus.rotation = p.trialMem.offset;
+    p.trial.stimulus.offset = p.trialMem.offset;
 else
-    p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.offset;
+    p.trial.stimulus.offset = p.conditions{p.trial.pldaps.iTrial}.offset;
 end
 p.trial.stimulus.direction = p.trial.stimulus.reference + p.trial.stimulus.rotation*p.trial.stimulus.offset;
 %initialize frame
@@ -544,12 +542,22 @@ if p.trial.userInput==3
 end
 
 % +/- offset
-if p.trial.pldpaps.iTrial <= 2
-    p.trialMem.offset = p.trial.stimulus.offset - (p.trial.stimulus.constant/p.trial.pldaps.iTrial)*...
-        (p.trial.pldaps.goodtrial - p.trial.pldaps.targetThreshold);
+nTrials = p.trial.pldaps.iTrial - p.trial.stimulus.nEasyTrials;
+if nTrials <= 0
+    p.trialMem.shift = 0;
+elseif nTrials <= 2 
+    p.trialMem.offset = p.trial.stimulus.offset - (p.trial.stimulus.constant/nTrials)*...
+        (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
+    disp(strcat('offset on the next trial:',num2str(p.trialMem.offset)));
 else
     p.trialMem.offset = p.trial.stimulus.offset - (p.trial.stimulus.constant/(2 + p.trialMem.mshift))*...
-        (p.trial.pldaps.goodTrial - p.trial.pldaps.targetThreshold);
+        (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
+    disp(strcat('offset on the next trial:',num2str(p.trialMem.offset)));
+end
+if isfield(p.trialMem,'offset') & p.trialMem.offset > 45
+    p.trialMem.offset = 45;
+elseif isfield(p.trialMem,'offset') & p.trialMem.offset < 0.5
+    p.trialMem.offset = 0.5;
 end
 %reference: accelerated stochastic approximation, Kesten 1958
 %reviewed in adaptive psychophysical procedures minireview, Treutwein 1995

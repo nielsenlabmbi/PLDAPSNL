@@ -17,23 +17,32 @@ s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
 s.stimulus.durStim = 480;
+
 s.stimulus.frameRate = 120;
-s.stimulus.nStaticFrames = 180;
+s.stimulus.nStaticFrames = 60;
+
+s.stimulus.reference = 45; 
+s.stimulus.offset = {25};%[{25},{20},{15},{10},{5},{[25 25 20 15 10 5]}];
+s.stimulus.constant = 20;
+s.stimulus.targetThreshold = 0.75;
+s.stimulus.fracInstructTrue = ones(length(s.stimulus.offset));%[1 0];
+s.stimulus.instructCutoff = 45;
+s.stimulus.nEasyTrials =10;
 
 %set viewing parameters
 
-%set viewing parameterses
+%set viewing parameters
 s.stimulus.baseline = 0.1;
 s.stimulus.lickdelay = 1.7;
 s.stimulus.forceCorrect_delay = 0.75;
 s.stimulus.duration.ITI = 2;
-s.stimulus.stimON = 1.5;
-s.stimulus.waitTime = 0.5;
+s.stimulus.stimON = 1 + s.stimulus.nStaticFrames/s.stimulus.frameRate;
+s.stimulus.waitTime = 0;
 s.stimulus.trialdur = 300;
 s.stimulus.timeout = 2; 
 
 %set instructive trials
-s.stimulus.fracInstruct =1;
+s.stimulus.fracInstruct =0.5;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
@@ -58,7 +67,7 @@ s.mouse.use = 0;
 %  s. behavior.   reward. channel. RIGHT = 5;
 % 
 % 
-% %%% Debugging settings
+% %% Debugging settings
 % 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
