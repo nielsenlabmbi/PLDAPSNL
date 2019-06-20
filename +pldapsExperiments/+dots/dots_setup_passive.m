@@ -23,12 +23,11 @@ cond.rotation = [-1 1];
 side.par = 'rotation';
 side.match=[-1 1];
 side.match=p.defaultParameters.stimulus.direction;
-if length(cond.dotCoherence) > 2
-   c=generateCondList_sides(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+if isfield(p.defaultParameters.stimulus,'nReps')
+c=generateCondList(cond,side,'pseudo',p.defaultParameters.stimulus.nReps/2);
 else
-   c=generateCondList(cond,side,'pseudo',2);
+c=generateCondList(cond,side,'pseudo',2);
 end
- 
 p.conditions=c;
 
 p.trial.pldaps.finish = length(p.conditions);
