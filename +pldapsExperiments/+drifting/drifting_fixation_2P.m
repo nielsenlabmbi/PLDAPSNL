@@ -18,9 +18,9 @@ switch state
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
             %Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
             %Screen('DrawTexture',p.trial.display.ptr, p.trial.stimulus.initex,[],p.trial.stimulus.dstRect,p.trial.stimulus.refangle,0);
-        elseif p.trial.state==p.trial.stimulus.states.STIMON 
-           showStimulus(p)
-        elseif p.trial.state == p.trial.stimulus.states.WAIT
+        elseif p.trial.state==p.trial.stimulus.states.STIMON & p.trial.ori >=0
+            showStimulus(p)
+        elseif p.trial.state == p.trial.stimulus.states.WAIT | p.trial.state==p.trial.stimulus.states.STIMON & p.trial.ori< 0;
             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
         end
         
@@ -141,8 +141,7 @@ switch p.trial.state
                 
                 %shutter laser, trigger daq
                 if p.trial.triggerState ~= p.trial.trigger.states.LICKDELAY
-                    p = pds.daq_com.send_daq(p,0);
-                    p = pds.sbserver.shutter2P(p,'0');
+                    p = pds.daq_com.send_daq(p,p.trial.daq.trigger.trialfinish); %for 2P
                     p.trial.triggerState = p.trial.trigger.states.LICKDELAY;
                     p.trial.TriggerTrialFinish = p.trial.ttime;
                 end
@@ -160,6 +159,9 @@ switch p.trial.state
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
+            
+                    p = pds.daq_com.send_daq(p,0);
+                    p = pds.sbserver.shutter2P(p,'0');
         end
         
 end
