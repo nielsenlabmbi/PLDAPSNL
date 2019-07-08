@@ -35,7 +35,7 @@ cond(i).fullField = p.defaultParameters.stimulus.fullField(i);
 if isfield(p.defaultParameters.stimulus,'nReps')
 c{i}=generateCondList(cond(i),side,'pseudo',p.defaultParameters.stimulus.nReps);
 else
-c{i}=generateCondList(cond(i),side,'pseudo',2);
+c{i}=generateCondList(cond(i),side,'pseudo',3);
 end
 end
 

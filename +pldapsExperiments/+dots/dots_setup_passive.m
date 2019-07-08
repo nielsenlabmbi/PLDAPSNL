@@ -26,7 +26,7 @@ side.match=p.defaultParameters.stimulus.direction;
 if isfield(p.defaultParameters.stimulus,'nReps')
 c=generateCondList(cond,side,'pseudo',p.defaultParameters.stimulus.nReps/2);
 else
-c=generateCondList(cond,side,'pseudo',2);
+c=generateCondList(cond,side,'pseudo',3);
 end
 p.conditions=c;
 
