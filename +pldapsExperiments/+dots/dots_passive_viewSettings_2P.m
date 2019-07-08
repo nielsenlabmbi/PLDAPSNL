@@ -14,15 +14,17 @@ s.stimulus.fractionBlack = 0;
 
 
 %set orientation and offsets
-s.stimulus.dotSize = 1;
-s.stimulus.dotDensity = 0.15;
+s.stimulus.dotSize = 1.5;
+s.stimulus.dotDensity = 0.05;
 s.stimulus.nrDots = 250;
-s.stimulus.direction = [0:22.5:359];
+s.stimulus.fractionBlack = 0.5;
+s.stimulus.direction = [-1 0:22.5:359];
 s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
 s.stimulus.durStim = 60;
 s.stimulus.frameRate = 120;
+s.stimulus.nStaticFrames = 120;
 
 %set viewing parameters
 s.stimulus.baseline = 0.5;
@@ -61,8 +63,8 @@ s. behavior.   reward. channel. RIGHT = 5;
  s.twoP.use = 1;
  s. pldaps. nosave = 0;
 
-% %%% Debugging settings
-
+% % %%% Debugging settings
+% 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
 % s.datapixx.adc.channels = [];
