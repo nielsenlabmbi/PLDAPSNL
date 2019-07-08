@@ -26,8 +26,11 @@ cond(i).sf = p.defaultParameters.stimulus.sf;
 cond(i).angle = p.defaultParameters.stimulus.angle;
 cond(i).range = p.defaultParameters.stimulus.range;
 cond(i).fullField = p.defaultParameters.stimulus.fullField(i); 
-c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).displacement)*2)));
-end
+if isfield(p.defaultParameters.stimulus,'nReps')
+c{i}=generateCondList(cond(i),side,'pseudo',p.defaultParameters.stimulus.nReps);
+else
+c{i}=generateCondList(cond(i),side,'pseudo',3);
+endend
 
 p.trial.allconditions = c;
 p.trialMem.whichConditions = 0;
