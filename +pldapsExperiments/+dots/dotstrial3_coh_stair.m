@@ -541,17 +541,18 @@ if nTrials <= 0
 elseif nTrials <= 2 
     p.trialMem.dotCoherence = p.trial.stimulus.dotCoherence - (p.trial.stimulus.constant/nTrials)*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
-    disp(strcat('dotCoherence on the next trial:',num2str(p.trialMem.dotCoherence)));
 else
     p.trialMem.dotCoherence = p.trial.stimulus.dotCoherence - (p.trial.stimulus.constant/(2 + p.trialMem.mshift))*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
-    disp(strcat('dotCoherence on the next trial:',num2str(p.trialMem.dotCoherence)));
 end
 %place upper and lower bounds on the dotCoherence
 if isfield(p.trialMem,'dotCoherence') & p.trialMem.dotCoherence > 1
     p.trialMem.dotCoherence = 1;
 elseif isfield(p.trialMem,'dotCoherence') & p.trialMem.dotCoherence < 0.02
     p.trialMem.dotCoherence = 0.02;
+end
+if isfield(p.trialMem,'dotCoherence')
+    disp(strcat('dotCoherence on the next trial:',num2str(p.trialMem.dotCoherence)));
 end
 % disp(['C: ' num2str(p.trialMem.stats.val)])
 % disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])

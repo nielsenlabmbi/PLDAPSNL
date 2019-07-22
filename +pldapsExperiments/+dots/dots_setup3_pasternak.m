@@ -5,7 +5,7 @@ function p = dots_setup3_pasternak(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial3_pastnerak';
+p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial3_pasternak';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;

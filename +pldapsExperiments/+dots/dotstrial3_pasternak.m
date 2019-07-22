@@ -395,7 +395,7 @@ randdir=zeros(p.trial.stimulus.nrDots,1);
 idx=find(noisevec==0);
 randdir(idx)=randi([0,359],length(idx),1);
 idx1 = find(noisevec==1);
-randdir(idx1)=randi([p.trial.stimulus.distWidth*-1, p.trial.stimulus.distWidth]+p.trial.stimulus.direction,length(idx1),1);
+randdir(idx1)=randi([p.trial.stimulus.distWidth*-1, p.trial.stimulus.distWidth]/2 +p.trial.stimulus.direction,length(idx1),1);
 
 
 %initialize lifetime vector
@@ -471,10 +471,10 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
         %directions are drawn based on coherence level
         rvec=rand(size(idx));
         for i=1:length(idx)
-            if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
-                randdir(idx(i))=p.trial.stimulus.direction;
-            else
+            if rvec(i)>=p.trial.stimulus.dotCoherence 
                 randdir(idx(i))=randi([0,359],1,1);
+            else
+                randdir(idx(i))=randi([p.trial.stimulus.distWidth*-1, p.trial.stimulus.distWidth]/2 +p.trial.stimulus.direction);
             end
         end
         

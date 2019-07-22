@@ -378,10 +378,13 @@ p.trial.stimulus.constant = p.conditions{p.trial.pldaps.iTrial}.constant;
 p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
 p.trial.stimulus.offset = p.conditions{p.trial.pldaps.iTrial}.offset;
 p.trial.stimulus.targetThreshold = p.conditions{p.trial.pldaps.iTrial}.targetThreshold;
-
+if isfield(p.trialMem,'reference_rotation')
+    p.trial.stimulus.reference_rotation = p.trialMem.reference_rotation;
+else
 p.trial.stimulus.reference_rotation = p.conditions{p.trial.pldaps.iTrial}.reference_rotation;
+end
 if isfield(p.trialMem,'reference')
-    p.trial.stimulus.offset = p.trialMem.reference;
+    p.trial.stimulus.reference = p.trialMem.reference;
 else
     p.trial.stimulus.reference = p.conditions{p.trial.pldaps.iTrial}.reference;
 end
@@ -550,14 +553,16 @@ if nTrials <= 0
 elseif nTrials <= 2 
     p.trialMem.reference = p.trial.stimulus.reference - p.trial.stimulus.reference_rotation*(p.trial.stimulus.constant/nTrials)*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
-    disp(strcat('reference on the next trial:',num2str(p.trialMem.reference)));
 else
     p.trialMem.reference = p.trial.stimulus.reference - p.trial.stimulus.reference_rotation*(p.trial.stimulus.constant/(2 + p.trialMem.mshift))*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
-    disp(strcat('reference on the next trial:',num2str(p.trialMem.reference)));
 end
-if isfield(p.trialMem,'reference') & mod(p.trialMem.reference,180) == 0 
+if isfield(p.trialMem,'reference') & p.trialMem.reference > 160 | p.trialMem.reference < 20
     p.trialMem.reference = p.conditions{p.trial.pldaps.iTrial}.reference; %restart
+    p.trialMem.reference_rotation = -1*p.trial.reference_rotation;
+end
+if isfield(p.trialMem,'reference')
+    disp(strcat('reference on the next trial:',num2str(p.trialMem.reference)));
 end
 %reference: accelerated stochastic approximation, Kesten 1958
 %reviewed in adaptive psychophysical procedures minireview, Treutwein 1995
