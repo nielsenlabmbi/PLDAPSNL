@@ -3,17 +3,13 @@ function s = ori_FBAA4Settings
 % s.pldaps.nosave = 1;
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
-
 %set orientation and offsets
-s.stimulus.sf_step = [0.25 0.44]; %cycles per degreeS
-s.stimulus.step = [0 0];%[0 0.005]; %0.01
-s.stimulus.sf_list = [{.25},{[0.2 0.3 0.4 0.5 0.6 0.7]}];
-
-s.stimulus.angle = [0 90];
-s.stimulus.range = 121;
+s.stimulus.sf = [0.25]; % cycles per degree, may be a vector
+s.stimulus.angle = [0 90]; % side matched
+s.stimulus.range = [121]; %contrast, range between 1 and 127, may be a vector
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 0;
-s.stimulus.midpointIR = 1;
+s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
 
 
 %set viewing parameters
@@ -24,7 +20,7 @@ s.stimulus.duration.ITI = 2;
 %set up the viewing distance
 s.display.viewdist = 75; 
 
-%%
+% %
 % % Debugging settings
 % 
 % %turn adc channels off

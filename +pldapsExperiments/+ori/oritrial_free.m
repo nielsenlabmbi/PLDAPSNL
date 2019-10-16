@@ -43,13 +43,6 @@ end
 function p=checkState(p)
 
 activePort=find(p.trial.ports.status==1);
-%switch conditions
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.spaceKey) 
-    if p.conditions{p.trial.pldaps.iTrial}.step > 1
-        p.trial.allconditions{mod(p.trialMem.whichConditions+1,length(p.trial.allconditions))+1}{p.trial.pldaps.iTrial}.sf_step ~= p.trial.allconditions{p.trialMem.whichConditions+1}{p.trial.pldaps.iTrial}.sf_step
-    p.trialMem.sf = p.conditions{p.trial.pldaps.iTrial}.sf_step;
-    end
-end
 
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
@@ -120,7 +113,6 @@ switch p.trial.state
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
                 end
-                p.trialMem.correct = p.trialMem.correct + 1;
                 %advance state
                 p.trial.state=p.trial.stimulus.states.CORRECT;
             else
@@ -216,21 +208,7 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
-if ~isfield(p.trialMem,'correct')
-    p.trialMem.correct = 0;
-end
-
-if ~isfield(p.trialMem,'sf') & p.conditions{p.trial.pldaps.iTrial}.step > 0
-        p.trialMem.sf = p.conditions{p.trial.pldaps.iTrial}.sf_step;
-end
-
-%set up stimulus
-if p.conditions{p.trial.pldaps.iTrial}.step > 0
-    p.trial.stimulus.sf = p.trialMem.sf;
-else
-    p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf_list;
-end
-p.trial.stimulus.step = p.conditions{p.trial.pldaps.iTrial}.step;
+p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
 p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle;
 p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
 %p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase; % phase is pseudorandom
@@ -302,7 +280,7 @@ disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
 %show reward amount
 if p.trial.pldaps.draw.reward.show
-    pds.behavior.reward.showReward(p,{'S';'L';'R';'M'})
+    pds.behavior.reward.showReward(p,{'S';'L';'R'})
 end
 
 %show stats
@@ -310,17 +288,7 @@ pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
-if p.trial.stimulus.step > 0
-%staircase 
-if p.trial.pldaps.goodtrial & p.trialMem.correct == 2
-    p.trialMem.sf = p.trialMem.sf + p.trial.stimulus.step;
-    p.trialMem.correct = 0; 
-elseif ~p.trial.pldaps.goodtrial 
-    p.trialMem.sf = p.trialMem.sf - p.trial.stimulus.step;
-    p.trialMem.correct = 0;
-end
-disp(['Spatial frequency on the next trial: ' num2str(p.trialMem.sf)]);
-end
+
 % %show stats
 % pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 % disp(['C: ' num2str(p.trialMem.stats.val)])
