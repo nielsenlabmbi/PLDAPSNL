@@ -347,7 +347,9 @@ end
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
+if ~isfield(p.trial.stimulus,'waitColor')
 p.trial.stimulus.waitColor = 0.5;
+end
 
 %% set up stimulus
 
@@ -362,6 +364,7 @@ p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence
 p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
 %direction
 p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+
 %initialize frame
 p.trial.stimulus.frameI = 0;
 %lifetime

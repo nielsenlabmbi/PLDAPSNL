@@ -26,13 +26,13 @@ s.stimulus.frameRate = 120;
 
 %set viewing parameterses
 s.stimulus.baseline = 0.1;
-s.stimulus.lickdelay = 1.5;
+s.stimulus.lickdelay = 1.2;
 s.stimulus.forceCorrect_delay = 0.75;
 s.stimulus.duration.ITI = 2;
 s.stimulus.stimON = 0.5;
 s.stimulus.waitTime = 0.5;
 s.stimulus.trialdur = 300;
-s.stimulus.timeout = 1;
+s.stimulus.timeout = 1.5;
 
 %set instructive trials
 s.stimulus.fracInstruct = 1;

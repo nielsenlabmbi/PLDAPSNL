@@ -1,8 +1,8 @@
-function s = dots_FBAB6Settings
+sfunction s = dots_FBAB6Settings
 
 
 %set reward amounts
-s. behavior.   reward. amount = [0.02 0.08 0.06];
+s. behavior.   reward. amount = [0.01 0.08 0.08];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -12,7 +12,7 @@ s.behavior.reward.amountDelta = 0.01;
 s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 250;
 s.stimulus.fractionBlack = 0.5;
-s.stimulus.direction = [0 90];
+s.stimulus.direction = [0 180];
 s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;

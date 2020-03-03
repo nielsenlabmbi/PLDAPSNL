@@ -291,13 +291,19 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
-if p.trial.side == p.trial.stimulus.rotationSide 
+if p.trial.side == p.trial.stimulus.rotationSide
     if isfield(p.trialMem,'direction');
         p.trial.stimulus.direction = mod(p.trialMem.direction,360);
     else
         p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
         p.trialMem.direction = p.trial.stimulus.direction;
     end
+else
+    p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+    if ~isfield(p.trialMem,'direction');
+    p.trialMem.direction = p.trial.rotationDirection;
+    end
+    
 end
 
 p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
@@ -318,8 +324,6 @@ p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
 p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence;
 %dot speed
 p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
-%direction
-%p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 %initialize frame
 p.trial.stimulus.frameI = 0;
 %lifetime
@@ -360,6 +364,10 @@ p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
 %compute speed
 deltaF=p.trial.stimulus.dotSpeed*PixPerDeg;
 
+% deal with legacy
+if ~isfield(p.trial.stimulus,'nStaticFrames');
+    p.trial.stimulus.nStaticFrames = 0;
+end
 
 %save misc variables
 p.trial.stimulus.randpos = randpos;
@@ -386,6 +394,7 @@ function showStimulus(p)
             deltaF = p.trial.stimulus.deltaF;
             lifetime = p.trial.stimulus.lifetime;
             %compute vectors for necessary frames
+            if f > p.trial.stimulus.nStaticFrames
             %move all dots according to their direction
             xproj=cos(randdir*pi/180);
             yproj=-sin(randdir*pi/180);
@@ -424,6 +433,7 @@ function showStimulus(p)
                 
                 lifetime=lifetime-1;
                 lifetime(idx)=p.trial.stimulus.dotLifetime;
+            end
             end
             p.trial.stimulus.lifetime = lifetime;
             p.trial.stimulus.dotpos{f}=randpos;

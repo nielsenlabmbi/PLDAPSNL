@@ -14,13 +14,14 @@ s.stimulus.nrDots = 250;
 s.stimulus.fractionBlack = 0.5;
 s.stimulus.direction = [0 180];
 
-s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
+s.stimulus.dotCoherence = 1;%[1 0.8 0.6 0.4 0.2];
 s.stimulus.reference = [{90} {120} {150}];
 s.stimulus.reference_rotation = 1; %1 or -1
 s.stimulus.offset = 90;%{90};%[{25},{20},{15},{10},{5},{[25 25 20 15 10 5]}];
-s.stimulus.constant = 70; %1 for coherence, 20 for direction (easy), 3 for direction (hard), 70 for axis
+s.stimulus.constant = 1; %1 for coherence, 20 for direction (easy), 3 for direction (hard), 70 for axis
 s.stimulus.nEasyTrials = 0;
-s.stimulus.targetThreshold = 0.85; %.75 for coherence/direction, 0.85 for axis
+s.stimulus.nConvTrials = 8; %multiple of 4
+s.stimulus.targetThreshold = 0.75; %.75 for coherence/direction, 0.85 for axis
 s.stimulus.distWidth = [0 10 40]; 
 
 s.stimulus.dotSpeed = 0.6;

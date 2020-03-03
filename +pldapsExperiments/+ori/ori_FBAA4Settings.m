@@ -20,16 +20,16 @@ s.stimulus.duration.ITI = 2;
 %set up the viewing distance
 s.display.viewdist = 75; 
 
-% %
-% % Debugging settings
-% 
-% %turn adc channels off
-% s.datapixx.useAsPorts = 0;
-% s.datapixx.adc.channels = [];
-% 
-% %turn mouse input on
-% s.mouse.useAsPort = 1;
-% s.mouse.use = 1;
-% 
-% % turn saving off
-% s.pldaps.nosave = 1;
+%
+% Debugging settings
+
+%turn adc channels off
+s.datapixx.useAsPorts = 0;
+s.datapixx.adc.channels = [];
+
+%turn mouse input on
+s.mouse.useAsPort = 1;
+s.mouse.use = 1;
+
+% turn saving off
+s.pldaps.nosave = 1;

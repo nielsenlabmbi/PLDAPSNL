@@ -22,11 +22,11 @@ cond.distWidth = p.defaultParameters.stimulus.distWidth;
 cond.dotLifetime = p.defaultParameters.stimulus.dotLifetime;
 side.par = 'direction';
 side.match=p.defaultParameters.stimulus.direction;
-if length(cond.dotCoherence) > 2
+%if length(cond.dotCoherence) > 2
    c=generateCondList_sides(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
-else
-   c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
-end
+%else
+%   c=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+%end
  
 p.conditions=c;
 

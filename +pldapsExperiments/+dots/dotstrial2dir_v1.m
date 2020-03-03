@@ -361,7 +361,7 @@ p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence
 %dot speed
 p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
 %direction
-p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction + p.conditions{p.trial.pldaps.iTrial}.addition;
 %initialize frame
 p.trial.stimulus.frameI = 0;
 %lifetime
@@ -386,6 +386,10 @@ noisevec(1:nrSignal)=1;
 %initialize directions: correct displacement for signal, opponent for
 %"noise"
 %side is either 1 or 2; 1 should equal ori=0, 2 ori=180
+%randomly switch direction
+if rand > 0.5
+    p.trial.stimulus.direction = p.trial.stimulus.direction + 180;
+end
 randdir=zeros(p.trial.stimulus.nrDots,1);
 randdir(1:end)=p.trial.stimulus.direction;
 idx=find(noisevec==0);

@@ -185,6 +185,12 @@ switch p.trial.state
             %check whether correct port chosen
             correct=checkPortChoice(activePort,p);
             if correct==1
+                p.trialMem.correctCount = p.trialMem.correctCount + 1;
+                 if isfield(p.trialMem,'correct') & p.trialMem.correct ~=1;
+                    p.trialMem.mshift = p.trialMem.mshift+1;
+                end
+                p.trialMem.correct = 1;
+                
                     p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                     p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                     if  activePort==p.trial.stimulus.port.RIGHT & activePort == p.trial.side %active port is the correct port
@@ -220,6 +226,10 @@ switch p.trial.state
                 p.trial.pldaps.goodtrial = 1;
                 
             else
+                if isfield(p.trialMem,'correct') & p.trialMem.correct ~=0;
+                    p.trialMem.mshift = p.trialMem.mshift+1;
+                end
+                p.trialMem.correct = 0;
                 %play tone
                 pds.audio.playDatapixxAudio(p,'breakfix');
                 p.trial.pldaps.goodtrial = 0;
@@ -337,6 +347,10 @@ if ~isfield(p.trialMem,'count') || p.trialMem.count == 0;
     p.trialMem.moveBool = p.trialMem.moveBool(randperm(10));
 end
 
+if ~isfield(p.trialMem,'correctCount')
+    p.trialMem.correctCount = 0;
+end
+
 p.trial.ports.moveBool = p.trialMem.moveBool(p.trialMem.count);
 p.trialMem.count = mod(p.trialMem.count+1,11);
 
@@ -351,7 +365,7 @@ end
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
-p.trial.stimulus.waitColor = 0.5;
+p.trial.stimulus.waitColor = p.trial.stimulus.waitColor;
 
 %% set up stimulus
 
@@ -536,8 +550,9 @@ num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
 
 % +/- coh
 nTrials = p.trial.pldaps.iTrial - p.trial.stimulus.nEasyTrials;
+
 if nTrials <= 0
-    p.trialMem.shift = 0;
+    p.trialMem.mshift = 0;
 elseif nTrials <= 2 
     p.trialMem.dotCoherence = p.trial.stimulus.dotCoherence - (p.trial.stimulus.constant/nTrials)*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
@@ -550,6 +565,14 @@ if isfield(p.trialMem,'dotCoherence') & p.trialMem.dotCoherence > 1
     p.trialMem.dotCoherence = 1;
 elseif isfield(p.trialMem,'dotCoherence') & p.trialMem.dotCoherence < 0.02
     p.trialMem.dotCoherence = 0.02;
+end
+%reset if we have reached convergence
+if mod(nTrials,p.trial.stimulus.nConvTrials) == 0
+    if p.trialMem.correctCount <= 0.75*p.trial.stimulus.nConvTrials;
+        p.trialMem.dotCoherence = 1;
+        p.trialMem.mshift = 0;
+    end
+    p.trialMem.correctCount = 0; 
 end
 if isfield(p.trialMem,'dotCoherence')
     disp(strcat('dotCoherence on the next trial:',num2str(p.trialMem.dotCoherence)));

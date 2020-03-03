@@ -39,7 +39,7 @@ s.stimulus.maskLimit=.8*s.stimulus.radius; %switch from open mask to exponential
  
  s.datapixx.din.useFor.ports = 1;
 
-s.ephys.use = 1;
+%s.ephys.use = 1;
 
 %%% Debugging settings
 

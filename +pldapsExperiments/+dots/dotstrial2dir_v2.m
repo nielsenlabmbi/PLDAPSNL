@@ -1,4 +1,4 @@
-function dotstrial2dir_v2(p,state)
+function dotstrial2dir_v3(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -366,10 +366,14 @@ p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
 p.trial.stimulus.frameI = 0;
 %lifetime
 p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
+% nr dots
+if isfield(p.trial.stimulus,'dotDensity')
+p.trial.stimulus.nrDots = round((p.trial.display.dWidth*p.trial.display.dHeight*p.trial.stimulus.dotDensity/p.trial.stimulus.dotSize)/2)*2;
+end
 
 %initialize dot positions - these need to be in pixels from center
-randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
-randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth; % values are in the range of +/- width/2
+randpos=rand(2,p.trial.stimulus.nrDots); 
+randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth;
 randpos(2,:)=(randpos(2,:)-0.5)*p.trial.display.pHeight;
 
 
@@ -383,18 +387,19 @@ nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
 noisevec=zeros(p.trial.stimulus.nrDots,1);
 noisevec(1:nrSignal)=1;
 
-%initialize directions: correct displacement for signal, opponent for
-%"noise"
+%initialize directions: correct displacement for signal, random for noise
 %side is either 1 or 2; 1 should equal ori=0, 2 ori=180
 randdir=zeros(p.trial.stimulus.nrDots,1);
-randdir(1:end)=p.trial.stimulus.direction;
-if p.trial.stimulus.direction == 90
-idx=find(randpos(2,:) < 0);
+%dots on opposite sides go in opposite directions
+if p.trial.stimulus.direction == 0
+    idx = randpos(1,:) <=0;
 else
-    idx = find(randpos(1,:) < 0);
+    idx = randpos(2,:) >0;
 end
-%randdir(idx)=randi([0,359],length(idx),1);
-randdir(idx) = p.trial.stimulus.direction + 180;
+randdir(idx) = p.trial.stimulus.direction+180;
+randdir(~idx) = p.trial.stimulus.direction;
+idx=find(noisevec==0);
+randdir(idx)=randi([0,359],length(idx),1);
 
 
 %initialize lifetime vector
@@ -450,44 +455,90 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     
     %now deal with wrap around - we pick the axis on which to replot a dot
     %based on the dots direction
+    
+    %do this separately for each side of the screen
     idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
-    % need to plot the dot such that it stays on the same side of the
-    % screen 
+%     idx1 = idx(idx<=p.trial.stimulus.nrDots/2);
+%     idx2 = idx(idx>p.trial.stimulus.nrDots/2);
+    
     rvec=rand(size(idx)); %btw 0 and 1
+%     if p.trial.stimulus.direction == 90
+%         for i = 1:length(idx1)
+%                 randpos(1,idx1(i))=-1*sign(xproj(idx1(i)))*p.trial.display.pWidth/4;
+%                 randpos(2,idx1(i))=(rand(1)-0.5)*p.trial.display.pHeight;
+%         end
+%         for i = 1:length(idx2)
+%                 randpos(1,idx2(i))=-1*sign(xproj(idx2(i)))*p.trial.display.pWidth/4 + p.trial.display.pWidth/2;
+%                 randpos(2,idx2(i))=(rand(1)-0.5)*p.trial.display.pHeight;
+%         end
+%     else
+%         for i = 1:length(idx1)
+%             randpos(1,idx1(i))=(rand(1)-0.5)*p.trial.display.pWidth;
+%             randpos(2,idx1(i))=-1*sign(yproj(idx1(i)))*p.trial.display.pHeight/4;
+%         end
+%         for i = 1:length(idx2)
+%             randpos(1,idx2(i))=(rand(1)-0.5)*p.trial.display.pWidth;
+%             randpos(2,idx2(i))=-1*sign(yproj(idx2(i)))*p.trial.display.pHeight/4 + p.trial.display.pHeight/2;
+%         end
+%     end
+
+% for i = 1:length(idx)
+%     if p.trial.stimulus.direction == 0
+%         randpos(1,idx(i)) = 0;
+%         randpos(2,idx(i)) = rand(1)-0.5*p.trial.display.pHeight;
+%     else
+%         randpos(2,idx(i)) = 0;
+%         randpos(1,idx(i)) = rand(1)-0.5*p.trial.display.pWidth;
+%     end
+% end
+
+
     for i=1:length(idx)
         if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
-            
-            randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
-            randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight/2*sign(randpos(2,idx(i)));
+            randpos(1,idx(i))= (rand(1)-0.5)*p.trial.display.pWidth;%-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
+            randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
         else
-            randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth/2*sign(randpos(1,idx(i)));
-            randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
+            randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
+            randpos(2,idx(i))= (rand(1)-0.5)*p.trial.display.pHeight;%-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
         end
     end
     
-    
-    %if lifetime is expired, randomly assign new direction
-    if p.trial.stimulus.dotLifetime>0
-        idx=find(lifetime==0);
-        %directions are drawn based on coherence level
-        rvec=rand(size(idx));
-        for i=1:length(idx)
-            if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
-                if p.trial.stimulus.direction == 90 && randpos(2,idx(i)) < 0
-                randdir(idx(i))=p.trial.stimulus.direction +180;
-                elseif p.trial.stimulus.direction == 0 && randpos(1,idx(i)) < 0
-                    randdir(idx(i)) = p.trial.stimulus.direction + 180;
-                else
-                    randdir(idx(i)) = p.trial.stimulus.direction;
-                end
+    if p.trial.stimulus.direction == 0
+        for i = 1:length(idx)
+            if randpos(1,idx(i)) <= 0
+                randdir(idx(i)) = p.trial.stimulus.direction + 180;
             else
-                randdir(idx(i))=randi([0,359],1,1);
+                randdir(idx(i)) = p.trial.stimulus.direction;
             end
         end
-        
-        lifetime=lifetime-1;
-        lifetime(idx)=p.trial.stimulus.dotLifetime;
+    else
+        for i = 1:length(idx)
+            if randpos(2,idx(i)) <= 0
+                randdir(idx(i)) = p.trial.stimulus.direction;
+            else
+                randdir(idx(i)) = p.trial.stimulus.direction + 180;
+            end
+        end
     end
+    
+%     %if lifetime is expired, randomly assign new direction
+%     if p.trial.stimulus.dotLifetime>0
+%         idx=find(lifetime==0);
+%         idx1 = idx(idx<=p.trial.stimulus.nrDots/2);
+%         idx2 = idx(idx>p.trial.stimulus.nrDots/2);
+%         %directions are drawn based on coherence level
+%         rvec=rand(size(idx));
+%         for i=1:length(idx)
+%             if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
+%                 randdir(idx(i))=p.trial.stimulus.direction;
+%             else
+%                 randdir(idx(i))=randi([0,359],1,1);
+%             end
+%         end
+%         
+%         lifetime=lifetime-1;
+%         lifetime(idx)=p.trial.stimulus.dotLifetime;
+%     end
     end
     p.trial.stimulus.lifetime = lifetime;
     p.trial.stimulus.dotpos{f}=randpos;

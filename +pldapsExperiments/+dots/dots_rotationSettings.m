@@ -18,7 +18,7 @@ s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = 240;
 s.stimulus.durStim = 480;
 s.stimulus.frameRate = 120;
-s.stimulus.rotationSide = 1; %1 for right, 2 for left
+s.stimulus.rotationSide = 2; %1 for right, 2 for left
 
 %set viewing parameters
 
@@ -33,7 +33,7 @@ s.stimulus.trialdur = 300;
 s.stimulus.timeout = 2; 
 
 %set instructive trials
-s.stimulus.fracInstruct =1;
+s.stimulus.fracInstruct = 0.4;
 
 %set up the viewing distance
 s.display.viewdist = 45; 

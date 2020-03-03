@@ -26,7 +26,7 @@ for i = 1:length(p.defaultParameters.stimulus.fullField)
     else
         cond(i).fullField = p.defaultParameters.stimulus.fullField;
     end
-    c{i} = generateCondList_sides(cond(i),side,'pseudo',100);
+    c{i} = generateCondList(cond(i),side,'block',1, 5);
 end
 p.trial.allconditions = c;
 p.trialMem.whichConditions = 0;

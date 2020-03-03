@@ -14,7 +14,7 @@ s.stimulus.baseline = 0.2;
 s.stimulus.lickdelay = 1.75;
 s.stimulus.forceCorrect_delay = 0.5;
 s.stimulus.duration.ITI = 1.7;
-s.stimulus.stimON = 1;
+s.stimulus.stimON = 0.5;
 s.stimulus.waitTime = 0.8;
 s.stimulus.trialdur = 120;
 s.stimulus.timeout = 0; 
@@ -30,19 +30,20 @@ s.stimulus.timeout = 0;
 % s.stimulus.timeout = 0; 
 
 % %set instructive trials
-s.stimulus.fracInstruct = 1;%0.3;
+s.stimulus.fracInstruct = 0.3;
 s.stimulus.fracInstructTrue = [1 0];%[1 0];
 s.stimulus.instructCutoff = 25;
 
 %set orientation and offsets
-s.stimulus.offsets = {45};%horzcat({45},{45});%horzcat({[25]},{[25 25 20 18 12 6 2]});
-%s.stimulus.offsets = horzcat({[25]},{[25 25 22 16 10 4 1]});
-s.stimulus.shift = [0 -0];
+%s.stimulus.offsets = horzcat({[45]},{[25 25 20 18 12 6 2]});
+s.stimulus.offsets = horzcat({[25]},{[25 25 22 16 10 4 1]});
+s.stimulus.shift = [0 0];
 s.stimulus.angle = 45;
-s.stimulus.sf = 0.125;
+s.stimulus.sf = 0.25;
 s.stimulus.range = 121;
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField =zeros(1,length(s.stimulus.offsets));
+s.stimulus.sideMatch = [1 -1];
 %set viewing parameters
 
 % s.stimulus.trialdur = 300;
@@ -69,15 +70,15 @@ s.display.viewdist = 45;
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 % 
-%%% Debugging settings
+% %%% Debugging settings
+% % 
+% %turn adc channels off
+% s.datapixx.useAsPorts = 0;
+% s.datapixx.adc.channels = [];
 % 
-%turn adc channels off
-s.datapixx.useAsPorts = 0;
-s.datapixx.adc.channels = [];
-
-%turn mouse input on
-s.mouse.useAsPort = 1;
-s.mouse.use = 1;
-
-% turn saving off
-s.pldaps.nosave = 1;
+% %turn mouse input on
+% s.mouse.useAsPort = 1;
+% s.mouse.use = 1;
+% 
+% % turn saving off
+% s.pldaps.nosave = 1;

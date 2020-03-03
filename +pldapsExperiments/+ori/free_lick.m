@@ -130,7 +130,7 @@ p.trial.stimulus.iniSize=[910 490 1010 590];
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
-p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
+%p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
 %set ports correctly
 pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
 

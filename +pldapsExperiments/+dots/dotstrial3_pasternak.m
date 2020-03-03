@@ -473,8 +473,10 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
         for i=1:length(idx)
             if rvec(i)>=p.trial.stimulus.dotCoherence 
                 randdir(idx(i))=randi([0,359],1,1);
-            else
+            elseif p.trial.stimulus.distWidth > 0
                 randdir(idx(i))=randi([p.trial.stimulus.distWidth*-1, p.trial.stimulus.distWidth]/2 +p.trial.stimulus.direction);
+            else
+                randdir(idx(i)) = p.trial.stimulus.direction;
             end
         end
         
@@ -522,6 +524,8 @@ if p.trial.userInput==3
     p.trialMem.count = 0;
     disp('increased fracInstruct to 1, effective immediately')
 end
+
+disp(['distWidth ' num2str(p.trial.stimulus.distWidth)])
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);

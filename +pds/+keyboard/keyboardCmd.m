@@ -39,6 +39,10 @@ if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Uarrow) %right arrow = us
     p.trial.userInput=3;
 end
 
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Darrow) %right arrow = user 2
+    p.trial.userInput=4;
+end
+
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.spaceKey) %change trials list
     p.trialMem.whichConditions = mod(p.trialMem.whichConditions+1,length(p.trial.allconditions));
     p.conditions = p.trial.allconditions{p.trialMem.whichConditions + 1};

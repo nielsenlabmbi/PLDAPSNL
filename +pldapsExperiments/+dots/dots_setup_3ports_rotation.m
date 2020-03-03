@@ -24,6 +24,7 @@ cond.dotSpeed = p.defaultParameters.stimulus.dotSpeed;
 cond.direction = [0 180];
 cond.dotLifetime = p.defaultParameters.stimulus.dotLifetime;
 cond.rotationSide = p.defaultParameters.stimulus.rotationSide;
+cond.rotationDirection = cond.direction(p.defaultParameters.stimulus.rotationSide);
 
 side.par = 'direction';
 side.match=[0 180];

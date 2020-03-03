@@ -24,7 +24,7 @@ s.stimulus.trialdur = 180;
 
 s.stimulus.lickdelay = 1.7;
 s.stimulus.forceCorrect_delay = 0.5;
-s.stimulus.duration.ITI = 2;
+s.stimulus.duration.ITI = 1;
 s.stimulus.stimON = 0.3;
 s.stimulus.waitTime = 0.3;
 

@@ -27,9 +27,9 @@ elseif p.trial.datapixx.use
             pause(amount);
             digital_out(chan,0);
             
-            wordvec=zeros(1,24);
-            wordvec(chan)=1;
-            word=bi2de(wordvec);
+%             wordvec=zeros(1,24);
+%             wordvec(chan)=1;
+%             word=bi2de(wordvec);
             
 %             maskvec=zeros(1,24);
 %             maskvec(chan)=1;

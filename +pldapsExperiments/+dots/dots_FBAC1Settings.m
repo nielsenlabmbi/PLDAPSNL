@@ -5,7 +5,7 @@ s.datapixx.useAsEyepos = 1;
  s.	pldaps.	draw.	eyepos.	show = 1;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.02 0.07 0.07];
+s. behavior.   reward. amount = [0.015 0.04 0.04];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -16,9 +16,9 @@ s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 250;
 s.stimulus.fractionBlack = 0.5;
 s.stimulus.direction = [0 180];
-s.stimulus.dotCoherence = 1;%[1 1 0.8 0.6 0.4 0.2];
+s.stimulus.dotCoherence = [{[1]},{[1 0.9 0.8]}];%[1 1 0.8 0.6 0.4 0.2];s
 s.stimulus.dotSpeed = 0.6;
-s.stimulus.dotLifetime = 240;
+s.stimulus.dotLifetime = 3;
 s.stimulus.durStim = 45;
 s.stimulus.frameRate = 120;
 
@@ -26,16 +26,16 @@ s.stimulus.frameRate = 120;
 
 %set viewing parameterses
 s.stimulus.baseline = 0.1;
-s.stimulus.lickdelay = 1.5;
+s.stimulus.lickdelay = 2.5;
 s.stimulus.forceCorrect_delay = 0.75;
-s.stimulus.duration.ITI = 2;
+s.stimulus.duration.ITI = 1;
 s.stimulus.stimON = 0.5;
 s.stimulus.waitTime = 0.5;
 s.stimulus.trialdur = 300;
 s.stimulus.timeout = 1.5;
 
 %set instructive trials
-s.stimulus.fracInstruct = 1.0;
+s.stimulus.fracInstruct = 0.8;
 
 %set up the viewing distance
 s.display.viewdist = 45; 
@@ -59,9 +59,9 @@ s.mouse.use = 0;
 %  s. behavior.   reward. channel. LEFT = 6;
 %  s. behavior.   reward. channel. RIGHT = 5;
 % 
-% 
-% %%% Debugging settings
-% 
+
+%%% Debugging settings
+
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
 % s.datapixx.adc.channels = [];

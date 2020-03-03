@@ -16,7 +16,11 @@ p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI 
 
 %% conditions:
 side.par = 'rotation';
-side.match=[-1 1];
+if isfield(p.defaultParameters,'sideMatch')
+    side.match=p.defaultParameters.sideMatch;
+else
+    side.match=[-1 1];
+end
 
 for i = 1:length(p.trial.stimulus.offsets)
 cond(i).displacement = p.defaultParameters.stimulus.offsets{i};

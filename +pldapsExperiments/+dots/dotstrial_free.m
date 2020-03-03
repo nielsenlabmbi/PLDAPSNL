@@ -15,7 +15,7 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            Screen(p.trial.display.ptr, 'FillRect', 0.5)
+            Screen(p.trial.display.ptr, 'FillRect', 0)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             showStimulus(p);
         end

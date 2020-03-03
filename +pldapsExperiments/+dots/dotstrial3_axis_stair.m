@@ -361,7 +361,7 @@ end
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
-p.trial.stimulus.waitColor = 0.5;
+p.trial.stimulus.waitColor = p.trial.stimulus.waitColor;
 
 %% set up stimulus
 
@@ -374,7 +374,11 @@ p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence
 %dot speed
 p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
 %direction
+if isfield(p.trialMem,'constant')
+    p.trial.stimulus.constant = p.trialMem.constant;
+else
 p.trial.stimulus.constant = p.conditions{p.trial.pldaps.iTrial}.constant;
+end
 p.trial.stimulus.rotation = p.conditions{p.trial.pldaps.iTrial}.rotation;
 p.trial.stimulus.offset = p.conditions{p.trial.pldaps.iTrial}.offset;
 p.trial.stimulus.targetThreshold = p.conditions{p.trial.pldaps.iTrial}.targetThreshold;
@@ -382,11 +386,13 @@ if isfield(p.trialMem,'reference_rotation')
     p.trial.stimulus.reference_rotation = p.trialMem.reference_rotation;
 else
 p.trial.stimulus.reference_rotation = p.conditions{p.trial.pldaps.iTrial}.reference_rotation;
+p.trialMem.reference_rotation = p.trial.stimulus.reference_rotation;
 end
 if isfield(p.trialMem,'reference')
     p.trial.stimulus.reference = p.trialMem.reference;
 else
     p.trial.stimulus.reference = p.conditions{p.trial.pldaps.iTrial}.reference;
+    p.trialMem.reference = p.conditions{p.trial.pldaps.iTrial}.reference;
 end
 p.trial.stimulus.direction = p.trial.stimulus.reference + p.trial.stimulus.rotation*p.trial.stimulus.offset;
 %initialize frame
@@ -543,13 +549,26 @@ end
 if p.trial.userInput==3
     p.trialMem.fracInstruct = 1;
     p.trialMem.count = 0;
-    disp('increased fracInstruct to 1, effective immediately')
+end
+if p.trial.userInput == 4;
+if p.trial.stimulus.constant ~=0
+disp('staircase paused. press down arrow again to restart')
+p.trialMem.reference = 90;
+p.trial.stimulus.reference = 90;
+p.trialMem.constant = 0;
+p.trial.stimulus.constant = 0;
+else
+    disp('staircase restarted')
+    p.trialMem.constant = p.conditions{p.trial.pldaps.iTrial}.constant;
+    p.trial.stimulus.constant = p.trialMem.constant;
+    p.trialMem.mshift = 0;
+end
 end
 
 % +/- reference
 nTrials = p.trial.pldaps.iTrial - p.trial.stimulus.nEasyTrials;
 if nTrials <= 0
-    p.trialMem.shift = 0;
+    p.trialMem.mshift = 0;
 elseif nTrials <= 2 
     p.trialMem.reference = p.trial.stimulus.reference - p.trial.stimulus.reference_rotation*(p.trial.stimulus.constant/nTrials)*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
@@ -557,6 +576,13 @@ else
     p.trialMem.reference = p.trial.stimulus.reference - p.trial.stimulus.reference_rotation*(p.trial.stimulus.constant/(2 + p.trialMem.mshift))*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
 end
+
+if isfield(p.trialMem,'reference_rotation') & p.trialMem.reference_rotation == 1 & p.trialMem.reference > 90
+    p.trialMem.reference = 90;
+elseif isfield(p.trialMem,'reference_rotation') & p.trialMem.reference_rotation == -1 & p.trialMem.reference < 90
+    p.trialMem.reference = 90;
+end
+
 if isfield(p.trialMem,'reference') & p.trialMem.reference > 160 | p.trialMem.reference < 20
     p.trialMem.reference = p.conditions{p.trial.pldaps.iTrial}.reference; %restart
     p.trialMem.reference_rotation = -1*p.trial.reference_rotation;

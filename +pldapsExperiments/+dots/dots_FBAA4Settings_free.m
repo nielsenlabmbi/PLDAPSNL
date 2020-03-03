@@ -25,11 +25,12 @@ s.stimulus.lickdelay = 1.3;
 s.stimulus.duration.ITI = 1.5;
 s.stimulus.stimON = 0.2;
 s.stimulus.waitTime = 0;
-
+s.	datapixx.	adc.	channels = [2 4 6];
 %set up the viewing distance
 s.display.viewdist = 75; 
 % %add camera
 %s.camera.use=1;
+% 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;
 % s.datapixx.adc.channels = [];

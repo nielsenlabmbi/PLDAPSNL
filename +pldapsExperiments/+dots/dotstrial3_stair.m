@@ -189,7 +189,8 @@ switch p.trial.state
                     p.trialMem.mshift = p.trialMem.mshift+1;
                 end
                 p.trialMem.correct = 1;
-               
+                p.trialMem.correctCount = p.trialMem.correctCount + 1;
+
                 p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                 p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
                 if  activePort==p.trial.stimulus.port.RIGHT & activePort == p.trial.side %active port is the correct port
@@ -361,7 +362,13 @@ end
 %set up initialization stimulus (this could be in settings file)
 p.trial.stimulus.iniColor=1;
 p.trial.stimulus.iniSize=[910 490 1010 590];
+if ~isfield(p.trial.stimulus,'waitColor')
 p.trial.stimulus.waitColor = 0.5;
+end
+
+if ~isfield(p.trialMem,'correctCount')
+    p.trialMem.correctCount = 0;
+end
 
 %% set up stimulus
 
@@ -544,20 +551,29 @@ end
 % +/- offset
 nTrials = p.trial.pldaps.iTrial - p.trial.stimulus.nEasyTrials;
 if nTrials <= 0
-    p.trialMem.shift = 0;
+    p.trialMem.mshift = 0;
 elseif nTrials <= 2 
     p.trialMem.offset = p.trial.stimulus.offset - (p.trial.stimulus.constant/nTrials)*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
-    disp(strcat('offset on the next trial:',num2str(p.trialMem.offset)));
 else
     p.trialMem.offset = p.trial.stimulus.offset - (p.trial.stimulus.constant/(2 + p.trialMem.mshift))*...
         (p.trial.pldaps.goodtrial - p.trial.stimulus.targetThreshold);
-    disp(strcat('offset on the next trial:',num2str(p.trialMem.offset)));
 end
 if isfield(p.trialMem,'offset') & p.trialMem.offset > 45
     p.trialMem.offset = 45;
 elseif isfield(p.trialMem,'offset') & p.trialMem.offset < 0.5
     p.trialMem.offset = 0.5;
+end
+%reset if we have reached convergence
+if mod(nTrials,p.trial.stimulus.nConvTrials) == 0
+    if p.trialMem.correctCount <= 0.75*p.trial.stimulus.nConvTrials;
+        p.trialMem.offset = p.conditions{p.trial.pldaps.iTrial}.offset;
+        p.trialMem.mshift = 0;
+    end
+    p.trialMem.correctCount = 0; 
+end
+if isfield(p.trialMem,'offset')
+disp(strcat('offset on the next trial:',num2str(p.trialMem.offset)));
 end
 %reference: accelerated stochastic approximation, Kesten 1958
 %reviewed in adaptive psychophysical procedures minireview, Treutwein 1995

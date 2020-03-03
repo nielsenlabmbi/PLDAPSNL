@@ -44,7 +44,7 @@ s.display.viewdist = 45;
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
-s.ephys.use = 1;
+%s.ephys.use = 1;
 
 % %%% Debugging settings
 % 
