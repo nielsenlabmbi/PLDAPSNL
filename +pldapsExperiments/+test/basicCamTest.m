@@ -61,9 +61,9 @@ switch p.trial.state
             end
             
             %move response ports (only if necessary)
-            if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-               pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
-               pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
+            if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+               pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
+               pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],1,p);
             end
             
             %note timepoint
@@ -106,7 +106,7 @@ switch p.trial.state
                 
                 %retract all reward ports (if necessary)
                 if any(p.trial.ports.position)
-                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                    pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],0,p);
                 end
                 
                 %advance state
@@ -138,13 +138,13 @@ switch p.trial.state
             
             %retract incorrect spout
             if p.trial.side==p.trial.stimulus.side.LEFT
-                if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.RIGHT)==1
+                    pds.ports.movePort(p.trial.stimulus.side.RIGHT,0,p);
                 end
             end
             if p.trial.side==p.trial.stimulus.side.RIGHT
-                if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.LEFT)==1
+                    pds.ports.movePort(p.trial.stimulus.side.LEFT,0,p);
                 end
             end
             
@@ -169,7 +169,7 @@ switch p.trial.state
                     
                     %retract all spouts
                     if any(p.trial.ports.position)
-                        pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                        pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],0,p);
                     end
                     
                     %advance state
@@ -181,7 +181,7 @@ switch p.trial.state
         else %incorrect responses end trial immediately
             %retract spouts
             if any(p.trial.ports.position)
-                pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0);
+                pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],0);
             end
             
             %wait for ITI
@@ -228,8 +228,8 @@ p.trial.stimulus.stimSize=[400 400 800 800];
 p.trial.state=p.trial.stimulus.states.START;
 
 %set ports correctly
-pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],0,p);
 
 %get camera ready (there's a little bit of wait associated with this, so we
 %have to do it here; the actual start happens with a trigger pulse when the

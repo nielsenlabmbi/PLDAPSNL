@@ -87,15 +87,15 @@ end
 if p.trial.ports.movable
     moveP=0;
     if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.aKey)  %move spout 1
-        portId=p.trial.ports.dio.channel.LEFT;
+        portId=p.trial.stimulus.side.LEFT;
         moveP=1;
     end
     if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.sKey)  %move spout 2
-        portId=p.trial.ports.dio.channel.MIDDLE;
+        portId=p.trial.stimulus.side.MIDDLE;
         moveP=1;
     end
     if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.dKey)  %move spout 3
-        portId=p.trial.ports.dio.channel.RIGHT;
+        portId=p.trial.stimulus.side.RIGHT;
         moveP=1;
     end
     if moveP==1

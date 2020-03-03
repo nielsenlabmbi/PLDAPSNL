@@ -235,7 +235,7 @@ s.  datapixx.   dio.    useForReward = 0;
  s. ports.   adc.  portThreshold = 2;
  s. ports.   adc.  portAvg = 0;
  s. ports.   din.  channelMapping = 'datapixx.din.ports'; %din channels for port contact
- s. ports.   dio.  channel. LEFT = 2; %dio channels to move ports
+ s. ports.   dio.  channel. LEFT = 5;%2; %dio channels to move ports
  s. ports.   dio.  channel. MIDDLE = 3;
  s. ports.   dio.  channel. RIGHT = 1;
  

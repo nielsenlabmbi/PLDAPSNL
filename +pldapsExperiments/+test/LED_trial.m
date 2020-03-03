@@ -41,8 +41,8 @@ disp(num2str(p.trial.led.channelTrial));
         p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
         p.trial.led.channel = p.trial.led.channelTrial;
         pds.LED.LEDOn(p);
-        if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         end
         p.trial.state = p.trial.stimulus.states.STIMON;
         
@@ -125,7 +125,7 @@ disp(num2str(p.trial.led.channelTrial));
             pds.LED.LEDOff(p);
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p); 
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p); 
         end
         
 end
@@ -141,7 +141,7 @@ p.trial.stimulus.iniSize=[910 490 1010 590];
 p.trial.state=p.trial.stimulus.states.START;
 
 %set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
 
     
 %initialize LEDs

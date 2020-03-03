@@ -193,7 +193,7 @@ p = pds.daq_com.send_daq(p,0);
 p.trial.state=p.trial.stimulus.states.START;
 
 %set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
 
 function showStimulus(p)
 p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;

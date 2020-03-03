@@ -1,4 +1,4 @@
-function oritrial_free(p,state)
+function oritrial_free_step(p,state)
 %%%% Note: includes staircase functionality for spatial frequency. Set
 %%%% stimulus.step = 0 in settings file to suppress staircase. 
 

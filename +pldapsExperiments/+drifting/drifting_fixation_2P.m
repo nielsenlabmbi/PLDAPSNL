@@ -48,8 +48,8 @@ switch p.trial.state
         end
     case p.trial.stimulus.states.START 
         
-        if p.trial.ttime > p.trial.stimulus.reference_baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ttime > p.trial.stimulus.reference_baseline && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
@@ -75,8 +75,8 @@ switch p.trial.state
                 end
                 
                 if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + 0.5;
-                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+                    pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
                 end
                 p.trial.stimulus.timeTrialWait = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.WAIT;
@@ -99,8 +99,8 @@ switch p.trial.state
                 end
                 
                 if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.lickdelay;
-                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+                    pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
                 end
                 p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                 p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
@@ -126,8 +126,8 @@ switch p.trial.state
         end
         p.trial.iFrame2 = p.trial.iFrame - p.trial.iFrame0;
          %wait to make ports available
-        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         end
         
         
@@ -238,7 +238,7 @@ p = pds.daq_com.send_daq(p,0);
 p.trial.state=p.trial.stimulus.states.BASELINE;
 
 %set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
 
 function showStimulus(p)
         %determine offset

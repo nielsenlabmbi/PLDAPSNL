@@ -8,8 +8,20 @@ if p.trial.ports.use && p.trial.ports.movable
     %first set port status
     p.trial.ports.position(port)=position;
     
+    % 'port', as an input, is indexed by side, so we have to align these indices
+    % see pdsDefaultTrialStructureNL(in support functions) for side
+    % assignment
+    
+    channels = [p.trial.ports.dio.channel.RIGHT, p.trial.ports.dio.channel.LEFT, p.trial.ports.dio.channel.MIDDLE];
+    sides = [p.trial.stimulus.side.RIGHT, p.trial.stimulus.side.LEFT, p.trial.stimulus.side.MIDDLE];
+    
+    %get aligned index
+    idx = ismember(sides,port);
+    
+    out_channel = channels(idx);
+    
     digword = 1-position;
-    digital_out(port,digword);
+    digital_out(out_channel,digword);
 %     
 %     %first set port status (1: extended)
 %     p.trial.ports.position(port)=position;

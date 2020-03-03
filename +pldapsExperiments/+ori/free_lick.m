@@ -46,7 +46,7 @@ switch p.trial.state
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
         end
-        pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         
         if any(p.trial.ports.position) %port activated
             
@@ -72,11 +72,11 @@ switch p.trial.state
             %play tone
                 pds.audio.playDatapixxAudio(p,'breakfix');
             %retract spouts
-            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+            pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
             %wait
             WaitSecs(4);
             %present spouts again
-            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
+            pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],1,p);
         end
         if p.trial.ttime < p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay & activePort==p.trial.stimulus.port.LEFT & length(activePort)==1 %start port activated
                     %deliver reward
@@ -101,7 +101,7 @@ switch p.trial.state
         
         if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + p.trial.stimulus.lickdelay;
             if any(p.trial.ports.position)
-                pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+                pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
             end
             p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.FINALRESP;
@@ -132,7 +132,7 @@ p.trial.stimulus.iniSize=[910 490 1010 590];
 p.trial.state=p.trial.stimulus.states.START;
 %p.trial.ports.moveBool = double(rand > p.trial.stimulus.fracInstruct);
 %set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
 
 
 

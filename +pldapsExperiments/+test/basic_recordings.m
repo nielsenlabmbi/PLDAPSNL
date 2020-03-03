@@ -55,8 +55,8 @@ switch p.trial.state
         end
     case p.trial.stimulus.states.START 
         
-        if p.trial.ttime > p.trial.stimulus.reference_baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ttime > p.trial.stimulus.reference_baseline && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
@@ -91,8 +91,8 @@ switch p.trial.state
                 end
                 
                 if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + 0.5;
-                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+                    pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
                 end
                 if p.trial.triggerState ~= p.trial.daq.trigger.spouts
                     p = pds.daq_com.send_daq(p,p.trial.daq.trigger.spouts);
@@ -114,8 +114,8 @@ switch p.trial.state
                 end
                 
                 if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.lickdelay;
-                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+                    pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
                 end
                 if p.trial.triggerState ~= p.trial.daq.trigger.spouts
                     p = pds.daq_com.send_daq(p,p.trial.daq.trigger.spouts);
@@ -145,8 +145,8 @@ switch p.trial.state
             p.trial.triggerState = p.trial.daq.trigger.stimon;
         end
          %wait to make ports available
-        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         end
         
         
@@ -255,7 +255,7 @@ p = pds.intan.send_intan(p.trial.ephys.trigger.stimon,0); %for intan
 p = pds.intan.send_intan(p.trial.ephys.trigger.spouts,0); %for intan
 
 %set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
 
 
 

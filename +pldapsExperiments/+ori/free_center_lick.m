@@ -47,8 +47,8 @@ switch p.trial.state
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
         end
 
-        if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-             pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+             pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         end
         
         
@@ -85,8 +85,8 @@ switch p.trial.state
         end
         
         if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + amount + p.trial.stimulus.lickdelay;
-            if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+            if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+                pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
             end
             p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.FINALRESP;
@@ -117,7 +117,7 @@ p.trial.stimulus.iniSize=[910 490 1010 590];
 p.trial.state=p.trial.stimulus.states.START;
 
 %set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],0,p);
 
 
 

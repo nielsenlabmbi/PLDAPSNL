@@ -58,8 +58,8 @@ switch p.trial.state
         end
   case p.trial.stimulus.states.START 
         
-        if p.trial.ttime > p.trial.stimulus.reference_baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ttime > p.trial.stimulus.reference_baseline && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
             if p.trial.triggerState ~=p.trial.trigger.states.SPOUTS
                 p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,1);
                 p.trial.StartSpoutTrigger = p.trial.ttime;
@@ -97,8 +97,8 @@ switch p.trial.state
                 end
                 
                 if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + 0.5;
-                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+                    pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
                 end
                 if p.trial.triggerState ~= p.trial.trigger.states.WAIT;
                     p = pds.intan.send_intan(p,p.trial.ephys.trigger.lickdelay,0);
@@ -121,8 +121,8 @@ switch p.trial.state
                 end
                 
                 if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.lickdelay;
-                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+                    pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
                     p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,0); %for intan
                 end
                 
@@ -152,8 +152,8 @@ switch p.trial.state
             p.trial.StimOnTrigger = p.trial.ttime;
         end
          %wait to make ports available
-        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
             if p.trial.triggerState ~= p.trial.trigger.states.SPOUTS
                 p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,1);
             end
@@ -277,7 +277,7 @@ p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0); %for intan
 p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,0); %for intan
 
 %set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
 
 
 %%

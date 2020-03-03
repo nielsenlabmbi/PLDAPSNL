@@ -46,7 +46,7 @@ s.display.viewdist = 45;
  %turn mouse input off
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
-% 
+
 % % 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;

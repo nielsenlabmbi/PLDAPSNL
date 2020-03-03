@@ -49,8 +49,8 @@ switch p.trial.state
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
         end
         
-        if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==0
-            pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,1,p);
+        if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
+            pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
@@ -90,8 +90,8 @@ switch p.trial.state
                 
                 
                 if p.trial.ttime > p.trial.stimulus.timeTrialStartResp + 0.5;
-                if p.trial.ports.position(p.trial.ports.dio.channel.MIDDLE)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.MIDDLE,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
+                    pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
                 end
                 p.trial.stimulus.timeTrialWait = p.trial.ttime;
                 p.trial.state=p.trial.stimulus.states.WAIT;
@@ -119,7 +119,7 @@ switch p.trial.state
                 
                 if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.lickdelay;
                 if any(p.trial.ports.position)
-                    pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                    pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],0,p);
                 end
                 p.trial.state=p.trial.stimulus.states.FINALRESP;
                 end
@@ -128,7 +128,7 @@ switch p.trial.state
                 
                 if p.trial.ttime > p.trial.stimulus.timeResp + p.trial.stimulus.forceCorrect_delay;
                     if any(p.trial.ports.position)
-                        pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0,p);
+                        pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],0,p);
                     end
                     p.trial.state=p.trial.stimulus.states.FINALRESP;
                 end
@@ -153,7 +153,7 @@ switch p.trial.state
 %                 pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
 
         %wait to make ports available
-       if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==0 && p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==0;
+       if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && p.trial.ports.position(p.trial.stimulus.side.LEFT)==0 && p.trial.ports.position(p.trial.stimulus.side.RIGHT)==0;
             pds.ports.movePort(p.trial.side,1,p);
             if isfield(p.trial,'fracInstructTrue')
                 if p.trial.fracInstructTrue | p.trial.stimulus.offset >= p.trial.stimulus.instructCutoff;
@@ -172,7 +172,7 @@ switch p.trial.state
               %  pds.ports.movePort(1+mod(p.trial.side,2),1,p);
                % p.trial.ports.moveBool = 1;
             %end
-            %             pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
+            %             pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],1,p);
             end
         end
         
@@ -180,11 +180,11 @@ switch p.trial.state
          if length(activePort) > 1 %if more than one port is activated
             
             %retract spouts
-            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+            pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
             %wait
             WaitSecs(2);
             %present spouts again
-            pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],1,p);
+            pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],1,p);
             
         elseif length(activePort) == 1 & activePort==p.trial.stimulus.port.LEFT | activePort==p.trial.stimulus.port.RIGHT & p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON
             %note time
@@ -215,13 +215,13 @@ switch p.trial.state
                 
                 %retract incorrect spout
                 if p.trial.side==p.trial.stimulus.side.LEFT
-                    if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
-                        pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
+                    if p.trial.ports.position(p.trial.stimulus.side.RIGHT)==1
+                        pds.ports.movePort(p.trial.stimulus.side.RIGHT,0,p);
                     end
                 end
                 if p.trial.side==p.trial.stimulus.side.RIGHT
-                    if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
-                        pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
+                    if p.trial.ports.position(p.trial.stimulus.side.LEFT)==1
+                        pds.ports.movePort(p.trial.stimulus.side.LEFT,0,p);
                     end
                 end
                 
@@ -247,13 +247,13 @@ switch p.trial.state
             
             %retract incorrect spout
             if p.trial.side==p.trial.stimulus.side.LEFT
-                if p.trial.ports.position(p.trial.ports.dio.channel.RIGHT)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.RIGHT,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.RIGHT)==1
+                    pds.ports.movePort(p.trial.stimulus.side.RIGHT,0,p);
                 end
             end
             if p.trial.side==p.trial.stimulus.side.RIGHT
-                if p.trial.ports.position(p.trial.ports.dio.channel.LEFT)==1
-                    pds.ports.movePort(p.trial.ports.dio.channel.LEFT,0,p);
+                if p.trial.ports.position(p.trial.stimulus.side.LEFT)==1
+                    pds.ports.movePort(p.trial.stimulus.side.LEFT,0,p);
                 end
             end
             
@@ -290,7 +290,7 @@ switch p.trial.state
         else %incorrect responses end trial immediately
             %retract spouts
             if any(p.trial.ports.position)
-                pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT],0);
+                pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT],0);
             end
             
             %wait for ITI
@@ -439,7 +439,7 @@ end
 p.trial.state=p.trial.stimulus.states.START;
 
 %set ports correctly
-pds.ports.movePort([p.trial.ports.dio.channel.LEFT p.trial.ports.dio.channel.RIGHT p.trial.ports.dio.channel.MIDDLE],0,p);
+pds.ports.movePort([p.trial.stimulus.side.LEFT p.trial.stimulus.side.RIGHT p.trial.stimulus.side.MIDDLE],0,p);
 
 
 %show stimulus - handles rotation and movement of grating
