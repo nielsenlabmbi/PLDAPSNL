@@ -242,7 +242,7 @@ try
                 p.trial.pldaps.quit = 0;
                 ListenChar(2);
                 HideCursor;
-            elseif pause==2
+            elseif pause==2 
                 pauseLoop(p);
             end
             %             pds.datapixx.refresh(dv);

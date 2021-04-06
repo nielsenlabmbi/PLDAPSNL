@@ -50,6 +50,7 @@ switch p.trial.state
         if p.trial.led.state==0
             %turn LED on
             pds.LED.LEDOn(p);
+            pds.LED.AnyLEDOn(p,23);
             p.trial.led.state=1;
             %note timepoint
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
@@ -124,6 +125,7 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.CORRECT %correct port selected for stimulus
+        pds.LED.AnyLEDOff(p,23);
         %wait for ITI
         if p.trial.ttime > p.trial.stimulus.timeTrialFirstResp + p.trial.stimulus.duration.ITI
             %trial done - note time
@@ -134,6 +136,7 @@ switch p.trial.state
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.pldaps.goodtrial = 1;
             p.trial.flagNextTrial = true;
+            %pds.LED.AnyLEDOff(p,23);
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
@@ -147,6 +150,7 @@ switch p.trial.state
                     %note time
                     p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                     p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
+                    pds.LED.AnyLEDOff(p,23);
                     
                     if activePort==p.trial.stimulus.port.LEFT
                         amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
@@ -171,6 +175,7 @@ switch p.trial.state
                 %trial done
                 p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
                 p.trial.flagNextTrial = true;
+                pds.LED.AnyLEDOff(p,23);
             end
         end
         
@@ -180,6 +185,7 @@ switch p.trial.state
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
+            %pds.LED.AnyLEDOff(p,23); 
         end
         
 end
@@ -279,6 +285,8 @@ function cleanUpandSave(p)
 %stop camera and set trigger to low
 pds.behavcam.stopcam(p);
 pds.behavcam.triggercam(p,0);
+
+pds.LED.AnyLEDOff(p,23); 
 
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
