@@ -299,19 +299,15 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     dotDir(idx(signalid==0))=randdir;
     
     %figure out whether some of the dots might be crossing over the center
-    idxCross=zeros(1,p.trial.stimulus.nrDots);
-    if p.trial.stimulus.direction==0
-        [~,rad]=cart2pol(xypos(1,:),xypos(2,:));
-        idxCross=find(rad<deltaFrame);
-    end
+    %idxCross=zeros(1,p.trial.stimulus.nrDots);
+    %if p.trial.stimulus.direction==0
+    %    [~,rad]=cart2pol(xypos(1,:),xypos(2,:));
+    %    idxCross=find(rad<deltaFrame);
+    %end
         
     %now move everyone
     xypos(1,:)=xypos(1,:)-deltaFrame.*cos(dotDir);
     xypos(2,:)=xypos(2,:)-deltaFrame.*sin(dotDir);
-    
-    %reduce lifetime
-    lifetime(lifetime==0)=p.trial.stimulus.dotLifetime;
-    lifetime=lifetime-1;
     
     
     %randomly reshuffle the ones that end up outside the stimulus, reset
@@ -320,15 +316,23 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     rvec=rand(2, length(idxOut));
     xypos(1,idxOut)=(rvec(1,:)-0.5)*2*stimRadius;
     xypos(2,idxOut)=(rvec(2,:)-0.5)*2*stimRadius;
+    [th,rad]=cart2pol(xypos(1,idxOut),xypos(2,idxOut));
+    dotDir(idxOut)=th+p.trial.stimulus.direction/180*pi; %this is in radians
+    deltaFrame(idxOut)=p.trial.stimulus.speedScale*rad;
     lifetime(idxOut)=0;
     
+    %reduce lifetime
+    lifetime(lifetime==0)=p.trial.stimulus.dotLifetime;
+    lifetime=lifetime-1;
+ 
+    
     %also randomly reshuffle the ones that crossed over the center
-    if sum(idxCross)>0
-        rvec=rand(2, length(idxCross));
-        xypos(1,idxCross)=(rvec(1,:)-0.5)*2*stimRadius;
-        xypos(2,idxCross)=(rvec(2,:)-0.5)*2*stimRadius;
-        lifetime(idxCross)=0;
-    end
+%     if sum(idxCross)>0
+%         rvec=rand(2, length(idxCross));
+%         xypos(1,idxCross)=(rvec(1,:)-0.5)*2*stimRadius;
+%         xypos(2,idxCross)=(rvec(2,:)-0.5)*2*stimRadius;
+%         lifetime(idxCross)=0;
+%     end
     
     
     %remove stimulus out of radius
