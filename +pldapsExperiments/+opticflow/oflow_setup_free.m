@@ -11,7 +11,7 @@ p.trial.pldaps.trialFunction='pldapsExperiments.opticflow.oflowtrial_free';
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = 3;
+p.trial.stimulus.duration.ITI = 1;
 
 %% conditions:
 side.par = 'direction';

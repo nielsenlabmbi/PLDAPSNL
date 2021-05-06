@@ -245,7 +245,7 @@ if nrNoise>0
 end
 
 %initialize lifetime vector
-lifetime=randi(p.trial.stimulus.dotLifetime,nrDots,1);
+lifetime=randi(p.trial.stimulus.dotLifetime,p.trial.stimulus.nrDots,1);
 
 %initialize frame
 p.trial.stimulus.frameI = 0;
@@ -257,7 +257,7 @@ p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
 %save misc variables
 p.trial.stimulus.xypos = xypos;
 p.trial.stimulus.dotDir = dotDir;
-p.trial.stimulus.deltaF = deltaFrame;
+p.trial.stimulus.deltaFrame = deltaFrame;
 p.trial.stimulus.lifetime = lifetime;
 p.trial.stimulus.speedScale = speedScale;
 
@@ -298,6 +298,13 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     randdir=round(360*rand(1,length(idx)-sum(signalid)));
     dotDir(idx(signalid==0))=randdir;
     
+    %figure out whether some of the dots might be crossing over the center
+    idxCross=zeros(1,p.trial.stimulus.nrDots);
+    if p.trial.stimulus.direction==0
+        [~,rad]=cart2pol(xypos(1,:),xypos(2,:));
+        idxCross=find(rad<deltaFrame);
+    end
+        
     %now move everyone
     xypos(1,:)=xypos(1,:)-deltaFrame.*cos(dotDir);
     xypos(2,:)=xypos(2,:)-deltaFrame.*sin(dotDir);
@@ -307,13 +314,22 @@ if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
     lifetime=lifetime-1;
     
     
-    %randomly reshuffle the ones that end up outside the stimulus (these
-    %will need to have their speeds etc recomputed, so set their lifetime to 0 at this point)
+    %randomly reshuffle the ones that end up outside the stimulus, reset
+    %lifetime direction etc 
     idxOut=find(abs(xypos(1,:))>stimRadius | abs(xypos(2,:))>stimRadius);
-    rvec=rand(s,[2 length(idxOut)]);
+    rvec=rand(2, length(idxOut));
     xypos(1,idxOut)=(rvec(1,:)-0.5)*2*stimRadius;
     xypos(2,idxOut)=(rvec(2,:)-0.5)*2*stimRadius;
     lifetime(idxOut)=0;
+    
+    %also randomly reshuffle the ones that crossed over the center
+    if sum(idxCross)>0
+        rvec=rand(2, length(idxCross));
+        xypos(1,idxCross)=(rvec(1,:)-0.5)*2*stimRadius;
+        xypos(2,idxCross)=(rvec(2,:)-0.5)*2*stimRadius;
+        lifetime(idxCross)=0;
+    end
+    
     
     %remove stimulus out of radius
     [~,rad]=cart2pol(xypos(1,:),xypos(2,:));
