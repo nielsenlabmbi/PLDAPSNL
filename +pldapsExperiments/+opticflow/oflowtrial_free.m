@@ -214,6 +214,7 @@ PixPerDeg = 1/DegPerPix;
 %dot size
 p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
 p.trial.stimulus.stimRadiusPix= round(p.trial.stimulus.stimRadius*PixPerDeg);
+stimRadius=p.trial.stimulus.stimRadiusPix;
 
 %displacements: set so that the scaling factor makes the average speed
 %appear at half the stimulus radius
@@ -272,7 +273,7 @@ for f=1:p.trial.stimulus.nrFrames
     %new direction and speed
     [th,rad]=cart2pol(xypos(1,idx),xypos(2,idx));
     dotDir(idx)=th+pi; %this is in radians
-    deltaFrame(idx)=p.trial.stimulus.speedScale*rad;
+    deltaFrame(idx)=speedScale*rad;
     
     %make some of those new dots noise dots
     signalid=rand(1,length(idx))<p.trial.stimulus.dotCoherence; %id=1: signal
@@ -291,8 +292,8 @@ for f=1:p.trial.stimulus.nrFrames
     xypos(1,idxOut)=(rvec(1,:)-0.5)*2*stimRadius;
     xypos(2,idxOut)=(rvec(2,:)-0.5)*2*stimRadius;
     [th,rad]=cart2pol(xypos(1,idxOut),xypos(2,idxOut));
-    dotDir(idxOut)=th+p.trial.stimulus.direction/180*pi; %this is in radians
-    deltaFrame(idxOut)=p.trial.stimulus.speedScale*rad;
+    dotDir(idxOut)=th+pi; %this is in radians
+    deltaFrame(idxOut)=speedScale*rad;
     lifetime(idxOut)=0;
 
     
