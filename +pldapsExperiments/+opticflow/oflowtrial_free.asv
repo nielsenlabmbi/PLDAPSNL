@@ -215,15 +215,6 @@ PixPerDeg = 1/DegPerPix;
 p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
 p.trial.stimulus.stimRadiusPix= round(p.trial.stimulus.stimRadius*PixPerDeg);
 
-%displacements: set so that the scaling factor makes the average speed
-%appear at half the stimulus radius
-avgDeltaFrame = p.trial.stimulus.dotSpeed*PixPerDeg;
-speedScale = 2*avgDeltaFrame/p.trial.stimulus.stimRadiusPix; 
-
-%compute nr frames
-p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
-
-
 %trial dependent parameters
 %dot coherence 
 p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence;
@@ -236,9 +227,14 @@ rvec=rand(2,p.trial.stimulus.nrDots); %gives numbers between 0 and 1
 xypos(1,:)=(rvec(1,:)-0.5)*2*p.trial.stimulus.stimRadiusPix;
 xypos(2,:)=(rvec(2,:)-0.5)*2*p.trial.stimulus.stimRadiusPix;
 
+%displacements: set so that the scaling factor makes the average speed
+%appear at half the stimulus radius
+avgDeltaFrame = p.trial.stimulus.dotSpeed*PixPerDeg;
+speedScale = 2*avgDeltaFrame/p.trial.stimulus.stimRadiusPix; 
+
 %set initial directions for all dots
 [th,rad]=cart2pol(xypos(1,:),xypos(2,:));
-dotDir=th+pi; %this is in radians
+dotDir=th+p.trial.stimulus.direction/180*pi; %this is in radians
 deltaFrame=speedScale*rad;
 
 %change directions for noise dots (we can grab the first N dots here since
@@ -251,15 +247,25 @@ end
 %initialize lifetime vector
 lifetime=randi(p.trial.stimulus.dotLifetime,p.trial.stimulus.nrDots,1);
 
+%initialize frame
+p.trial.stimulus.frameI = 0;
+
+%compute nr frames
+p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
 
 %we need to precompute the dot sequence here - to equate dot densities
 %across expanding and contracting stimuli, the contracting stimulus is an
 %expanding stimulus played in reverse (otherwise the density at the center
 %ends up being higher and makes the stimulus easier than the other one)
-%180 deg = expansion
-
 for f=1:p.trial.stimulus.nrFrames
-   
+
+f = p.trial.stimulus.frameI;
+    xypos = p.trial.stimulus.xypos;
+    dotDir = p.trial.stimulus.dotDir;
+    deltaFrame = p.trial.stimulus.deltaFrame;
+    lifetime = p.trial.stimulus.lifetime;
+    stimRadius = p.trial.stimulus.stimRadiusPix;
+    
     %compute new positions and directions for any dot with lifetime
     %0
     idx=find(lifetime==0);
@@ -271,13 +277,20 @@ for f=1:p.trial.stimulus.nrFrames
     
     %new direction and speed
     [th,rad]=cart2pol(xypos(1,idx),xypos(2,idx));
-    dotDir(idx)=th+pi; %this is in radians
+    dotDir(idx)=th+p.trial.stimulus.direction/180*pi; %this is in radians
     deltaFrame(idx)=p.trial.stimulus.speedScale*rad;
     
     %make some of those new dots noise dots
     signalid=rand(1,length(idx))<p.trial.stimulus.dotCoherence; %id=1: signal
     randdir=round(360*rand(1,length(idx)-sum(signalid)));
     dotDir(idx(signalid==0))=randdir;
+    
+    %figure out whether some of the dots might be crossing over the center
+    idxCross=[];
+    if p.trial.stimulus.direction==0
+       [~,rad]=cart2pol(xypos(1,:),xypos(2,:));
+       idxCross=find(rad<deltaFrame);
+    end
         
     %now move everyone
     xypos(1,:)=xypos(1,:)-deltaFrame.*cos(dotDir);
@@ -294,35 +307,43 @@ for f=1:p.trial.stimulus.nrFrames
     dotDir(idxOut)=th+p.trial.stimulus.direction/180*pi; %this is in radians
     deltaFrame(idxOut)=p.trial.stimulus.speedScale*rad;
     lifetime(idxOut)=0;
-
+    
+    
+     
+    %also randomly reshuffle the ones that crossed over the center
+    if ~isempty(idxCross)>0
+        rvec=rand(2, length(idxCross));
+        xypos(1,idxCross)=(rvec(1,:)-0.5)*2*stimRadius;
+        xypos(2,idxCross)=(rvec(2,:)-0.5)*2*stimRadius;
+        [th,rad]=cart2pol(xypos(1,idxCross),xypos(2,idxCross));
+        dotDir(idxCross)=th+p.trial.stimulus.direction/180*pi; %this is in radians
+        deltaFrame(idxCross)=p.trial.stimulus.speedScale*rad;
+        lifetime(idxCross)=0;
+    end
     
     %reduce lifetime
     lifetime(lifetime==0)=p.trial.stimulus.dotLifetime;
     lifetime=lifetime-1;
  
-
+   
+    
+    
     %remove stimulus out of radius
     [~,rad]=cart2pol(xypos(1,:),xypos(2,:));
     
-    
-    %save dot positions
-    if p.trial.stimulus.direction==180
-        p.trial.stimulus.dotpos{f}=xypos(:,rad<stimRadius);
-    elseif p.trial.stimulus.direction==0
-        p.trial.stimulus.dotpos{p.trial.stimulus.nrFrames-f+1}=xypos(:,rad<stimRadius);
-    end
-    
-   
-end
+    %save variables
+    p.trial.stimulus.lifetime = lifetime;
+    p.trial.stimulus.dotpos{f}=xypos(:,rad<stimRadius);
+    p.trial.stimulus.xypos = xypos;
+    p.trial.stimulus.dotDir = dotDir;
 
 
 %save misc variables
+p.trial.stimulus.xypos = xypos;
+p.trial.stimulus.dotDir = dotDir;
 p.trial.stimulus.deltaFrame = deltaFrame;
 p.trial.stimulus.lifetime = lifetime;
 p.trial.stimulus.speedScale = speedScale;
-
-%initialize frame
-p.trial.stimulus.frameI = 0;
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
@@ -334,12 +355,9 @@ end
 %show stimulus - handles actual dot displacement
 function showStimulus(p)
 p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
-if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames    
+if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
+    
     Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
-        p.trial.stimulus.dotSizePix, [1 1 1], ...
-        [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
-else
-    Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.nrFrames}, ...
         p.trial.stimulus.dotSizePix, [1 1 1], ...
         [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
 end
