@@ -276,24 +276,38 @@ for f=1:p.trial.stimulus.nrFrames
     deltaFrame(idx)=speedScale*rad;
     
     %make some of those new dots noise dots
-    signalid=rand(1,length(idx))<p.trial.stimulus.dotCoherence; %id=1: signal
-    randdir=round(360*rand(1,length(idx)-sum(signalid)));
-    dotDir(idx(signalid==0))=randdir;
-        
+    rvec=rand(1,length(idx));
+    for i=1:length(idx)
+        if rvec(i)>=p.trial.stimulus.dotCoherence
+            dotDir(idx(i))=randi([0,359],1,1);
+        end
+    end
+      
     %now move everyone
     xypos(1,:)=xypos(1,:)-deltaFrame.*cos(dotDir);
     xypos(2,:)=xypos(2,:)-deltaFrame.*sin(dotDir);
     
     
     %randomly reshuffle the ones that end up outside the stimulus, reset
-    %lifetime direction etc 
+    %lifetime direction etc according to noise level
     idxOut=find(abs(xypos(1,:))>stimRadius | abs(xypos(2,:))>stimRadius);
     rvec=rand(2, length(idxOut));
     xypos(1,idxOut)=(rvec(1,:)-0.5)*2*stimRadius;
     xypos(2,idxOut)=(rvec(2,:)-0.5)*2*stimRadius;
+    
+    %first set everyone as if signal
     [th,rad]=cart2pol(xypos(1,idxOut),xypos(2,idxOut));
     dotDir(idxOut)=th+pi; %this is in radians
     deltaFrame(idxOut)=speedScale*rad;
+    
+    %then reset direction for noise
+    rvec=rand(1,length(idxOut));
+    for i=1:length(idxOut)
+       if rvec(i)>=p.trial.stimulus.dotCoherence
+           dotDir(idxOut(i))=randi([0,359],1,1);
+        end
+    end
+    %set lifetime to 0 so that it will be set to full next    
     lifetime(idxOut)=0;
 
     

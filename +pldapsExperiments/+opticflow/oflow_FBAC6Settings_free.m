@@ -9,12 +9,13 @@ s.stimulus.dotSize = 1;
 s.stimulus.nrDots = 200;
 s.stimulus.stimRadius=30;
 s.display.bgColor = [0 0 0]; 
-s.stimulus.dotCoherence = [{1},{[1 0.8]}, {[1 0.8 0.4]}]; %[0.2 0.4 0.6 0.8 1];
-s.stimulus.dotSpeed = 0.1;
+s.stimulus.dotCoherence = [{1},{[1 0.8]}, {[1 0.8 0.6 0.5 0.4]}]; %[0.2 0.4 0.6 0.8 1];
+s.stimulus.dotSpeed = 0.2;
 s.stimulus.dotLifetime = 60;
 s.stimulus.durStim = 60;
 s.stimulus.frameRate = 120;
 s.stimulus.direction = [0 180];
+
 
 
 

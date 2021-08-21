@@ -1,0 +1,13 @@
+frameII = 1;
+while frameII <= framescale
+
+frameIdx=mod(p.trial.stimulus.frameI,p.trial.stimulus.framesPerMovie)+1;
+            Screen('DrawDots', p.trial.display.ptr, squeeze(p.trial.stimulus.dotpos(:,:,frameIdx)'),...
+                p.trial.stimulus.dotSizePix, [1 1 1], ...
+                [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+
+frameII = frameII + 1;
+
+end
+
+
