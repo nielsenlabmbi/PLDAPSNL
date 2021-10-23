@@ -341,7 +341,7 @@ catch me
     end
     fprintf('\r\r')
     
-    keyboard
+    clear keyboard
 end
 
 end

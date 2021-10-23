@@ -9,7 +9,7 @@ s.stimulus.dotSize = 1.5;
 s.display.bgColor = [0 0 0]; 
 s.stimulus.framesPerMovie= [220, 72];
 s.stimulus.direction = [0 180];
-s.stimulus.movieId = [11, 12, 14];
+s.stimulus.movieId = [15, 12, 14];
 %s.stimulus.speed = [0 1 2]; %0 in place, 1 fast, 2 slow
 %s.stimulus.dotCoherence=100;
 %this will be dot speed in +/- x position

@@ -5,7 +5,7 @@ function p=plain_calibrate3(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.test.calibrate_3spouts';
+p.trial.pldaps.trialFunction='pldapsExperiments.hpcalibrate.calibrate_3spouts';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
