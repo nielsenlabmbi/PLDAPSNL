@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><addonProperties xmlns="http://schemas.mathworks.com/matlab/addon/2014/addonProperties"><identifier type="GUID">86ea3197-b131-4364-8650-dae8bacf51e4</identifier><description>The Zaber Motion Library aims to provide easy-to-use API for communication with Zaber devices.
+
+For devices using Zaber ASCII Protocol:
+API Reference: https://www.zaber.com/software/docs/motion-library/ascii/references/matlab/
+Getting Started Guide: https://www.zaber.com/software/docs/motion-library/ascii/tutorials/introduction/
+
+For devices using Zaber Binary Protocol:
+API Reference: https://www.zaber.com/software/docs/motion-library/binary/references/matlab/
+Getting Started Guide: https://www.zaber.com/software/docs/motion-library/binary/tutorials/introduction/</description><authors><author><name>Zaber Technologies Inc.</name><contact>contact@zaber.com</contact><organization>Zaber Technologies Inc.</organization></author></authors></addonProperties>

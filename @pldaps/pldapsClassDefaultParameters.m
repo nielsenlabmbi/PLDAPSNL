@@ -240,7 +240,7 @@ s.  datapixx.   dio.    useForReward = 0;
  s. ports.   dio.  channel. RIGHT = 1;
  
 %s.	session.
- s.	session.	experimentFile = [ ];
+ s.	session. experimentFile = [ ];
 
 %s.	sound.
  s.	sound.	deviceid = [ ];
@@ -250,7 +250,14 @@ s.  datapixx.   dio.    useForReward = 0;
 
  
  %s.twoP 
- s. twoP.       use = 0;
- s. twoP.       IP = '172.30.11.132';
- s. twoP.       udpRemortPort = 7000;
+ s. twoP.   use = 0;
+ s. twoP.   IP = '172.30.11.132';
+ s. twoP.   udpRemortPort = 7000;
+ 
+ %s. zaber
+ s. zaber.  use = 0;
+ s. zaber.  port = '/dev/ttyUSB0';
+ %s. zaber.  connection = [];
+ %s. zaber.  device = [];
+ %s. zaber.  axis = [];
 end
