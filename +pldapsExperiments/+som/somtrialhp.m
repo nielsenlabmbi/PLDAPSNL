@@ -281,6 +281,7 @@ switch p.trial.state
     case p.trial.stimulus.states.FINALRESP
         
         %move stage out of the way
+        zaber.axis(p.trial.stimulus.orthaxis).moveAbsolute(p.trial.stimulus.orthoff(1),Units.LENGTH_MILLIMETRES);
         
         %wait for ITI
         if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI + p.trial.stimulus.timeout*(~p.trial.pldaps.goodtrial)
@@ -349,7 +350,12 @@ end
 %determine shape and stage position
 p.trial.stimulus.shapenr=p.conditions{p.trial.pldaps.iTrial}.curvetype+p.conditions{p.trial.pldaps.iTrial}.shapeid; %results in nr between 1 and 4
 p.trial.stimulus.rotangle=p.trial.stimulus.angle(p.trial.stimulus.shapenr)+rand(1)*p.trial.stimulus.rotrange;
-p.trial.stimulus.orthoff=p.trial.stimulus.orthpos+rand(1)*p.trial.stimulus.orthrange; %we're adjusting both start and stop position
+
+orand=rand(1);
+o1=max(p.trial.stimulus.orthpos(1)+orand*p.trial.stimulus.orthrange,0); 
+o2=min(p.trial.stimulus.orthpos(2)+orand*p.trial.stimulus.orthrange,50); 
+
+p.trial.stimulus.orthoff=[o1 o2]; %we're adjusting both start and stop position
 p.trial.stimulus.paroff=p.trial.stimulus.parpos+rand(1)*p.trial.stimulus.parrange;
 
 

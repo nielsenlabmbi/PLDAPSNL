@@ -22,7 +22,7 @@ else
     side.match=[1 2];
 end
 
-cond(1).curevetype=p.defaultParameters.stimulus.curvetype;
+cond(1).curvetype=p.defaultParameters.stimulus.curvetype;
 cond(1).shapeid=p.defaultParameters.stimulus.shapeid;
 
 c{1}=generateCondList_sides(cond(1),side,'pseudo',ceil(500/(length(cond(1).curvetype)*2)));
@@ -39,10 +39,10 @@ p.trial.pldaps.finish = length(p.conditions);
 %% display stats
 p.trialMem.stats.cond={'curvetype','shapeid'}; %conditions to display
 A = []; B = []; 
-for i = 1:length(p.trial.stimulus.offsets)
-    [aa,bb] = ndgrid(cond(i).curvetype,cond(i).shapeid);
+%for i = 1:length(p.trial.stimulus.)
+    [aa,bb] = ndgrid(cond(1).curvetype,cond(1).shapeid);
     A = [A; aa(:)]; B = [B; bb(:)];
-end
+%end
 
 p.trialMem.stats.val = [A(:),B(:)]';
 nCond=size(p.trialMem.stats.val,2);

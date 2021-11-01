@@ -14,6 +14,7 @@ s.stimulus.movieId = [11, 12, 14]; %current working set
 %s.stimulus.dotCoherence=100;
 %this will be dot speed in +/- x position
 s.stimulus.dotdistance = [{5},{4}, {3}, {2}, {1}, {0}, {[ 5 4 3 2 1 0]}]; %]; %[0.2 0.4 0.6 0.8 1];
+s.stimulus.phase_coherence = [{.2},{.4},{.6},{.8}, {1}];
 
 
 

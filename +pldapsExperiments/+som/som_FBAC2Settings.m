@@ -27,16 +27,19 @@ s.stimulus.curvetype=[1 2]; %convex/concave
 s.stimulus.shapeid=[0 1]; %there are 2 shapes per curvature
 s.stimulus.angle=[0 90 180 270];
 s.stimulus.orthaxis=2; % axis orthogonal to ferret
-s.stimulus.orthpos=[0 500]; %start and stop position
-s.stimulus.orthrange=20; %noise range for position
+s.stimulus.orthpos=[0 20]; %start and stop position
+s.stimulus.orthrange=5; %noise range for position
 s.stimulus.paraxis=1; %parallel axis
-s.stimulus.parpos=300; %center of range
-s.stimulus.parrange=20; %noise range for position
+s.stimulus.parpos=25; %center of range
+s.stimulus.parrange=5; %noise range for position
 s.stimulus.rotaxis=3; %rotation axis
 s.stimulus.rotrange=5; %noise range for rotation
 s.stimulus.runtype = 'pseudo';
 s.stimulus.sideMatch = [1 2];
 
+
+%add zaber
+ s. zaber.  use = 1;
 
 % %configure ports
  s.ports.use = true;
