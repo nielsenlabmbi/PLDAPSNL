@@ -34,19 +34,6 @@ end
 %check port status and set events accordingly
 function p=checkState(p)
 
-import zaber.motion.Library;
-import zaber.motion.ascii.Connection;
-import zaber.motion.Units;
-import zaber.motion.ascii.AxisSettings;
-import zaber.motion.ascii.AllAxes;
-import zaber.motion.ascii.Axis;
-import zaber.motion.ascii.Stream;
-import zaber.motion.Measurement;
-
-Library.enableDeviceDbStore();
-
-global zaber;
-
 activePort=find(p.trial.ports.status==1);
 
 
@@ -141,8 +128,6 @@ switch p.trial.state
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
 
         %move stage
-        zaber.axis(p.trial.stimulus.orthaxis).moveAbsolute(p.trial.stimulus.orthoff(2),Units.LENGTH_MILLIMETRES);
-
         
         %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && ...
@@ -298,33 +283,16 @@ end
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
 
-import zaber.motion.Library;
-import zaber.motion.ascii.Connection;
-import zaber.motion.Units;
-import zaber.motion.ascii.AxisSettings;
-import zaber.motion.ascii.AllAxes;
-import zaber.motion.ascii.Axis;
-import zaber.motion.ascii.Stream;
-import zaber.motion.Measurement;
-
-Library.enableDeviceDbStore();
-
-
-global zaber;
-
 %get side for condition
 if p.conditions{p.trial.pldaps.iTrial}.side==2
     p.trial.side=p.trial.stimulus.side.LEFT;
 else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
-
-%deal with fraction instructive trials if there were manual adjustments
 if isfield(p.trialMem,'fracInstruct')
     p.trial.stimulus.fracInstruct = p.trialMem.fracInstruct;
 end
 
-%adjust fraction instructive trials (regulated by moveBool)
 if ~isfield(p.trialMem,'count') || p.trialMem.count == 0
     p.trialMem.count = 1;
     p.trialMem.moveBool = zeros(1,10);
@@ -335,7 +303,7 @@ end
 p.trial.ports.moveBool = p.trialMem.moveBool(p.trialMem.count);
 p.trialMem.count = mod(p.trialMem.count+1,11);
 
-%lick delay
+
 if length(p.trial.stimulus.lickdelay) > 1
     p.trial.stimulus.lickdelayL = p.trial.stimulus.lickdelay(1);
     p.trial.stimulus.lickdelayR = p.trial.stimulus.lickdelay(2);
@@ -344,19 +312,35 @@ else
     p.trial.stimulus.lickdelayR = p.trial.stimulus.lickdelay;
 end
 
+%set up initialization stimulus (this could be in settings file)
+p.trial.stimulus.iniColor=1;
+p.trial.stimulus.iniSize=[910 490 1010 590];
+p.trial.stimulus.waitColor = 0.5;
 
-% set up stimulus
+%% set up stimulus
+
+global zaber;
+
 %determine shape and stage position
 p.trial.stimulus.shapenr=p.conditions{p.trial.pldaps.iTrial}.curvetype+p.conditions{p.trial.pldaps.iTrial}.shapeid; %results in nr between 1 and 4
-p.trial.stimulus.rotangle=p.trial.stimulus.angle(p.trial.stimulus.shapenr)+rand(1)*p.trial.stimulus.rotrange;
-p.trial.stimulus.orthoff=p.trial.stimulus.orthpos+rand(1)*p.trial.stimulus.orthrange; %we're adjusting both start and stop position
-p.trial.stimulus.paroff=p.trial.stimulus.parpos+rand(1)*p.trial.stimulus.parrange;
+p.trial.stimulus.rotangle=p.trial.stimulus.angle(p.trial.stimulus.shapenr);
+p.trial.stimulus.orthoff=p.trial.stimulu
 
+
+
+%p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
+
+%determine end xy position
+%p.trial.stimulus.dotcolor=ones(3,p.trial.stimulus.nrDots)*255;
 
 %move stage into position
-zaber.axis(p.trial.stimulus.orthaxis).moveAbsolute(p.trial.stimulus.orthoff(1),Units.LENGTH_MILLIMETRES);
-zaber.axis(p.trial.stimulus.paraxis).moveAbsolute(p.trial.stimulus.paroff,Units.LENGTH_MILLIMETRES);
-zaber.axis(p.trial.stimulus.rotaxis).moveAbsolute(p.trial.stimulus.rotangle,Units.ANGLE_DEGREES);
+
+
+%save misc variables
+p.trial.stimulus.randpos = randpos;
+p.trial.stimulus.randdir = randdir;
+p.trial.stimulus.deltaF = deltaF;
+p.trial.stimulus.lifetime = lifetime;
 
 
 %set state
