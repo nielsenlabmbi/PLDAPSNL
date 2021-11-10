@@ -29,10 +29,12 @@ end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Larrow) %left arrow = user 1
     p.trial.userInput=1;
+    disp('left key')
 end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Rarrow) %right arrow = user 2
     p.trial.userInput=2;
+    disp('right key')
 end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Uarrow) %right arrow = user 2

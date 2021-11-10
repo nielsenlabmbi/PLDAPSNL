@@ -22,7 +22,7 @@ s.stimulus.fractionBlack = 0;
 %this progression is above, but adds a new bag of a singular threshold
 %this continues as a cascade down until all the thresholds are represented
 %can always cut and adjust
-s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[1 0.8 0.6 0.4 0.2]}];
+s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 0.8 0.6 0.4 0.2]}];
 %s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[1 0.8 0.6 0.4 0.2]}];
 %s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[1 0.8 0.6 0.4 0.2]}];
 %s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[1 0.8 0.6 0.4 0.2]}];

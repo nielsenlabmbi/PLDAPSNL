@@ -348,7 +348,12 @@ end
 
 % set up stimulus
 %determine shape and stage position
-p.trial.stimulus.shapenr=p.conditions{p.trial.pldaps.iTrial}.curvetype+p.conditions{p.trial.pldaps.iTrial}.shapeid; %results in nr between 1 and 4
+if p.conditions{p.trial.pldaps.iTrial}.curvetype==1
+    p.trial.stimulus.shapenr=p.conditions{p.trial.pldaps.iTrial}.shapeid; %results either 1 or 2
+else
+    p.trial.stimulus.shapenr=p.conditions{p.trial.pldaps.iTrial}.shapeid+2; %results either 3 or 4
+end
+
 p.trial.stimulus.rotangle=p.trial.stimulus.angle(p.trial.stimulus.shapenr)+rand(1)*p.trial.stimulus.rotrange;
 
 orand=rand(1);
@@ -387,7 +392,7 @@ if p.trial.pldaps.draw.reward.show
 end
 
 %show frac instruct
-disp(p.trial.stimulus.fracInstruct);
+disp(['FI: ' num2str(p.trial.stimulus.fracInstruct)]);
 
 
 %+/- frac instruct
