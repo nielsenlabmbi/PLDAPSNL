@@ -1,4 +1,5 @@
-function somtrial_free(p,state)
+function human1_trial_free(p,state)
+
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -13,22 +14,31 @@ switch state
         %check port status and set states accordingly
         checkState(p);
         
+        
     case p.trial.pldaps.trialStates.frameDraw
-%         %if p.trial.state==p.trial.stimulus.states.START
-%            % Screen(p.trial.display.ptr, 'FillRect', 0)
-%         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
-%             %showStimulus(p);
-%         end
+
+        if p.trial.state==p.trial.stimulus.states.START
+            Screen(p.trial.display.ptr, 'FillRect', 0)
+        elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
+
+            p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+            frameIdx=mod(p.trial.stimulus.frameI,p.trial.stimulus.framesPerMovie)+1;
+            Screen('DrawDots', p.trial.display.ptr, squeeze(p.trial.stimulus.dotpos(:,:,frameIdx)'),...
+                p.trial.stimulus.dotSizePix, [1 1 1], ...
+                [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+            
+        end
      
+        
+      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
         cleanUpandSave(p);
         
 end
 
-
  
 
-%-------------------------------------------------------------------%
+%% -------------------------------------------------------------------%
 %check port status and set events accordingly
 function p=checkState(p)
 
@@ -46,6 +56,12 @@ switch p.trial.state
             %note timepoint
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+            %send trigger pulse to camera
+            if p.trial.camera.use 
+                pds.behavcam.triggercam(p,1);
+                p.trial.stimulus.timeCamOn = p.trial.ttime;
+                p.trial.stimulus.frameCamOn = p.trial.iFrame;
+            end
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
@@ -64,10 +80,6 @@ switch p.trial.state
             amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             
-            %move the stimulus
-            digital_out(p.trial.stimulus.moveCh,p.trial.stimulus.movein); 
-
-
             %advance state
             p.trial.state=p.trial.stimulus.states.STIMON;
         end
@@ -93,15 +105,14 @@ switch p.trial.state
                 if activePort==p.trial.stimulus.port.LEFT
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-                else 
+                elseif activePort==p.trial.stimulus.port.RIGHT
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                else
+                    amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
+                    pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
                 end
                 
-                %move the stimulus
-                digital_out(p.trial.stimulus.moveCh,p.trial.stimulus.moveout); 
-
-
                 %advance state
                 p.trial.state=p.trial.stimulus.states.CORRECT;
             else
@@ -141,14 +152,14 @@ switch p.trial.state
                     if activePort==p.trial.stimulus.port.LEFT
                         amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-                    else
+                    elseif activePort==p.trial.stimulus.port.RIGHT
                         amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
+                    else
+                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
+                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
                     end
-
-                     %move the stimulus
-                     digital_out(p.trial.stimulus.moveCh,p.trial.stimulus.moveout); 
-
+                    
                     %advance state
                     p.trial.state=p.trial.stimulus.states.FINALRESP;
                 
@@ -181,7 +192,19 @@ end
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
 
+%we are implementing the graziano style (spiral space) optic flow pattern
+%here, with noise that is random in direction, but not speed (each dot
+%keeps its speed and direction throughout its lifetime)
 
+if isfield(p.trial,'masktxtr')
+    Screen('Close',p.trial.masktxtr);
+end
+p.trial.masktxtr=[];
+
+if isfield(p.trial,'gtxtr')
+    Screen('Close',p.trial.gtxtr)
+end
+p.trial.gtxtr=[];
 
 %get side for condition
 switch p.conditions{p.trial.pldaps.iTrial}.side
@@ -189,28 +212,175 @@ switch p.conditions{p.trial.pldaps.iTrial}.side
         p.trial.side=p.trial.stimulus.side.LEFT;
     case 2
         p.trial.side=p.trial.stimulus.side.RIGHT;
+    case 3
+        p.trial.side=p.trial.stimulus.side.MIDDLE;
 end
 
-%get stimulus number
-if p.conditions{p.trial.pldaps.iTrial}.curvetype==1
-    p.trial.stimulus.shapenr=p.conditions{p.trial.pldaps.iTrial}.shapeid; %results either 1 or 2
-else
-    p.trial.stimulus.shapenr=p.conditions{p.trial.pldaps.iTrial}.shapeid+2; %results either 3 or 4
+% set up stimulus
+DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+PixPerDeg = 1/DegPerPix;
+
+%fixed parameters
+%dot size
+%just changed to lower size
+p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg) ;
+
+%direction
+p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+
+%movie id
+p.trial.stimulus.movieId = p.conditions{p.trial.pldaps.iTrial}.movieId;
+
+%speed : keeping this silent for now
+%p.trial.stimulus.speed = p.conditions{p.trial.pldaps.iTrial}.speed;
+
+%phase_coherence
+
+p.trial.stimulus.phase_coherence = p.conditions{p.trial.pldaps.iTrial}.phase_coherence;
+
+%load movie - generates coordVec
+load(['movie' num2str(p.trial.stimulus.movieId) '.mat']);
+
+% trying to choose framerate
+p.trial.stimulus.framesPerMovie = size(coordvec, 3);
+
+%dot lifetime
+p.trial.stimulus.dot_lifetime = p.trial.stimulus.framesPerMovie;
+
+%number dots
+p.trial.stimulus.nrDots = p.trial.stimulus.nrDots;
+
+
+coordvec(:, 2, :) = coordvec(:, 2, :) .* 100;
+coordvec(:, 1, :) = coordvec(:, 1, :) .* 100;
+coordvec(:, 1, :) = coordvec(:, 1, :) + 980; %this should start at one end
+
+
+%**** 100% coherence means all dots are signal, i.e they don't move
+%**** 0% coherence means all dots are not moving
+
+
+
+
+% 100% would have the signal value, which is 100% no dots moving
+% 20% would have the signal value, which is 20% no dots move
+
+% *nothing is corresponding to global motion at this time
+% *directoin calculations don't matter at this time
+dot_lifetime = p.trial.stimulus.dot_lifetime;
+%*** cordvec basis
+herey = squeeze(coordvec(:, 2, :))';
+herex = squeeze(coordvec(:,1,:))';
+
+frames = size(herex, 1);
+
+Xdis = diff(herex(:, :));
+Ydis = diff(herey(:, :));
+
+%***initialize random dots
+%the bounds will correspond to psychtoolbox bounds
+nrDots = p.trial.stimulus.nrDots;
+maxi = max(max(max(coordvec)));
+mini = min(min(min(coordvec)));
+randdotvec = rand(2, nrDots)'.*1980 - (1980/2);
+
+
+%*** initialize noise vector
+coherence = p.trial.stimulus.phase_coherence;
+nrSignal = round(nrDots*coherence);
+noisevec = zeros(nrDots, 2);
+noisevec(1:nrSignal, 1) = 1; %1 = signal 0 = noise
+%the remainder noise will move w/ a random movement vector
+noisevec(nrSignal + 1:end, 2) = randi(size(coordvec, 1), 1, nrDots-nrSignal);
+
+%idx = 0, these are the noise
+%idx = 0, these are the values that will move
+
+%*** don't need directions for now
+
+%*** initialize lifetime
+
+if dot_lifetime >0
+    lifetime = randi(frames, nrDots, 1);
 end
 
-%get port number to move
-p.trial.stimulus.moveCh=p.trial.stimulus.solenoidCh(p.trial.stimulus.shapenr);
 
+%this is the building vector
+%once complete, its size should be [dots x frames]
+dotposx = randdotvec(:, 1);
+dotposy = randdotvec(:, 2);
+
+%*** now it's time to start making all the dots
+
+%***
+  %dotpos can take 3D array w/ x/y concatenated
+      %will have to split up here for testing
+%***
+
+
+for counter = 2:frames
+    idx = find(noisevec(:, 1) == 0);
+    randdotvec(idx, 1) = randdotvec(idx, 1) + (Xdis(counter-1, noisevec(idx, 2)))';
+    randdotvec(idx, 2) = randdotvec(idx, 2) + (Ydis(counter-1, noisevec(idx, 2)))';
+    
+    if dot_lifetime > 0
+        idx = find(lifetime == 0);
+        lifetime(idx) = randi(frames, length(idx), 1);
+        randdotvec(idx, :) = mini + (maxi - mini).*rand(2, length(idx))';
+        newbag(idx, 1) = rand(length(idx),1);
+
+        if newbag(idx, 1) <= coherence
+            noisevec(idx, 1) = 1;
+            noisevec(idx, 2) = 0;
+        elseif newbag(idx, 1) > coherence
+            noisevec(idx, 1) = 0;
+            noisevec(idx, 2) = randi(size(coordvec, 1), 1, length(idx));
+        end
+        
+        lifetime = lifetime - 1;
+    end
+    
+    dotposx(:, counter) = randdotvec(:, 1);
+    dotposy(:, counter) = randdotvec(:, 2);
+
+end
+
+thedot(:, 1, :) = dotposx;
+thedot(:, 2, :) = dotposy;
+
+
+%the stimuli is walking
+count = 0;
+for timer = 1:size(coordvec, 3)
+            count = count + (1980 /(size(coordvec,3)));
+            coordvec(:, 1, timer) = coordvec(:, 1, timer) - (count);
+end
+
+if p.trial.stimulus.direction==180
+    coordvec(:, 1, :) = coordvec(:, 1, :) .* -1;
+end
+
+coordvec = cat(1, coordvec, thedot);
+%put into variable
+p.trial.stimulus.dotpos=coordvec;
+
+
+%initialize frame
+p.trial.stimulus.frameI = 0;
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
+if p.trial.camera.use;
+    pds.behavcam.startcam(p);
+end
 
 
-
-
-%------------------------------------------------------------------%
+%% ------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
+%stop camera and set trigger to low
+pds.behavcam.stopcam(p);
+pds.behavcam.triggercam(p,0);
 
 pds.LED.AnyLEDOff(p,23); 
 
@@ -232,10 +402,21 @@ num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
 % disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
 % disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
 
+%user function test
+if p.trial.userInput==1
+    disp('decrement offset:')
+    p.trialMem.stimulus.offset=p.trialMem.stimulus.offset+p.trial.stimulus.deltaOffset;
+    disp(['offset left - ' num2str(p.trialMem.stimulus.offset(1))]);
+end
+if p.trial.userInput==2
+    disp('increment offset:')
+    p.trialMem.stimulus.offset=p.trialMem.stimulus.offset-p.trial.stimulus.deltaOffset;
+    disp(['offset left - ' num2str(p.trialMem.stimulus.offset(1))]);
+end
     
 
 %%%%%%Helper functions
-%-------------------------------------------------------------------%
+%% -------------------------------------------------------------------%
 %check whether a particular port choice is correct
 function correct=checkPortChoice(activePort,p)
 
