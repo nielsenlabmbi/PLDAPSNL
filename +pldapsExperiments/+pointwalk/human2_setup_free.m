@@ -9,7 +9,7 @@ function p = human2_setup_free(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.pointwalk.human2_trial_free';
+p.trial.pldaps.trialFunction='pldapsExperiments.pointwalk.human22_trial_free';
 %THIS IS NEW EACH TRIAL
 
 %% set general parameters

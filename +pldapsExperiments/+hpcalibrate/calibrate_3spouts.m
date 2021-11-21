@@ -51,6 +51,8 @@ switch p.trial.state
             pds.ports.movePort(p.trial.stimulus.side.MIDDLE,1,p);
         end
         
+        %disp(['a: ' num2str(activePort)])
+       % disp(['s: ' num2str(p.trial.stimulus.port.START)])
         if activePort==p.trial.stimulus.port.START %start port activated
             %deliver reward
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);

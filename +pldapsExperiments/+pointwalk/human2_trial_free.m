@@ -253,7 +253,7 @@ p.trial.stimulus.nrDots = p.trial.stimulus.nrDots;
 
 coordvec(:, 2, :) = coordvec(:, 2, :) .* 100;
 coordvec(:, 1, :) = coordvec(:, 1, :) .* 100;
-coordvec(:, 1, :) = coordvec(:, 1, :) + 980; %this should start at one end
+coordvec(:, 1, :) = coordvec(:, 1, :) + 1000; %this should start at one end
 
 
 %**** 100% coherence means all dots are signal, i.e they don't move
@@ -282,8 +282,9 @@ Ydis = diff(herey(:, :));
 nrDots = p.trial.stimulus.nrDots;
 maxi = max(max(max(coordvec)));
 mini = min(min(min(coordvec)));
-randdotvec = rand(2, nrDots)'.*1980 - (1980/2);
-
+%randdotvec = rand(2, nrDots)'.*1980 - (1980/2);
+randdotvec(:, 1) = -920 + (920 - (-920)).*rand(1, nrDots)';
+randdotvec(:, 2) = -920 + (920 - (-920)).*rand(1, nrDots)';
 
 %*** initialize noise vector
 coherence = p.trial.stimulus.phase_coherence;
@@ -327,23 +328,95 @@ for counter = 2:frames
     %      the signal dots that are supposed to move
     %for now, it will move w/ predefined direction
     idx = find(noisevec(:, 1) == 1);
-    if p.trial.stimulus.direction==180
+%     randdotvec(idx, 1) = randdotvec(idx, 1) - (1980 /(size(coordvec,3)));
+%     if randdotvec(idx, 1) >= (920) 
+%         randdotvec(idx, 1) = -920 + (920 - (-920)).*rand(1);
+%         randdotvec(idx, 2) = -920 + (920 - (-920)).*rand(1);
+% %             trythis = randdotvec(idx, 1) - 1500;
+% %             randdotvec(idx, 1) = trythis;
+%     elseif randdotvec(idx, 1) <= (-920)
+%         randdotvec(idx, 1) = -920 + (920 - (-920)).*rand(1);
+%         randdotvec(idx, 2) = -920 + (920 - (-920)).*rand(1);
+% %             trythis = randdotvec(idx, 1) + 1500;
+% %             randdotvec(idx, 1) = trythis;
+%     end
+%         
+%     if p.trial.stimulus.direction==180
+%         randdotvec(idx, 1) = randdotvec(idx, 1) .* -1;
+%     end
+%     if p.trial.stimulus.direction==180 
+%         randdotvec(idx, 1) = randdotvec(idx, 1) + (1980 /(size(coordvec,3)));
+%         if randdotvec(idx, 1) >= (920) 
+%             randdotvec(idx, 1) = -920 + (920 - (-920)).*rand(1);
+%             randdotvec(idx, 2) = -920 + (920 - (-920)).*rand(1);
+% %           trythis = randdotvec(idx, 1) + 1500;
+% %             randdotvec(idx, 1) = trythis;
+%         elseif randdotvec(idx, 1) <= (-920)
+%             randdotvec(idx, 1) = -920 + (920 - (-920)).*rand(1);
+%             randdotvec(idx, 2) = -920 + (920 - (-920)).*rand(1);
+% %             trythis = randdotvec(idx, 1) - 1500;
+% %             randdotvec(idx, 1) = trythis;
+%         end     
+%     elseif p.trial.stimulus.direction==0
+%         randdotvec(idx, 1) = randdotvec(idx, 1) - (1980 /(size(coordvec,3)));
+%         if randdotvec(idx, 1) >= (920) 
+%             randdotvec(idx, 1) = -920 + (920 - (-920)).*rand(1);
+%             randdotvec(idx, 2) = -920 + (920 - (-920)).*rand(1);
+% %             trythis = randdotvec(idx, 1) - 1500;
+% %             randdotvec(idx, 1) = trythis;
+%         elseif randdotvec(idx, 1) <= (-920)
+%             randdotvec(idx, 1) = -920 + (920 - (-920)).*rand(1);
+%             randdotvec(idx, 2) = -920 + (920 - (-920)).*rand(1);
+% %             trythis = randdotvec(idx, 1) + 1500;
+% %             randdotvec(idx, 1) = trythis;
+%         end
+%         
+%     end
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if p.trial.stimulus.direction==180 
         randdotvec(idx, 1) = randdotvec(idx, 1) + (1980 /(size(coordvec,3)));
-        if randdotvec(idx, 1) >= (1980/2)
-            randdotvec(idx, 1) = rand(1).*1980 - (1980/2);
-        elseif randdotvec(idx, 1) <= (-1980/2)
-            randdotvec(idx, 1) = rand(1).*1980 - (1980/2);
-        end
-            
-    else 
+        randdotvec(randdotvec(idx, 1) >= 920) = -920 + (920 - (-920)).*rand(1);
+        randdotvec(randdotvec(idx, 1) <= -920) = -920 + (920 - (-920)).*rand(1);
+%         
+    elseif p.trial.stimulus.direction==0
         randdotvec(idx, 1) = randdotvec(idx, 1) - (1980 /(size(coordvec,3)));
-        if randdotvec(idx, 1) >= (1980/2) 
-            randdotvec(idx, 1) = rand(1).*1980 - (1980/2);
-        elseif randdotvec(idx, 1) <= (-1980/2)
-            randdotvec(idx, 1) = rand(1).*1980 - (1980/2);
-        end
+        randdotvec(randdotvec(idx, 1) >= 920) = -920 + (920 - (-920)).*rand(1);
+        randdotvec(randdotvec(idx, 1) <= -920) = -920 + (920 - (-920)).*rand(1);
     end
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     if dot_lifetime > 0
         idx = find(lifetime == 0);
         lifetime(idx) = randi(frames, length(idx), 1);
