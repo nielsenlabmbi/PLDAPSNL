@@ -253,7 +253,7 @@ p.trial.stimulus.nrDots = p.trial.stimulus.nrDots;
 
 coordvec(:, 2, :) = coordvec(:, 2, :) .* 100;
 coordvec(:, 1, :) = coordvec(:, 1, :) .* 100;
-coordvec(:, 1, :) = coordvec(:, 1, :) + 980; %this should start at one end
+coordvec(:, 1, :) = coordvec(:, 1, :) + 1000; %this should start at one end
 
 
 %**** 100% coherence means all dots are signal, i.e they don't move
@@ -282,7 +282,8 @@ Ydis = diff(herey(:, :));
 nrDots = p.trial.stimulus.nrDots;
 maxi = max(max(max(coordvec)));
 mini = min(min(min(coordvec)));
-randdotvec = rand(2, nrDots)'.*1980 - (1980/2);
+randdotvec(:, 1) = -920 + (920 - (-920)).*rand(1, nrDots)';
+randdotvec(:, 2) = -920 + (920 - (-920)).*rand(1, nrDots)';
 
 
 %*** initialize noise vector
