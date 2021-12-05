@@ -1,4 +1,4 @@
-function dotstrial_free(p,state)
+function dotstrial_dense_free(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -208,7 +208,7 @@ DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
 PixPerDeg = 1/DegPerPix;
 
 %number of Dots
-%p.trial.stimulus.nrDots = p.conditions{p.trial.pldaps.iTrial}.nrDots;
+p.trial.stimulus.nrDots = p.conditions{p.trial.pldaps.iTrial}.nrDots;
 %dot size
 p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
 %dot coherence

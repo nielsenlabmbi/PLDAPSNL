@@ -1,4 +1,5 @@
-function dotstrial_free(p,state)
+function human3_trial_free(p,state)
+
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -13,22 +14,31 @@ switch state
         %check port status and set states accordingly
         checkState(p);
         
+        
     case p.trial.pldaps.trialStates.frameDraw
+
         if p.trial.state==p.trial.stimulus.states.START
             Screen(p.trial.display.ptr, 'FillRect', 0)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
-            showStimulus(p);
+
+            p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+            frameIdx=mod(p.trial.stimulus.frameI,p.trial.stimulus.framesPerMovie)+1;
+            Screen('DrawDots', p.trial.display.ptr, squeeze(p.trial.stimulus.dotpos(:,:,frameIdx)'),...
+                p.trial.stimulus.dotSizePix, [1 1 1], ...
+                [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+            
         end
      
+        
+      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
         cleanUpandSave(p);
         
 end
 
-
  
 
-%-------------------------------------------------------------------%
+%% -------------------------------------------------------------------%
 %check port status and set events accordingly
 function p=checkState(p)
 
@@ -178,9 +188,13 @@ end
         
 
         
-%------------------------------------------------------------------%
+%% ------------------------------------------------------------------%
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
+
+%we are implementing the graziano style (spiral space) optic flow pattern
+%here, with noise that is random in direction, but not speed (each dot
+%keeps its speed and direction throughout its lifetime)
 
 if isfield(p.trial,'masktxtr')
     Screen('Close',p.trial.masktxtr);
@@ -202,133 +216,193 @@ switch p.conditions{p.trial.pldaps.iTrial}.side
         p.trial.side=p.trial.stimulus.side.MIDDLE;
 end
 
-%% set up stimulus
-
+% set up stimulus
 DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
 PixPerDeg = 1/DegPerPix;
 
-%number of Dots
-%p.trial.stimulus.nrDots = p.conditions{p.trial.pldaps.iTrial}.nrDots;
+%fixed parameters
 %dot size
-p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
-%dot coherence
-p.trial.stimulus.dotCoherence = p.conditions{p.trial.pldaps.iTrial}.dotCoherence;
-%dot speed
-p.trial.stimulus.dotSpeed = p.conditions{p.trial.pldaps.iTrial}.dotSpeed;
+%just changed to lower size
+p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg) ;
+
 %direction
 p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
-%lifetime
-p.trial.stimulus.dotLifetime = p.conditions{p.trial.pldaps.iTrial}.dotLifetime;
+
+%movie id
+p.trial.stimulus.movieId = p.conditions{p.trial.pldaps.iTrial}.movieId;
+
+%speed : keeping this silent for now
+%p.trial.stimulus.speed = p.conditions{p.trial.pldaps.iTrial}.speed;
+
+%phase_coherence
+
+p.trial.stimulus.phase_coherence = p.conditions{p.trial.pldaps.iTrial}.phase_coherence;
+
+%load movie - generates coordVec
+load(['movie' num2str(p.trial.stimulus.movieId) '.mat']);
+
+% trying to choose framerate
+p.trial.stimulus.framesPerMovie = size(coordvec, 3);
+
+%dot lifetime
+p.trial.stimulus.dot_lifetime = p.trial.stimulus.framesPerMovie;
+
+%number dots
+p.trial.stimulus.nrDots = p.trial.stimulus.nrDots;
+
+
+coordvec(:, 2, :) = coordvec(:, 2, :) .* 100;
+coordvec(:, 1, :) = coordvec(:, 1, :) .* 100;
+coordvec(:, 1, :) = coordvec(:, 1, :) + 1000; %this should start at one end
+
+
+%**** 100% coherence means all dots are signal, i.e they don't move
+%**** 0% coherence means all dots are not moving
+
+
+
+
+% 100% would have the signal value, which is 100% no dots moving
+% 20% would have the signal value, which is 20% no dots move
+
+% *nothing is corresponding to global motion at this time
+% *directoin calculations don't matter at this time
+dot_lifetime = p.trial.stimulus.dot_lifetime;
+%*** cordvec basis
+herey = squeeze(coordvec(:, 2, :))';
+herex = squeeze(coordvec(:,1,:))';
+
+frames = size(herex, 1);
+
+Xdis = diff(herex(:, :));
+Ydis = diff(herey(:, :));
+
+%***initialize random dots
+%the bounds will correspond to psychtoolbox bounds
+nrDots = p.trial.stimulus.nrDots;
+maxi = max(max(max(coordvec)));
+mini = min(min(min(coordvec)));
+%randdotvec = rand(2, nrDots)'.*1980 - (1980/2);
+randdotvec(:, 1) = -920 + (920 - (-920)).*rand(1, nrDots)';
+randdotvec(:, 2) = -920 + (920 - (-920)).*rand(1, nrDots)';
+
+%*** initialize noise vector
+coherence = p.trial.stimulus.phase_coherence;
+nrSignal = round(nrDots*coherence);
+noisevec = zeros(nrDots, 2);
+noisevec(1:nrSignal, 1) = 1; %1 = signal 0 = noise
+%the remainder noise will move w/ a random movement vector
+noisevec(:, 2) = randi(size(coordvec, 1), 1, nrDots);
+
+%idx = 0, these are the noise
+%idx = 0, these are the values that will move
+
+%*** don't need directions for now
+
+%*** initialize lifetime
+
+if dot_lifetime >0
+    lifetime = randi(frames, nrDots, 1);
+end
+
+
+%this is the building vector
+%once complete, its size should be [dots x frames]
+dotposx = randdotvec(:, 1);
+dotposy = randdotvec(:, 2);
+
+%*** now it's time to start making all the dots
+
+%***
+  %dotpos can take 3D array w/ x/y concatenated
+      %will have to split up here for testing
+%***
+
+
+for counter = 2:frames
+    randdotvec(:, 1) = randdotvec(:, 1) + (Xdis(counter-1, noisevec(:, 2)))';
+    randdotvec(:, 2) = randdotvec(:, 2) + (Ydis(counter-1, noisevec(:, 2)))';
+    
+    %     also need to translate in the X direction
+    %      the signal dots that are supposed to move
+    %for now, it will move w/ predefined direction
+    ind = find(noisevec(:, 1) == 1);
+    
+    if p.trial.stimulus.direction==180   
+        idea = find(randdotvec(ind, 1) >= 1000);
+        for herewego = 1:length(idea)
+            randdotvec(ind(idea(herewego)), 1) = -920 + (920 - (-920)).*rand(1, 1);
+        end
+        idea = find(randdotvec(ind, 1) <= -1000);
+        for herewego = 1:length(idea)
+            randdotvec(ind(idea(herewego)), 1) = -920 + (920 - (-920)).*rand(1, 1);
+        end
+        randdotvec(ind, 1) = randdotvec(ind, 1) + (1980 /(size(coordvec,3)));
+
+    elseif p.trial.stimulus.direction==0   
+        idea = find(randdotvec(ind, 1) >= 1000);
+        for herewego = 1:length(idea)
+            randdotvec(ind(idea(herewego)), 1) = -920 + (920 - (-920)).*rand(1, 1);
+        end
+        idea = find(randdotvec(ind, 1) <= -1000);
+        for herewego = 1:length(idea)
+            randdotvec(ind(idea(herewego)), 1) = -920 + (920 - (-920)).*rand(1, 1);
+        end
+        randdotvec(ind, 1) = randdotvec(ind, 1) - (1980 /(size(coordvec,3)));
+    end    
+
+    if dot_lifetime > 0
+        idx = find(lifetime == 0);
+        lifetime(idx) = randi(frames, length(idx), 1);
+        randdotvec(idx, :) = mini + (maxi - mini).*rand(2, length(idx))';
+        newbag(idx, 1) = rand(length(idx),1);
+
+        if newbag(idx, 1) <= coherence
+            noisevec(idx, 1) = 1;
+        elseif newbag(idx, 1) > coherence
+            noisevec(idx, 1) = 0;
+            noisevec(idx, 2) = randi(size(coordvec, 1), 1, length(idx));
+        end
+        
+        lifetime = lifetime - 1;
+    end
+    
+    dotposx(:, counter) = randdotvec(:, 1);
+    dotposy(:, counter) = randdotvec(:, 2);
+
+end
+
+thedot(:, 1, :) = dotposx;
+thedot(:, 2, :) = dotposy;
+
+
+%the stimuli is walking
+count = 0;
+for timer = 1:size(coordvec, 3)
+            count = count + (1980 /(size(coordvec,3)));
+            coordvec(:, 1, timer) = coordvec(:, 1, timer) - (count);
+end
+
+if p.trial.stimulus.direction==180
+    coordvec(:, 1, :) = coordvec(:, 1, :) .* -1;
+end
+
+coordvec = cat(1, coordvec, thedot);
+%put into variable
+p.trial.stimulus.dotpos=coordvec;
+
+
 %initialize frame
 p.trial.stimulus.frameI = 0;
 
-%initialize dot positions - these need to be in pixels from center
-randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
-randpos(1,:)=(randpos(1,:)-0.5)*p.trial.display.pWidth; 
-randpos(2,:)=(randpos(2,:)-0.5)*p.trial.display.pHeight;
-
-
-%pick color for each dot
-p.trial.stimulus.dotcolor=ones(3,p.trial.stimulus.nrDots)*255;
-p.trial.stimulus.dotcolor(:,1:round(p.trial.stimulus.fractionBlack*p.trial.stimulus.nrDots))=0;
-p.trial.stimulus.dotcolor=p.trial.stimulus.dotcolor(:,randperm(p.trial.stimulus.nrDots));
-
-%initialize noise vector
-nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
-noisevec=zeros(p.trial.stimulus.nrDots,1);
-noisevec(1:nrSignal)=1;
-
-%initialize directions: correct displacement for signal, random for noise
-%side is either 1 or 2; 1 should equal direction=0, 2 direction=180
-randdir=zeros(p.trial.stimulus.nrDots,1);
-randdir(1:end)=p.trial.stimulus.direction;
-idx=find(noisevec==0);
-randdir(idx)=randi([0,359],length(idx),1);
-
-
-%initialize lifetime vector
-if p.trial.stimulus.dotLifetime>0
-    lifetime=randi(p.trial.stimulus.dotLifetime,p.trial.stimulus.nrDots,1);
-end
-
-%compute nr frames
-p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
-
-%compute speed
-deltaF=p.trial.stimulus.dotSpeed*PixPerDeg;
-
-%save misc variables
-p.trial.stimulus.randpos = randpos;
-p.trial.stimulus.randdir = randdir;
-p.trial.stimulus.deltaF = deltaF;
-p.trial.stimulus.lifetime = lifetime;
-%%
 %set state
 p.trial.state=p.trial.stimulus.states.START;
 if p.trial.camera.use;
     pds.behavcam.startcam(p);
 end
 
-%------------------------------------------------------------------%
-%show stimulus - handles rotation and movement of grating
-function showStimulus(p)
-        p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
-        if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
-            f = p.trial.stimulus.frameI;
-            randpos = p.trial.stimulus.randpos;
-            randdir = p.trial.stimulus.randdir;
-            deltaF = p.trial.stimulus.deltaF;
-            lifetime = p.trial.stimulus.lifetime;
-            %compute vectors for necessary frames
-            %move all dots according to their direction
-            xproj=-cos(randdir*pi/180);
-            yproj=-sin(randdir*pi/180);
-            
-            randpos(1,:)=randpos(1,:)+deltaF*xproj';
-            randpos(2,:)=randpos(2,:)+deltaF*yproj';
-            
-            %now deal with wrap around - we pick the axis on which to replot a dot
-            %based on the dots direction
-            idx=find(abs(randpos(1,:))>p.trial.display.pWidth/2 | abs(randpos(2,:))>p.trial.display.pHeight/2);
-            
-            rvec=rand(size(idx)); %btw 0 and 1
-            for i=1:length(idx)
-                if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
-                    randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.display.pWidth/2;
-                    randpos(2,idx(i))=(rand(1)-0.5)*p.trial.display.pHeight;
-                else
-                    randpos(1,idx(i))=(rand(1)-0.5)*p.trial.display.pWidth;
-                    randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.display.pHeight/2;
-                end
-            end
-            
-            
-            %if lifetime is expired, randomly assign new direction
-            if p.trial.stimulus.dotLifetime>0
-                idx=find(lifetime==0);
-                %directions are drawn based on coherence level
-                rvec=rand(size(idx));
-                for i=1:length(idx)
-                    if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
-                        randdir(idx(i))=p.trial.stimulus.direction;
-                    else
-                        randdir(idx(i))=randi([0,359],1,1);
-                    end
-                end
-                
-                lifetime=lifetime-1;
-                lifetime(idx)=p.trial.stimulus.dotLifetime;
-            end
-            p.trial.stimulus.lifetime = lifetime;
-            p.trial.stimulus.dotpos{f}=randpos;
-            p.trial.stimulus.randpos = randpos;
-            p.trial.stimulus.randdir = randdir;
-            Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
-                p.trial.stimulus.dotSizePix, p.trial.stimulus.dotcolor, ...
-                [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
-        end
 
-%------------------------------------------------------------------%
+%% ------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
 %stop camera and set trigger to low
@@ -369,7 +443,7 @@ end
     
 
 %%%%%%Helper functions
-%-------------------------------------------------------------------%
+%% -------------------------------------------------------------------%
 %check whether a particular port choice is correct
 function correct=checkPortChoice(activePort,p)
 

@@ -37,7 +37,7 @@ s.display.viewdist = 75;
 % s.datapixx.useAsPorts = 0;
 % s.datapixx.adc.channels = [];
 % 
-% %turn mouse input on
-% s.mouse.useAsPort = 1;
-% s.mouse.use = 1;
+%turn mouse input on
+s.mouse.useAsPort = 1;
+s.mouse.use = 1;
 

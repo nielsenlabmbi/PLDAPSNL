@@ -14,14 +14,13 @@ switch state
         checkState(p);
         
     case p.trial.pldaps.trialStates.frameDraw
-        Screen('FillRect',p.trial.display.ptr,0);
-        %        if p.trial.state==p.trial.stimulus.states.START
-        %             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
+                if p.trial.state==p.trial.stimulus.states.START
+                     Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.iniColor,p.trial.stimulus.iniSize);
         %         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
         %             showStimulus(p);
         %         elseif p.trial.state == p.trial.stimulus.states.WAIT
         %             Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,p.trial.stimulus.iniSize);
-        %        end
+        %         end
         
     case p.trial.pldaps.trialStates.trialCleanUpandSave
         cleanUpandSave(p);
@@ -152,6 +151,8 @@ switch p.trial.state
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
 
+        
+        
         %wait to make ports available
         if p.trial.ttime > p.trial.stimulus.timeTrialStimOn + p.trial.stimulus.stimON && ...
                 p.trial.ports.position(p.trial.stimulus.side.LEFT)==0 && p.trial.ports.position(p.trial.stimulus.side.RIGHT)==0
@@ -288,12 +289,12 @@ switch p.trial.state
         
     case p.trial.stimulus.states.FINALRESP
         
+        %move stage out of the way
+        zaber.axis(p.trial.stimulus.orthaxis).moveAbsolute(p.trial.stimulus.orthoff(1),Units.LENGTH_MILLIMETRES);
+        
         %wait for ITI
         if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI + p.trial.stimulus.timeout*(~p.trial.pldaps.goodtrial)
             %trial done
-            %move stage out of the way
-            zaber.axis(p.trial.stimulus.orthaxis).moveAbsolute(p.trial.stimulus.orthoff(1),Units.LENGTH_MILLIMETRES);
-            
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
         end
@@ -377,8 +378,6 @@ zaber.axis(p.trial.stimulus.orthaxis).moveAbsolute(p.trial.stimulus.orthoff(1),U
 zaber.axis(p.trial.stimulus.paraxis).moveAbsolute(p.trial.stimulus.paroff,Units.LENGTH_MILLIMETRES);
 zaber.axis(p.trial.stimulus.rotaxis).moveAbsolute(p.trial.stimulus.rotangle,Units.ANGLE_DEGREES);
 
-
-Screen('FillRect',p.trial.display.ptr,0);
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;

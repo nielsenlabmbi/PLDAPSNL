@@ -10,7 +10,8 @@ function s = dots_FBAC9Settings_free
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 %set orientation and offsets
 s.stimulus.dotSize = 1.5;
-s.stimulus.nrDots = 100;
+%s.stimulus.nrDots = 100;
+s.stimulus.nrDots =  [{[80]}, {[60]}, {[40]}, {[20]}, {[10]}, {[80 60 40 20 10]}];
 %set background color, wait color, and dot color 
 s.display.bgColor = [0 0 0]; 
 s.stimulus.fractionBlack = 0;
@@ -21,10 +22,10 @@ s.stimulus.fractionBlack = 0;
 %this progression is above, but adds a new bag of a singular threshold
 %this continues as a cascade down until all the thresholds are represented
 %can always cut and adjust
-s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 0.8 0.6 0.4 0.2]}];
+%s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 0.8 0.6 0.4 0.2]}];
 %s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[1 0.8 0.6 0.4 0.2]}];
 %s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[1 0.8 0.6 0.4 0.2]}];
-%s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[1 0.8 0.6 0.4 0.2]}];
+s.stimulus.dotCoherence =  0.4;
 
 
 %this progression is a cascade mix, add coherence to full coherence and

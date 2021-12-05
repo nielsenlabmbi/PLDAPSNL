@@ -20,7 +20,9 @@ s.stimulus.timeout = 0;
 
 
 % %set instructive trials
-s.stimulus.fracInstruct = 1;
+s.stimulus.fracInstruct = 0.4;
+
+s.stimulus.moveduring = 1; %0 - off
 
 %set stimulus parameters
 s.stimulus.curvetype=[1 2]; %convex/concave
@@ -30,10 +32,11 @@ s.stimulus.orthaxis=2; % axis orthogonal to ferret
 s.stimulus.orthpos=[0 20]; %start and stop position
 s.stimulus.orthrange=5; %noise range for position
 s.stimulus.paraxis=1; %parallel axis
-s.stimulus.parpos=15; %center of range
+s.stimulus.parpos=17; %center of range
 s.stimulus.parrange=5; %noise range for position
 s.stimulus.rotaxis=3; %rotation axis
 s.stimulus.rotrange=5; %noise range for rotation
+s.stimulus.rotduring=15; %rotation angle during trial
 s.stimulus.runtype = 'pseudo';
 s.stimulus.sideMatch = [1 2];
 

@@ -1,4 +1,4 @@
-function p = human2_setup_free(p)
+function p = human3_setup_free(p)
 %experiment setup file for a simple test experiment
 
 %%THIS IS THE GLOBAL OVERALL SET UP
@@ -9,7 +9,7 @@ function p = human2_setup_free(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.pointwalk.human2_trial_free';
+p.trial.pldaps.trialFunction='pldapsExperiments.pointwalk.human3_trial_free';
 %THIS IS NEW EACH TRIAL
 
 %% set general parameters
