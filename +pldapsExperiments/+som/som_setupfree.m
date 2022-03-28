@@ -34,11 +34,15 @@ p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
 p.trialMem.stats.cond={'curvetype','shapeid'}; %conditions to display
+%p.trialMem.stats.cond={'curvetype'}; %conditions to display
 
 [A,B] = ndgrid(cond.curvetype,cond.shapeid);
+%A=cond.curvetype;
 
 p.trialMem.stats.val = [A(:),B(:)]';
+%p.trialMem.stats.val = A(:)';
 nCond=size(p.trialMem.stats.val,2);
+%nCond=length(A);
 p.trialMem.stats.count.correct=zeros(1,nCond);
 p.trialMem.stats.count.incorrect=zeros(1,nCond);
 p.trialMem.stats.count.Ntrial=zeros(1,nCond);

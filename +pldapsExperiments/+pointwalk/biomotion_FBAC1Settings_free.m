@@ -9,11 +9,11 @@ s.stimulus.dotSize = 1.5;
 s.display.bgColor = [0 0 0]; 
 s.stimulus.framesPerMovie=220;
 s.stimulus.direction = [0 180];
-s.stimulus.movieId = [12, 14, 100, 15]; %current sets
+s.stimulus.movieId = [12, 14, 329, 15]; %current sets
 %s.stimulus.speed = [0 1 2]; %0 in place, 1 fast, 2 slow
 %s.stimulus.dotCoherence=100;
 %this will be dot speed in +/- x position
-s.stimulus.dotdistance = [{5},{4}, {3}, {2}, {1}, {0}, {[ 5 4 3 2 1 0]}]; %]; %[0.2 0.4 0.6 0.8 1];
+s.stimulus.dotdistance = [{5},{4}, {[3, 3, 5]}, {[2, 2, 2, 5]}, {1}, {0}, {[ 5 4 3 2 1 0]}]; %]; %[0.2 0.4 0.6 0.8 1];
 
 
 

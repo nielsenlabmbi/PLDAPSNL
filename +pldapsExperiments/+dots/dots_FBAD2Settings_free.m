@@ -1,6 +1,7 @@
-function s = dots_FBAD1Settings_free
+function s = dots_FBAD2Settings_free
 
-%MALE
+%Female
+%662571 - animal ID
 
 % % turn saving off
 % s.pldaps.nosave = 1;

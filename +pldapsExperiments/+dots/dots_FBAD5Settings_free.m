@@ -1,6 +1,7 @@
-function s = dots_FBAD1Settings_free
+function s = dots_FBAD5Settings_free
 
-%MALE
+%FEMALE
+%664901 = ANIMAL ID
 
 % % turn saving off
 % s.pldaps.nosave = 1;
@@ -13,8 +14,8 @@ s.stimulus.dotSize = 1.5;
 s.stimulus.nrDots = 100;
 %s.stimulus.nrDots =  [{80}, {60}, {40}, {20}, {10}, {[80 60 40 20 10]}];
 %set background color, wait color, and dot color 
-s.display.bgColor = [0 0 0]; 
-s.stimulus.fractionBlack = 0;
+s.display.bgColor = [.5 .5 .5]; 
+s.stimulus.fractionBlack = 1;
 
 
 %this progression is only full coherence or a mixed bag of all coherences
