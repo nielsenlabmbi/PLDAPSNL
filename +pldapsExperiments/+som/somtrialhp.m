@@ -44,9 +44,11 @@ import zaber.motion.ascii.Axis;
 import zaber.motion.ascii.Stream;
 import zaber.motion.Measurement;
 
+
 Library.enableDeviceDbStore();
 
 global zaber;
+
 
 activePort=find(p.trial.ports.status==1);
 
@@ -315,11 +317,17 @@ import zaber.motion.ascii.AllAxes;
 import zaber.motion.ascii.Axis;
 import zaber.motion.ascii.Stream;
 import zaber.motion.Measurement;
-
+import zaber.motion.ascii.SettingConstants;
+import zaber.motion.ascii.DeviceSettings;
 Library.enableDeviceDbStore();
 
 
 global zaber;
+%disable knobs
+zaber.device(1).getSettings().set('knob.enable',0);
+zaber.device(2).getSettings().set('knob.enable',0);
+zaber.device(3).getSettings().set('knob.enable',0);
+
 
 %get side for condition
 if p.conditions{p.trial.pldaps.iTrial}.side==2
@@ -424,6 +432,11 @@ end
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
+
+%Re-enable knobs
+zaber.device(1).getSettings().set('knob.enable',1);
+zaber.device(2).getSettings().set('knob.enable',1);
+zaber.device(3).getSettings().set('knob.enable',1);
 
 
 % disp(['C: ' num2str(p.trialMem.stats.val)])

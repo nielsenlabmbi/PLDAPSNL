@@ -15,7 +15,7 @@ s.stimulus.nrDots = 100;
 %s.stimulus.nrDots =  [{80}, {60}, {40}, {20}, {10}, {[80 60 40 20 10]}];
 %set background color, wait color, and dot color 
 s.display.bgColor = [.5 .5 .5]; 
-s.stimulus.fractionBlack = 1;
+s.stimulus.fractionBlack = .5;
 
 
 %this progression is only full coherence or a mixed bag of all coherences

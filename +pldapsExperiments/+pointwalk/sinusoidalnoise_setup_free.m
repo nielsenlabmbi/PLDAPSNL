@@ -27,17 +27,17 @@ side.match=p.defaultParameters.stimulus.direction;
 
 %remeber in the earlier version, p.phase_coherence doesnt exist, it is speed
 
-if iscell(p.defaultParameters.stimulus.phase_coherence)
-    for i = 1:length(p.defaultParameters.stimulus.phase_coherence)
-        cond(i).phase_coherence = p.defaultParameters.stimulus.phase_coherence{i};
+if iscell(p.defaultParameters.stimulus.nrDots)
+    for i = 1:length(p.defaultParameters.stimulus.nrDots)
+        cond(i).phase_coherence = p.defaultParameters.stimulus.phase_coherence{1};
         cond(i).direction = p.defaultParameters.stimulus.direction;
         cond(i).movieId=p.defaultParameters.stimulus.movieId;
-        cond(i).nrDots = p.defaultParameters.stimulus.nrDots{1};
+        cond(i).nrDots = p.defaultParameters.stimulus.nrDots{i};
 
-        if length(cond(i).phase_coherence) > 2
-            c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).phase_coherence)*2)));
+        if length(cond(i).nrDots) > 2
+            c{i}=generateCondList_sides(cond(i),side,'pseudo',ceil(500/(length(cond(i).nrDots)*2)));
         else
-            c{i}=generateCondList(cond(i),side,'pseudo',ceil(500/(length(cond(i).phase_coherence)*2)));
+            c{i}=generateCondList(cond(i),side,'pseudo',ceil(500/(length(cond(i).nrDots)*2)));
         end
     end
     p.trial.allconditions = c;
@@ -50,7 +50,7 @@ else
     cond.phase_coherence = p.defaultParameters.stimulus.phase_coherence;
     cond.direction = p.defaultParameters.stimulus.direction;%[0 180];
     cond.movieId=p.defaultParameters.stimulus.movieId;
-    cond.nrDots = p.defaultParameters.stimulus.nrDots{1};
+    cond.nrDots = p.defaultParameters.stimulus.nrDots{i};
 
     %cond.speed=p.defaultParameters.stimulus.speed;%[0 in place 1 fast 2 slow]
     if length(cond.phase_coherence) > 2
@@ -68,11 +68,11 @@ end
 
 
 %% display stats
-p.trialMem.stats.cond={'direction', 'phase_coherence'}; %conditions to display %took out movie id and replaced speed with distance for now
+p.trialMem.stats.cond={'direction', 'nrDots'}; %conditions to display %took out movie id and replaced speed with distance for now
 if length(cond)>1
-    [A,B] = ndgrid(cond(end).direction,cond(end).phase_coherence); %replaced movid and took out speed
+    [A,B] = ndgrid(cond(end).direction,cond(end).nrDots); %replaced movid and took out speed
 else
-[A,B] = ndgrid(cond.direction, cond.phase_coherence); %changed dotcoherence to movieId after reference to non existent field error
+[A,B] = ndgrid(cond.direction, cond.nrDots); %changed dotcoherence to movieId after reference to non existent field error
 end
 p.trialMem.stats.val = [A(:),B(:)]';
 nCond=size(p.trialMem.stats.val,2);

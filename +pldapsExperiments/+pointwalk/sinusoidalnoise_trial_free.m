@@ -23,6 +23,13 @@ switch state
 
             p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
             frameIdx=mod(p.trial.stimulus.frameI,p.trial.stimulus.framesPerMovie)+1;
+            load(['movie' num2str(p.trial.stimulus.movieId) '.mat']);
+            DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+            PixPerDeg = 1/DegPerPix;
+            normalsize = round(p.trial.stimulus.dotSize*PixPerDeg);
+            ferretsize = round(p.trial.stimulus.ferretdotSize*PixPerDeg);
+            p.trial.stimulus.dotSizePix(1:size(coordvec, 1)) = ferretsize;
+            p.trial.stimulus.dotSizePix(size(coordvec,1) + 1: size(p.trial.stimulus.dotpos,1)) = normalsize;
             Screen('DrawDots', p.trial.display.ptr, squeeze(p.trial.stimulus.dotpos(:,:,frameIdx)'),...
                 p.trial.stimulus.dotSizePix, [1 1 1], ...
                 [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
@@ -273,7 +280,7 @@ dot_lifetime = p.trial.stimulus.dot_lifetime;
 herey = squeeze(coordvec(:, 2, :))';
 herex = squeeze(coordvec(:,1,:))';
 
-frames = size(herex, 1)*1000;
+frames = size(herex, 1)*100;
 
 countercellx = zeros(size(coordvec,1), frames);
 countercelly = zeros(size(coordvec, 1), frames);
@@ -292,8 +299,8 @@ nrDots = p.trial.stimulus.nrDots;
 maxi = max(max(max(coordvec)));
 mini = min(min(min(coordvec)));
 %randdotvec = rand(2, nrDots)'.*1980 - (1980/2);
-randdotvec(:, 1) = -920 + (920 - (-920)).*rand(1, nrDots)';
-randdotvec(:, 2) = -920 + (920 - (-920)).*rand(1, nrDots)';
+randdotvec(:, 1) = -1000 + (1000 - (-1000)).*rand(1, nrDots)';
+randdotvec(:, 2) = -980 + (1000 - (-1000)).*rand(1, nrDots)';
 
 %*** initialize noise vector
 coherence = p.trial.stimulus.phase_coherence;
@@ -311,7 +318,7 @@ noisevec(:, 2) = randi(size(coordvec, 1), 1, nrDots);
 %*** initialize lifetime
 
 if dot_lifetime >0
-    lifetime = randi(frames, nrDots, 1);
+    lifetime = randi(dot_lifetime, nrDots, 1);
 end
 
 
@@ -337,24 +344,24 @@ for counter = 2:frames
     ind = find(noisevec(:, 1) == 1);
     
     if p.trial.stimulus.direction==180   
-        idea = find(randdotvec(ind, 1) >= 1000);
+        idea = find(randdotvec(ind, 1) >= 1200);
         for herewego = 1:length(idea)
-            randdotvec(ind(idea(herewego)), 1) = -920 + (920 - (-920)).*rand(1, 1);
+            randdotvec(ind(idea(herewego)), 1) = -980 + (980 - (-980)).*rand(1, 1);
         end
-        idea = find(randdotvec(ind, 1) <= -1000);
+        idea = find(randdotvec(ind, 1) <= -1200);
         for herewego = 1:length(idea)
-            randdotvec(ind(idea(herewego)), 1) = -920 + (920 - (-920)).*rand(1, 1);
+            randdotvec(ind(idea(herewego)), 1) = -980 + (980 - (-980)).*rand(1, 1);
         end
         randdotvec(ind, 1) = randdotvec(ind, 1) + (1980 /(size(coordvec,3)));
 
     elseif p.trial.stimulus.direction==0   
-        idea = find(randdotvec(ind, 1) >= 1000);
+        idea = find(randdotvec(ind, 1) >= 1200);
         for herewego = 1:length(idea)
-            randdotvec(ind(idea(herewego)), 1) = -920 + (920 - (-920)).*rand(1, 1);
+            randdotvec(ind(idea(herewego)), 1) = -980 + (980 - (-980)).*rand(1, 1);
         end
-        idea = find(randdotvec(ind, 1) <= -1000);
+        idea = find(randdotvec(ind, 1) <= -1200);
         for herewego = 1:length(idea)
-            randdotvec(ind(idea(herewego)), 1) = -920 + (920 - (-920)).*rand(1, 1);
+            randdotvec(ind(idea(herewego)), 1) = -980 + (980 - (-980)).*rand(1, 1);
         end
         randdotvec(ind, 1) = randdotvec(ind, 1) - (1980 /(size(coordvec,3)));
     end    
@@ -362,7 +369,7 @@ for counter = 2:frames
     if dot_lifetime > 0
         idx = find(lifetime == 0);
         lifetime(idx) = randi(frames, length(idx), 1);
-        randdotvec(idx, :) = -920 + (920 - (-920)).*rand(2, length(idx))';
+        randdotvec(idx, :) = -980 + (980 - (-980)).*rand(2, length(idx))';
         newbag(idx, 1) = rand(length(idx),1);
 
         if newbag(idx, 1) <= coherence
@@ -382,6 +389,10 @@ end
 
 thedot(:, 1, :) = dotposx;
 thedot(:, 2, :) = dotposy;
+opposing = thedot(:,1,1);
+opposing = opposing(randperm(numel(opposing), ceil(length(opposing)/2)));
+[diffidx, A] = find(thedot(:,1,1) == opposing');
+thedot(diffidx,1,:) = thedot(diffidx,1,:) * -1;
 
 diffcountercellx = zeros(size(coordvec,1), frames);
 diffcountercelly = zeros(size(coordvec, 1), frames);
@@ -393,12 +404,32 @@ for j = 1:size(coordvec,3):frames
     diffcountercelly(1:end, j:j+(size(coordvec, 3)-1)) = squeeze(coordvec(:, 2, :));
 end
 
+s = p.trial.stimulus.stretchFactor;
+diffcountercellx = (s*diffcountercellx(:,:)) + ((1-s)*mean(diffcountercellx(1:end-1)));
+diffcountercelly = (s*diffcountercelly(:,:)) + ((1-s)*mean(diffcountercelly(1:end-1)));
+
+%I will change distance by making the max pixel value for count scaled by 5
+count = 0;
+distvec = [0, 10, 8, 6, 4, 2];
+for iter = 0:5
+    if p.trial.stimulus.dotdistance == 0
+        for timer = 1:size(coordvec, 3)
+            %count = count + (1980/(size(coordvec,3) ));
+            diffcountercellx(:, timer) = diffcountercellx(:, timer) - count;
+        end
+    elseif p.trial.stimulus.dotdistance == iter
+        for timer = 1:size(coordvec, 3)
+            count = count + ( 1980 /(size(coordvec,3) * distvec(iter + 1)) );
+            diffcountercellx(:, timer) = diffcountercellx(:, timer) - count;
+        end
+    end
+end
 
 if p.trial.stimulus.direction==180
     %coordvec(:, 1, :) = coordvec(:, 1, :) .* -1;
-    diffcountercellx = countercellx .* -1;
+    %diffcountercellx = countercellx .* -1;
+    diffcountercellx = diffcountercellx .* -1;
 end
-
 
 countercell(:, 1, :) = diffcountercellx;
 countercell(:, 2, :) = diffcountercelly;

@@ -6,20 +6,24 @@ function s = biomotion_XXXX0Settings_free
 %s. behavior.   reward. amount = [0.1 0.35 0.375 0.35];
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 s.stimulus.dotSize = 1.5;
+s.stimulus.ferretdotSize = 1.5;
 %s.stimulus.nrDots = 100;
+s.stimulus.stretchFactor = 2;
 
-s.stimulus.nrDots = [{[100]}, {[80]}, {[60]}, {[40]}, {[20]}, {[100 80 60 40 20]}];
+s.stimulus.nrDots = [{[0]}, {[5]}, {[10]}, {[15]}, {[20]}, {[40]}, {[0 5 10 15 20 40]}];
 s.display.bgColor = [0 0 0]; 
 s.stimulus.framesPerMovie= [220, 72];
 s.stimulus.direction = [0 180];
-s.stimulus.movieId = [329]; %14 15 329]; %current working set
+s.stimulus.movieId = [336, 14, 335, 15]; %14 15 329]; %current working set
 %s.stimulus.speed = [0 1 2]; %0 in place, 1 fast, 2 slow
 %s.stimulus.dotCoherence=100;
 %this will be dot speed in +/- x position
-s.stimulus.dotdistance = [{5},{4}, {3}, {2}, {1}, {0}, {[ 5 4 3 2 1 0]}]; %]; %[0.2 0.4 0.6 0.8 1];
+%s.stimulus.dotdistance = [{5},{4}, {3}, {2}, {1}, {0}, {[ 5 4 3 2 1 0]}]; %]; %[0.2 0.4 0.6 0.8 1];
+s.stimulus.dotdistance = [5]; %]; %[5 4 3 2 1 ];
 s.stimulus.phase_coherence = [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 .8 .6 .4 .2]}];
 s.stimulus.dotSpeed =[0.6];
 s.stimulus.fractionBlack = 0;
+s.stimulus.dotLifetime = [3];
 
 
 

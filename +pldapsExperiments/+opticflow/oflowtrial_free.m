@@ -1,4 +1,4 @@
-function oflowtrial_free(p,state)
+sefunction oflowtrial_free(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);

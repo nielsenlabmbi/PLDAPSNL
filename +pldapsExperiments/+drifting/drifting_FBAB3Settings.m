@@ -43,7 +43,7 @@ s.stimulus.phase=0; %phase
 %run/condition specific parameters
 s.stimulus.runtype='pseudo'; %or block
 s.stimulus.blocklength=2; %only used in blocks
-s.stimulus.stimtype = [1];
+s.stimulus.stimtype = [2];
 
 % %configure ports
  s.ports.use = true;
@@ -56,15 +56,15 @@ s.stimulus.stimtype = [1];
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
-% % Debugging
-% %turn adc channels off
-% s.datapixx.useAsPorts = 0;
-% s.datapixx.adc.channels = [];
-% 
-% %turn mouse input on
-% s.mouse.useAsPort = 1;
-% s.mouse.use = 1;
-% 
-% %turn saving off
-% s.pldaps.nosave = 1;
+% Debugging
+%turn adc channels off
+s.datapixx.useAsPorts = 0;
+s.datapixx.adc.channels = [];
+
+%turn mouse input on
+s.mouse.useAsPort = 1;
+s.mouse.use = 1;
+
+%turn saving off
+s.pldaps.nosave = 1;
 

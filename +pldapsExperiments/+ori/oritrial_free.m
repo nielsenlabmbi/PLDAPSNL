@@ -289,6 +289,7 @@ num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
 
+
 % %show stats
 % pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 % disp(['C: ' num2str(p.trialMem.stats.val)])

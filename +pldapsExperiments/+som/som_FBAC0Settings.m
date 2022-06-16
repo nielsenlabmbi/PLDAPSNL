@@ -13,8 +13,8 @@ s.stimulus.duration.ITI = 1.5;
 
 %set stimulus parameters
 s.stimulus.curvetype=[1 2]; %convex/concave
-s.stimulus.shapeid=[1]; %there are 2 shapes per curvature
-s.stimulus.solenoidCh=[6 4];
+s.stimulus.shapeid=[1 1]; %there are 2 shapes per curvature
+s.stimulus.solenoidCh=[8 2];
 s.stimulus.movein=1; %ttl high moves shapes in
 s.stimulus.moveout=0; 
 s.stimulus.runtype = 'pseudo';

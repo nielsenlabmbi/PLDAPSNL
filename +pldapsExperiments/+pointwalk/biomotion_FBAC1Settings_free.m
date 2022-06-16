@@ -9,13 +9,21 @@ s.stimulus.dotSize = 1.5;
 s.display.bgColor = [0 0 0]; 
 s.stimulus.framesPerMovie=220;
 s.stimulus.direction = [0 180];
-s.stimulus.movieId = [12, 14, 329, 15]; %current sets
+s.stimulus.movieId = [336, 14, 335, 15]; %current sets
 %s.stimulus.speed = [0 1 2]; %0 in place, 1 fast, 2 slow
 %s.stimulus.dotCoherence=100;
-%this will be dot speed in +/- x position
-s.stimulus.dotdistance = [{5},{4}, {[3, 3, 5]}, {[2, 2, 2, 5]}, {1}, {0}, {[ 5 4 3 2 1 0]}]; %]; %[0.2 0.4 0.6 0.8 1];
+
+%use this for biomotion_trial
+%s.stimulus.dotdistance = [{5},{4}, {3}, {2}, {1}, {[ 5 4 3 2 1]}]; %]; %[0.2 0.4 0.6 0.8 1];
 
 
+s.stimulus.nrDots = [{[0]}, {[5]}, {[10]}, {[15]}, {[20]}, {[40]}, {[0 5 10 15 20 40]}];
+
+s.stimulus.ferretdotSize = 1.5;
+s.stimulus.stretchFactor = 2;
+
+%use for sinusoidalscript
+s.stimulus.dotdistance = [5];
 
 
 
@@ -23,6 +31,10 @@ s.stimulus.dotdistance = [{5},{4}, {[3, 3, 5]}, {[2, 2, 2, 5]}, {1}, {0}, {[ 5 4
 s.display.viewdist = 75; 
 % %add camera
 %s.camera.use=1;
+s.stimulus.phase_coherence = [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 .8 .6 .4 .2]}];
+s.stimulus.dotSpeed =[0.6];
+s.stimulus.fractionBlack = 0;
+s.stimulus.dotLifetime = [3];
 
 
 % %turn adc channels off
