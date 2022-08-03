@@ -11,7 +11,7 @@ s.stimulus.nrDots = 100;
 %set background color, wait color, and dot color 
 s.display.bgColor = [0 0 0]; 
 s.stimulus.fractionBlack = 0;
-s.stimulus.dotCoherence = [{[1]},{[.6 .4 .2]},{[.4 .2]},{[1 0.8 0.6 0.4 0.2]}]; %{[1 0.8]},{[1]},{[1 0.6]},{[1]},{[1 0.4]},{[1]},{[1 0.2]},{[1]}];
+s.stimulus.dotCoherence = [{[1]},{[1 0.8 0.6 0.4 0.2]},{[0.6 0.4 0.2}] %{[1 0.8]},{[1]},{[1 0.6]},{[1]},{[1 0.4]},{[1]},{[1 0.2]},{[1]}];
 s.stimulus.dotSpeed = 0.6;
 s.stimulus.dotLifetime = [3];
 s.stimulus.durStim = 60;

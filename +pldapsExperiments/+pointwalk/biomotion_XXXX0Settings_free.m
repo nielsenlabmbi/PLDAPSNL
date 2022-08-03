@@ -10,7 +10,7 @@ s.stimulus.ferretdotSize = 1.5;
 %s.stimulus.nrDots = 100;
 s.stimulus.stretchFactor = 2;
 
-s.stimulus.nrDots = [{[0]}, {[5]}, {[10]}, {[15]}, {[20]}, {[40]}, {[0 5 10 15 20 40]}];
+s.stimulus.nrDots = [{[20]}, {[5]}, {[10]}, {[15]}, {[20]}, {[40]}, {[0 5 10 15 20 40]}];
 s.display.bgColor = [0 0 0]; 
 s.stimulus.framesPerMovie= [220, 72];
 s.stimulus.direction = [0 180];
@@ -20,10 +20,16 @@ s.stimulus.movieId = [336, 14, 335, 15]; %14 15 329]; %current working set
 %this will be dot speed in +/- x position
 %s.stimulus.dotdistance = [{5},{4}, {3}, {2}, {1}, {0}, {[ 5 4 3 2 1 0]}]; %]; %[0.2 0.4 0.6 0.8 1];
 s.stimulus.dotdistance = [5]; %]; %[5 4 3 2 1 ];
-s.stimulus.phase_coherence = [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 .8 .6 .4 .2]}];
+
+
+%.2 means 20% are out of phase (easy) 1 means 100% out of phase (hard)
+s.stimulus.phase_coherence = [{[0]}, {[0.2]}, {[0.4]}, {[0.6]}, {[0.8]}, {[1]}, {[0 .2 .4 .6 .8 1]}];
+%s.stimulus.phase_coherence = [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 .8 .6 .4 .2]}];
 s.stimulus.dotSpeed =[0.6];
 s.stimulus.fractionBlack = 0;
 s.stimulus.dotLifetime = [3];
+%use this to shift the percentage of ferret that is scrambled
+s.stimulus.scrambled = [{[0]}, {[0.2]}, {[0.4]}, {[0.6]}, {[0.8]}, {[1]}, {[0 .2 .4 .6 .8 1]}];
 
 
 

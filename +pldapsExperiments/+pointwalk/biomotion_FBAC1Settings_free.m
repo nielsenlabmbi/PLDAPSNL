@@ -17,14 +17,15 @@ s.stimulus.movieId = [336, 14, 335, 15]; %current sets
 %s.stimulus.dotdistance = [{5},{4}, {3}, {2}, {1}, {[ 5 4 3 2 1]}]; %]; %[0.2 0.4 0.6 0.8 1];
 
 
-s.stimulus.nrDots = [{[0]}, {[5]}, {[10]}, {[15]}, {[20]}, {[40]}, {[0 5 10 15 20 40]}];
+s.stimulus.nrDots = [{[20]}, {[5]}, {[10]}, {[15]}, {[20]}, {[40]}, {[0 5 10 15 20 40]}];
 
 s.stimulus.ferretdotSize = 1.5;
 s.stimulus.stretchFactor = 2;
 
 %use for sinusoidalscript
 s.stimulus.dotdistance = [5];
-
+%use for sinusoidal scrambled
+s.stimulus.scrambled = [{[0]}, {[0.2]}, {[0.4]}, {[0.6]}, {[0.8]}, {[1]}, {[0 .2 .4 .6 .8 1]}];
 
 
 %set up the viewing distance

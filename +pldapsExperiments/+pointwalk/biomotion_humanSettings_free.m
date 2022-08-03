@@ -1,4 +1,4 @@
-function s = biomotion_FBAC8Settings_free
+function s = biomotion_humanSettings_free
 % % turn saving off
 % s.pldaps.nosave = 1;
 
@@ -17,14 +17,14 @@ s.stimulus.movieId = [15, 335, 14, 336];
 %s.stimulus.dotdistance = [{5},{4}, {3}, {2}, {1}, {[ 5 4 3 2 1]}]; %]; %[0.2 0.4 0.6 0.8 1];
 
 
-s.stimulus.nrDots = [{[10]}, {[5]}, {[10]}, {[15]}, {[20]}, {[40]}, {[0 5 10 15 20 40]}];
+s.stimulus.nrDots = [{[0]}, {[100 150 200 250 300 400]}];
 
 s.stimulus.ferretdotSize = 1.5;
 s.stimulus.stretchFactor = 2;
 
 %use for sinusoidalscript
 s.stimulus.dotdistance = [5];
-%s.stimulus.phase_coherence = [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 .8 .6 .4 .2]}];
+s.stimulus.phase_coherence = [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 .8 .6 .4 .2]}];
 %use for sinusoidal scrambled
 s.stimulus.scrambled = [{[0]}, {[0.2]}, {[0.4]}, {[0.6]}, {[0.8]}, {[1]}, {[0 .2 .4 .6 .8 1]}];
 s.stimulus.dotSpeed =[0.6];
