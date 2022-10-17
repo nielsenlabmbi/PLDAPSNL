@@ -36,6 +36,7 @@ try
     
     if ~p.defaultParameters.pldaps.nosave
         p.defaultParameters.session.dir = p.defaultParameters.pldaps.dirs.data;
+        p.defaultParameters.session.dirTmp = p.defaultParameters.pldaps.dirs.dataTmp;
         p.defaultParameters.session.filename = [p.defaultParameters.session.subject datestr(p.defaultParameters.session.initTime, 'yyyymmdd') p.defaultParameters.session.experimentSetupFile datestr(p.defaultParameters.session.initTime, 'HHMM')];
         p.defaultParameters.session.shortfilename = [p.defaultParameters.session.subject datestr(p.defaultParameters.session.initTime, 'yyyymmdd') datestr(p.defaultParameters.session.initTime, 'HHMM')];
         p.defaultParameters.session.file = [p.defaultParameters.session.filename '.PDS'];

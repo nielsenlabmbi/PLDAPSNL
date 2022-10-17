@@ -1,4 +1,6 @@
-function drifting_grating_trial(p,state)
+function ori_thres_trial(p,state)
+%%%% Note: includes staircase functionality for spatial frequency. Set
+%%%% stimulus.step = 0 in settings file to suppress staircase. 
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -14,26 +16,33 @@ switch state
         checkState(p);
         
     case p.trial.pldaps.trialStates.frameDraw
-       
-        if p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
-            showStimulus(p);
-        elseif p.trial.state == p.trial.stimulus.states.WAIT
-            Screen('FillRect',p.trial.display.ptr,p.trial.stimulus.waitColor,[0 0 1920 1080]);
+        if p.trial.state==p.trial.stimulus.states.START
+            Screen(p.trial.display.ptr, 'FillRect', 0.5)
+        elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
+            if p.trial.stimulus.midpointIR 
+                if p.trial.stimulus.midpointCrossed
+                   Screen(p.trial.display.ptr, 'FillRect', 0.5) 
+                else
+                    Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+                end
+            else
+            Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+            end
         end
-        
+     
     case p.trial.pldaps.trialStates.trialCleanUpandSave
         cleanUpandSave(p);
         
 end
 
 
+ 
 
-%% -------------------------------------------------------------------%
+%-------------------------------------------------------------------%
 %check port status and set events accordingly
 function p=checkState(p)
 
 activePort=find(p.trial.ports.status==1);
-
 
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
@@ -76,7 +85,10 @@ switch p.trial.state
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         %check whether any port chosen
-        if ismember(activePort, [p.trial.stimulus.port.MIDDLE p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
+        if p.trial.stimulus.midpointIR & find(p.trial.ports.status==1)==p.trial.stimulus.port.MIDDLE
+            p.trial.stimulus.midpointCrossed = 1;
+        end
+        if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
             p.trial.stimulus.frameTrialFirstResp = p.trial.iFrame;
@@ -102,19 +114,18 @@ switch p.trial.state
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
                 end
-                
                 %advance state
                 p.trial.state=p.trial.stimulus.states.CORRECT;
             else
                 %play tone
                 pds.audio.playDatapixxAudio(p,'breakfix');
-                
                 %advance state
                 p.trial.state=p.trial.stimulus.states.INCORRECT;
             end
         end
         
     case p.trial.stimulus.states.CORRECT %correct port selected for stimulus
+        pds.LED.AnyLEDOff(p,23);
         %wait for ITI
         if p.trial.ttime > p.trial.stimulus.timeTrialFirstResp + p.trial.stimulus.duration.ITI
             %trial done - note time
@@ -125,9 +136,11 @@ switch p.trial.state
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.pldaps.goodtrial = 1;
             p.trial.flagNextTrial = true;
+            %pds.LED.AnyLEDOff(p,23);
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
+        p.trial.pldaps.goodtrial = 0; 
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial            
             %check whether any port chosen
             if ismember(activePort, [p.trial.stimulus.port.MIDDLE p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
@@ -152,7 +165,7 @@ switch p.trial.state
                     
                     %advance state
                     p.trial.state=p.trial.stimulus.states.FINALRESP;
-                
+                    
                 end
             end
                 
@@ -162,6 +175,7 @@ switch p.trial.state
                 %trial done
                 p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
                 p.trial.flagNextTrial = true;
+                pds.LED.AnyLEDOff(p,23);
             end
         end
         
@@ -171,17 +185,18 @@ switch p.trial.state
             %trial done
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;
+            %pds.LED.AnyLEDOff(p,23); 
         end
         
 end
 
+        
 
-
-
-
+        
 %------------------------------------------------------------------%
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
+
 if isfield(p.trial,'masktxtr')
     Screen('Close',p.trial.masktxtr);
 end
@@ -199,87 +214,73 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
-p.trial.stimulus.waitColor = 0.5;
-p.trial.stimulus.fullfield = p.conditions{p.trial.pldaps.iTrial}.fullfield;
-
-
-
-%generate mask
-%transform mask parameters into pixel
-sigmaN=deg2pixNL(p,p.trial.stimulus.sigma,'round',2);
-mN=deg2pixNL(p,p.trial.stimulus.maskLimit,'round',2);
-
-xdom=[1:p.trial.display.pWidth]-p.trial.display.pWidth/2;
-ydom=[1:p.trial.display.pHeight]-p.trial.display.pHeight/2;
-[xdom,ydom] = meshgrid(xdom,ydom); %this results in a matrix of dimension height x width
-r = sqrt(xdom.^2 + ydom.^2);
-
-maskT = exp(-.5*(r-mN).^2/sigmaN.^2);
-maskT(r<mN) = 1;
-
-mask = 0.5*ones(p.trial.display.pHeight,p.trial.display.pWidth,2);
-mask(:,:,2) =1 - maskT;
-
-p.trial.masktxtr = Screen(p.trial.display.ptr, 'MakeTexture', mask,[],[],2);
-
-%set up one line of grating
-p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
-p.trial.t_period = p.conditions{p.trial.pldaps.iTrial}.t_period;
+%set up stimulus
+p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
+p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
 p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
+p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
 
-%assume stimuli are full screen
-p.trial.stimulus.sN=p.trial.display.pWidth; %pixel
-
-%add space for sliding window
-p.trial.stimulus.pCycle=deg2pixNL(p,1/p.trial.stimulus.sf,'none',2);
-stimsizeN=ceil(p.trial.stimulus.sN+p.trial.stimulus.pCycle);
-
-
-x_ecc=linspace(-p.trial.display.dWidth/2,stimsize/2,stimsizeN); %deg
-sdom = x_ecc*p.trial.stimulus.sf*2*pi; %radians
-grating = cos(sdom);
-
-p.trial.gtxtr = Screen('MakeTexture',p.trial.display.ptr, grating,[],[],2);
-
-%compute a few additional parameters that will be needed later
-%destination rectangle
-p.trial.stimulus.sDst=[0 0 p.trial.display.pWidth p.trial.display.pHeight];
-%shift per frame
-if p.trial.t_period >0
-    p.trial.stimulus.dFrame=p.trial.stimulus.pCycle/p.trial.t_period;
+if p.trial.side==2 %left port always vertical
+    p.trial.stimulus.angle=p.conditions{p.trial.pldaps.iTrial}.angle;
 else
-    p.trial.stimulus.dFrame = 0;
+    p.trial.stimulus.angle=0;
 end
+    
+
+%make grating
+%DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+%PixPerDeg = 1/DegPerPix;
+
+% GET GRATING SPECIFICATIONS
+%     nCycles = 24*p.trial.stimulus.sf;
+%     DegPerCyc = 1/p.trial.stimulus.sf;
+ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
+
+% CREATE A MESHGRID THE SIZE OF THE GRATING
+x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);%-p.trial.stimulus.shift(p.trial.side);
+y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
+[x,y] = meshgrid(x,y);
+
+
+% Transform to account for orientation
+% note: transformation changed from headfixed
+sdom=x*sin(p.trial.stimulus.angle*pi/180)-y*cos(p.trial.stimulus.angle*pi/180);
+
+% GRATING
+sdom=sdom*p.trial.stimulus.sf*2*pi;
+sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
+
+if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
+    grating = sdom1;
+else
+    % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
+    r = sqrt(x.^2 + y.^2);
+    sigmaDeg = ApertureDeg/16.5;
+    MaskLimit=.6*ApertureDeg/2;
+    maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
+    maskdom(r<MaskLimit) = 1;
+    grating = sdom1.*maskdom;
+end
+
+% TRANSFER THE GRATING INTO AN IMAGE
+grating = round(grating*p.trial.stimulus.range) + 127;
+
+p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
+p.trial.gratPos = [0 0 1920 1080];
+
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
-
-
-%show stimulus - handles rotation and movement of grating
-function showStimulus(p)
-
-xoffset = mod((p.trial.iFrame)*p.trial.stimulus.dFrame+...
-    p.trial.stimulus.phase/360*p.trial.stimulus.pCycle,p.trial.stimulus.pCycle*1.1);
-
-stimSrc=[xoffset 0 xoffset + p.trial.stimulus.sN-1 p.trial.stimulus.sN-1];
-
-if p.trial.stimulus.fullfield == 0
-    
-    stimSrc=[xoffset 0 xoffset + p.trial.stimulus.sN-1 p.trial.stimulus.sN-1];
-    Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
-    Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.direction,[],0.5);
-     
-    Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    Screen('DrawTexture', p.trial.display.ptr, p.trial.masktxtr);
-else
-    Screen('BlendFunction', p.trial.display.ptr, GL_SRC_ALPHA, GL_ONE);
-    Screen('DrawTexture', p.trial.display.ptr, p.trial.gtxtr, stimSrc, p.trial.stimulus.sDst,p.trial.direction,[],0.5);
+if p.trial.stimulus.midpointIR
+    p.trial.stimulus.midpointCrossed = 0;
+end
+if p.trial.camera.use;
+    pds.behavcam.startcam(p);
 end
 
 
-   
 
-%% ------------------------------------------------------------------%
+%------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
 %stop camera and set trigger to low
@@ -292,36 +293,24 @@ disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
 %show reward amount
 if p.trial.pldaps.draw.reward.show
-    pds.behavior.reward.showReward(p,{'S';'L';'R';'M'})
+    pds.behavior.reward.showReward(p,{'S';'L';'R'})
 end
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
-    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
+    round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
+
 
 % %show stats
 % pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 % disp(['C: ' num2str(p.trialMem.stats.val)])
 % disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
 % disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
-
-%user function test
-if p.trial.userInput==1
-    disp('decrement offset:')
-    p.trialMem.stimulus.offset=p.trialMem.stimulus.offset+p.trial.stimulus.deltaOffset;
-    disp(['offset left - ' num2str(p.trialMem.stimulus.offset(1))]);
-end
-if p.trial.userInput==2
-    disp('increment offset:')
-    p.trialMem.stimulus.offset=p.trialMem.stimulus.offset-p.trial.stimulus.deltaOffset;
-    disp(['offset left - ' num2str(p.trialMem.stimulus.offset(1))]);
-end
     
 
-
 %%%%%%Helper functions
-%% -------------------------------------------------------------------%
+%-------------------------------------------------------------------%
 %check whether a particular port choice is correct
 function correct=checkPortChoice(activePort,p)
 
@@ -334,10 +323,6 @@ switch p.trial.side
         end
     case p.trial.stimulus.side.RIGHT
         if activePort==p.trial.stimulus.port.RIGHT
-            correct=1;
-        end
-    case p.trial.stimulus.side.MIDDLE
-        if activePort==p.trial.stimulus.port.MIDDLE
             correct=1;
         end
 end
