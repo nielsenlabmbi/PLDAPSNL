@@ -1,4 +1,5 @@
 function connectZaber(p)
+q
 
 global zaber 
 %we can't use p to hold the zaber connections because they tie into their library

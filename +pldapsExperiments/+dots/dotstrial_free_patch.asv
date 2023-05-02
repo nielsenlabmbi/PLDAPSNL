@@ -240,8 +240,8 @@ function p=trialSetup(p)
     p.trial.stimulus.dotLifeFr = round(p.trial.stimulus.dotLifetime*p.trial.stimulus.frameRate/1000);
     
     %dot coherence/staircase
-    p.trial.stimulus.stair = p.conditions{p.trial.pldaps.iTrial}.stair;
-    if p.trial.stimulus.stair ==0
+    p.trial.stimulus.stair = 
+    if p.conditions{p.trial.pldaps.iTrial}.stair==0
         p.trialMem.stairstart=1;
         p.trialMem.dotCoherence=p.trial.stimulus.dotCoherence; %for bookkeeping
     else

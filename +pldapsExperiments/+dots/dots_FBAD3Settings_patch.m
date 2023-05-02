@@ -1,4 +1,4 @@
-function s = dots_FBAD5Settings_patch
+function s = dots_FBAD3Settings_patch
 
 %FEMALE
 %664901 = ANIMAL ID

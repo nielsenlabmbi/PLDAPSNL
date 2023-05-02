@@ -127,7 +127,7 @@ try
     p = pds.intan.setupIntan(p);
     
     % zaber
-    pds.zaber.connectZaber(p);
+    %pds.zaber.connectZaber(p);
     
     % DAQ
     %-------------------------------------------------------------------------%
@@ -301,7 +301,7 @@ try
     pds.intan.stopIntan(p);
     
     %stop zaber (if used)
-    pds.zaber.stopZaber(p);
+    %pds.zaber.stopZaber(p);
     
     if ~p.defaultParameters.pldaps.nosave
         [structs,structNames] = p.defaultParameters.getAllStructs();

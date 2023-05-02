@@ -50,7 +50,7 @@ function s=pldapsClassDefaultParameters(s)
  s.	datapixx.	adc.	channelMapping = 'datapixx.adc.ports'; %alternatively: cell array
  s.	datapixx.	adc.	channelModes = 0;
  s.	datapixx.	adc.	channelOffsets = 0;
- s.	datapixx.	adc.	channels = [2 4 6]; %8];
+ s.	datapixx.	adc.	channels = [2 4 6 8];
  s.	datapixx.	adc.	maxSamples = 0;
  s.	datapixx.	adc.	numBufferFrames = 600000;
  s.	datapixx.	adc.	srate =1000;
@@ -173,7 +173,7 @@ s.  datapixx.   dio.    useForReward = 0;
 
 %s.	pldaps.	dirs.
  s.	pldaps.	dirs.	data = '~/pldapsData';
-s.	pldaps.	dirs.	dataTmp = '/media/nielsenlab/data/pldapsData/TEMP'; 
+s.	pldaps.	dirs.	dataTmp = '/data/pldapsData/TEMP'; 
  s.	pldaps.	dirs.	wavfiles = '~/PLDAPSNL/beepsounds';
 
 %s.	pldaps.	draw.
