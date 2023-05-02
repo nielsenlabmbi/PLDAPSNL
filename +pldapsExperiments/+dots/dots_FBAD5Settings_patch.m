@@ -29,7 +29,7 @@ s.stimulus.stair=[0 1];
 s.stimulus.step=0.05;
 
 %viewing parameters
-s.display.viewdist = 75; 
+s.display.viewdist = 60; %cm
 s.stimulus.durStim = 60; %sec
 s.stimulus.frameRate = 120;
 s.stimulus.duration.ITI = 1.5;
