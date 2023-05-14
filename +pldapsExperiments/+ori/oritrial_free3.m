@@ -143,7 +143,7 @@ switch p.trial.state
         p.trial.pldaps.goodtrial = 0; 
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial            
             %check whether any port chosen
-            if ismember(activePort, [p.trial.stimulus.port.MIDDLE p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
+            if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
                 %check whether correct port chosen
                 correct=checkPortChoice(activePort,p);                
                 if correct==1 %now has chosen correct port
@@ -155,12 +155,9 @@ switch p.trial.state
                     if activePort==p.trial.stimulus.port.LEFT
                         amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
-                    elseif activePort==p.trial.stimulus.port.RIGHT
+                    else 
                         amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
-                    else
-                        amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.MIDDLE);
-                        pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.MIDDLE);
                     end
                     
                     %advance state

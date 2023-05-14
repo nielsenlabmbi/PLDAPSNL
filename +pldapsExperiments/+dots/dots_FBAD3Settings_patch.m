@@ -25,15 +25,15 @@ s.stimulus.centerY=540;
 s.display.bgColor = [.5 .5 .5]; 
 
 %staircase parameters
-s.stimulus.stair=[0 1];
+s.stimulus.stair=1; %[0 1] if on spacebar
 s.stimulus.step=0.05;
 
 %viewing parameters
 s.display.viewdist = 60; 
-s.stimulus.durStim = 60; %sec
+s.stimulus.durStim = [60 2 1 0.5 0.4 0.3 0.25]; %sec
 s.stimulus.frameRate = 120;
-s.stimulus.duration.ITI = 1.5;
-s.stimulus.midpointIR = 0; %turn stimulus on when crossing midline
+s.stimulus.duration.ITI = 0.2; %intertrial interval
+s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 
 
 

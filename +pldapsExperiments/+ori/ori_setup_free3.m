@@ -21,7 +21,7 @@ if isfield(p.defaultParameters,'sideMatch')
 else
     side.match=[1 -1];
 end
-for i = 1:length(p.trial.stimulus.offsets)
+for i = 1:length(p.defaultParameters.stimulus.offsets)
 cond(i).displacement = p.defaultParameters.stimulus.offsets{i};
 %cond(i).phase = [0 180];
 cond(i).rotation = [-1 1];

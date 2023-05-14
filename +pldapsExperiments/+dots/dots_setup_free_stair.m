@@ -25,7 +25,7 @@ for i = 1:length(p.defaultParameters.stimulus.stair)
     cond(i).dotLifetime = p.defaultParameters.stimulus.dotLifetime;
     cond(i).stair=p.defaultParameters.stimulus.stair(i);
         
-    c{i}=generateCondList(cond,side,'pseudo',ceil(500/(length(cond.dotCoherence)*2)));
+    c{i}=generateCondList(cond(i),side,'pseudo',ceil(500/(length(cond(i).dotCoherence)*2)));
 end
 
 p.trial.allconditions = c;

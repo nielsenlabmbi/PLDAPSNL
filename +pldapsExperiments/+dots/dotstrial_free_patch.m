@@ -216,8 +216,7 @@ function p=trialSetup(p)
         p.trialMem.stairstart = 1; %mark transition between normal and staircase
     end
     
-    % set up stimulus
-    
+    % set up stimulus    
     DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
     PixPerDeg = 1/DegPerPix;
     
@@ -260,6 +259,8 @@ function p=trialSetup(p)
     %stimulus center
     p.trial.stimulus.centerX = p.conditions{p.trial.pldaps.iTrial}.centerX;
     
+    %stimulus duration
+    p.trial.stimulus.durStim = p.conditions{p.trial.pldaps.iTrial}.durStim;
     
     %initialize frame
     p.trial.stimulus.frameI = 0;

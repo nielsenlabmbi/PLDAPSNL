@@ -18,10 +18,11 @@ side.par = 'direction';
 side.match=p.defaultParameters.stimulus.direction;
 
 %staircase on space bar
-for i = 1:length(p.defaultParameters.stimulus.stair)
-     cond(i).stair=p.defaultParameters.stimulus.stair(i);
+for i = 1:length(p.defaultParameters.stimulus.durStim)
+     cond(i).stair=p.defaultParameters.stimulus.stair;
      cond(i).direction=p.defaultParameters.stimulus.direction;
      cond(i).centerX=p.defaultParameters.stimulus.centerX;
+     cond(i).durStim=p.defaultParameters.stimulus.durStim(i);
      c{i}=generateCondList(cond(i),side,'pseudo',250);
 end
 
