@@ -221,13 +221,13 @@ function p=trialSetup(p)
     PixPerDeg = 1/DegPerPix;
     
     %transform stimulus sizes into px
-    p.trial.stimulus.pWidth=p.trial.stimulus.width*PixPerDeg;
-    p.trial.stimulus.pHeight=p.trial.stimulus.height*PixPerDeg;
+    p.trial.stimulus.pWidth=round(p.trial.stimulus.width*PixPerDeg);
+    p.trial.stimulus.pHeight=round(p.trial.stimulus.height*PixPerDeg);
     
     
     %number of dots - density is in dots/deg^2, size in deg
-    p.trial.stimulus.nrDots=p.trial.stimulus.dotDensity*p.trial.stimulus.width*...
-        p.trial.stimulus.height;
+    p.trial.stimulus.nrDots=round(p.trial.stimulus.dotDensity*p.trial.stimulus.width*...
+        p.trial.stimulus.height);
     
     %dot size
     p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);

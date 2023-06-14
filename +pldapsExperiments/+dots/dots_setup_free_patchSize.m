@@ -1,11 +1,11 @@
-function p = dots_setup_free_patchOff(p)
+function p = dots_setup_free_patchSize(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial_free_patchOff';
+p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial_free_patchSize';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
@@ -18,10 +18,10 @@ side.par = 'direction';
 side.match=p.defaultParameters.stimulus.direction;
 
 %staircase on space bar
-for i = 1:length(p.defaultParameters.stimulus.offset)
+for i = 1:length(p.defaultParameters.stimulus.patchWidth)
      cond(i).direction=p.defaultParameters.stimulus.direction;
      cond(i).stimSide=p.defaultParameters.stimulus.stimSide;
-     cond(i).offset=p.defaultParameters.stimulus.offset(i);
+     cond(i).patchWidth=p.defaultParameters.stimulus.patchWidth(i);
      c{i}=generateCondList(cond(i),side,'pseudo',250);
 end
 

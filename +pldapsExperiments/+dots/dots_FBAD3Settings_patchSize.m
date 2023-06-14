@@ -1,4 +1,4 @@
-function s = dots_FBAD5Settings_patchOff
+function s = dots_FBAD5Settings_patchSize
 
 %FEMALE
 %664901 = ANIMAL ID
@@ -10,24 +10,24 @@ function s = dots_FBAD5Settings_patchOff
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 
 %set stimulus parameters
-s.stimulus.dotSize = 1.5;% original 1.5
-s.stimulus.dotDensity = 0.13; %dots/deg^2
+s.stimulus.dotSize = 1.5; %Originally set to 1.5
+s.stimulus.dotDensity = 0.13; %dots/deg^2, originally set to 0.12
 s.stimulus.dotColor = 0;
-s.stimulus.dotCoherence =  0.8; %regulated by staircase, this is start value
+s.stimulus.dotCoherence =  0.85; %regulated by staircase, this is start value
 s.stimulus.dotSpeed = 48; %deg/sec
 s.stimulus.dotLifetime = 25; %ms, 
 s.stimulus.direction = [0 180];
-s.stimulus.patchWidth=15; %deg ORGINAL 12
+s.stimulus.patchWidth=[50 40 30 20 15]; %deg ORIGINAL 12
 s.stimulus.patchHeight=12; %deg
 s.stimulus.centerX=990; %pixels
 s.stimulus.centerY=810;
-s.stimulus.offset=[0 300 400 500 600];% first is setting 0, increase with spacebar
-s.stimulus.stimSide= -1; % set to [-1 1] to alternate sides
+s.stimulus.offset=0; %First setting is 0, increase to 3 with spacebar
+s.stimulus.stimSide= -1; % [-1 1] to alternate, controls which side of screen stim ocures on, modified 5/17 to be locked on one side
 
 s.display.bgColor = [.5 .5 .5]; 
 
 %staircase parameters
-s.stimulus.stair=0; %[0 1] if on space bar;
+s.stimulus.stair=0; %[0 1] if on space bar, 0 off, 1 on;
 s.stimulus.step=0.05;
 
 %viewing parameters

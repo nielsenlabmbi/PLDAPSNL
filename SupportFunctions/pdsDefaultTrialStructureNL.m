@@ -49,6 +49,7 @@ p.defaultParameters.stimulus.states.WAIT = 8;
 p.defaultParameters.stimulus.states.MOVESTAGE = 9;
 p.defaultParameters.stimulus.states.BASELINE = 0;
 p.defaultParameters.stimulus.states.MOVE = 11;
+p.defaultParameters.stimulus.states.WAITSTART = 12;
 
 %-------------------------------------------------------------------------%
 % Trigger States

@@ -1,4 +1,4 @@
-function dotstrial_free_patchOff(p,state)
+function dotstrial_free_patchSize(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -234,6 +234,7 @@ function p=trialSetup(p)
     PixPerDeg = 1/DegPerPix;
     
     %transform stimulus sizes into px
+    p.trial.stimulus.patchWidth = p.conditions{p.trial.pldaps.iTrial}.patchWidth;
     p.trial.stimulus.pWidth=round(p.trial.stimulus.patchWidth*PixPerDeg);
     p.trial.stimulus.pHeight=round(p.trial.stimulus.patchHeight*PixPerDeg);
     
@@ -269,10 +270,9 @@ function p=trialSetup(p)
     p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
     
     %stimulus center
-    p.trial.stimulus.offset = p.conditions{p.trial.pldaps.iTrial}.offset;
     p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
     p.trial.stimulus.centerX = p.trial.stimulus.centerX+...
-        p.conditions{p.trial.pldaps.iTrial}.stimSide*p.conditions{p.trial.pldaps.iTrial}.offset;
+        p.conditions{p.trial.pldaps.iTrial}.stimSide*p.trial.stimulus.offset;
     
     %stimulus duration
     p.trial.stimulus.durStim = p.trialMem.durStim;

@@ -11,7 +11,7 @@ p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial_free_patch';
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = 3;
+%p.trial.stimulus.duration.ITI = 3;
 
 %% conditions:
 side.par = 'direction';
