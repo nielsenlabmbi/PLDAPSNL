@@ -10,15 +10,15 @@ function s = dots_FBAD5Settings_patchSize
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 
 %set stimulus parameters
-s.stimulus.dotSize = 1.5; %Originally set to 1.5
-s.stimulus.dotDensity = 0.13; %dots/deg^2, originally set to 0.12
+s.stimulus.dotSize = 1.25; %Originally set to 1.5
+s.stimulus.dotDensity = 0.12; %dots/deg^2, originally set to 0.12
 s.stimulus.dotColor = 0;
-s.stimulus.dotCoherence =  0.85; %regulated by staircase, this is start value
+s.stimulus.dotCoherence =  [0.85 0.80]; %regulated by staircase, this is start value
 s.stimulus.dotSpeed = 48; %deg/sec
 s.stimulus.dotLifetime = 25; %ms, 
 s.stimulus.direction = [0 180];
-s.stimulus.patchWidth=[50 40 30 20 15]; %deg ORIGINAL 12
-s.stimulus.patchHeight=12; %deg
+s.stimulus.patchWidth= [25 20]; %deg ORIGINAL 12
+s.stimulus.patchHeight= 12; %deg
 s.stimulus.centerX=990; %pixels
 s.stimulus.centerY=810;
 s.stimulus.offset=0; %First setting is 0, increase to 3 with spacebar
@@ -27,7 +27,7 @@ s.stimulus.stimSide= -1; % [-1 1] to alternate, controls which side of screen st
 s.display.bgColor = [.5 .5 .5]; 
 
 %staircase parameters
-s.stimulus.stair=0; %[0 1] if on space bar, 0 off, 1 on;
+s.stimulus.stair=0; %[0 1] if on space bar, 0 off, 1 on;zzq
 s.stimulus.step=0.05;
 
 %viewing parameters

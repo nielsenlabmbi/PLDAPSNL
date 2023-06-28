@@ -10,14 +10,14 @@ function s = dots_FBAD5Settings_patchSize
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 
 %set stimulus parameters
-s.stimulus.dotSize = 1.5;% original 1.5
-s.stimulus.dotDensity = 0.13; %dots/deg^2
+s.stimulus.dotSize = 1.25;% original 1.5
+s.stimulus.dotDensity = 0.12; %dots/deg^2
 s.stimulus.dotColor = 0;
-s.stimulus.dotCoherence =  1.0; %regulated by staircase, this is start value
+s.stimulus.dotCoherence =  1.0 ; %can be regulated by staircase, this is start value
 s.stimulus.dotSpeed = 48; %deg/sec
 s.stimulus.dotLifetime = 25; %ms, 
 s.stimulus.direction = [0 180];
-s.stimulus.patchWidth=[50 40 30 20 15]; %deg ORGINAL 12
+s.stimulus.patchWidth=[25 20]; %deg ORGINAL 12, 50 is full
 s.stimulus.patchHeight=30; %deg
 s.stimulus.centerX=990; %pixels
 s.stimulus.centerY=500;
