@@ -1,4 +1,4 @@
-function dotstrial_free_patchStair(p,state)
+function perim_trial_free(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -221,101 +221,49 @@ function p=trialSetup(p)
     if ~isfield(p.trialMem,'correct')
         p.trialMem.correct = 0;
     end
-    if ~isfield(p.trialMem,'stairstart')
-        p.trialMem.stairstart = 1; %mark transition between normal and staircase
-    end
     if ~isfield(p.trialMem,'durStim')
         p.trialMem.durStim=p.trial.stimulus.durStim;
     end
-
+    if ~isfield(p.trialMem,'dotColor')
+        p.trialMem.dotColor = 1; %required for flashing dot (1 = default, 0 = flash color)
+    end
 
     % set up stimulus    
     DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
     PixPerDeg = 1/DegPerPix;
-    
-    %transform stimulus sizes into px
-    p.trial.stimulus.pWidth=round(p.trial.stimulus.patchWidth*PixPerDeg);
-    p.trial.stimulus.pHeight=round(p.trial.stimulus.patchHeight*PixPerDeg);
-    
-    
-    %number of dots - density is in dots/deg^2, size in deg
-    p.trial.stimulus.nrDots=round(p.trial.stimulus.dotDensity*p.trial.stimulus.patchWidth*...
-        p.trial.stimulus.patchHeight);
-    
-    %dot size
+      
+    %dot size in pixels
     p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
     
-    %dot displacement per frame (speed is in deg/sec)
-    p.trial.stimulus.deltaF=p.trial.stimulus.dotSpeed/p.trial.stimulus.frameRate*PixPerDeg;
-    
-    %dot lifetime in frames (lifetime is in ms)
-    p.trial.stimulus.dotLifeFr = round(p.trial.stimulus.dotLifetime*p.trial.stimulus.frameRate/1000);
-    
-    %dot coherence/staircase
-    p.trial.stimulus.stair=p.conditions{p.trial.pldaps.iTrial}.stair;
-    if p.trial.stimulus.stair ==0
-        p.trialMem.stairstart=1;
-        p.trialMem.dotCoherence=p.trial.stimulus.dotCoherence; %for bookkeeping
-    else
-        if p.trialMem.stairstart==1
-            p.trialMem.dotCoherence=p.trial.stimulus.dotCoherence;
-            p.trialMem.stairstart=0;
-            p.trialMem.correct=0;
-        else
-            p.trial.stimulus.dotCoherence = p.trialMem.dotCoherence;
-        end
-    end
-    
-    %direction
-    p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
-    
-    %stimulus center
+    %dot position
+    p.trial.stimulus.offset = p.conditions{p.trial.pldaps.iTrial}.offset;
     p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
-    if p.trial.stimulus.stimSide==-1 %left
-        p.trial.stimulus.offset = -1*p.conditions{p.trial.pldaps.iTrial}.offset(1);
+    p.trial.stimulus.randPos = p.conditions{p.trial.pldaps.iTrial}.randPos;
+    centerX = round(p.trial.display.pWidth/2)+...
+        p.conditions{p.trial.pldaps.iTrial}.stimSide*p.conditions{p.trial.pldaps.iTrial}.offset;
+    
+    if p.trial.stimulus.randPos==1
+        %choose random position
+        %positions come from a grid of possible positions
+        x=[0:p.trial.stimulus.posSpacing:p.trial.stimulus.windowWidth];
+        y=[0:p.trial.stimulus.posSpacing:p.trial.stimulus.windowHeight];
+        [xpos,ypos]=meshgrid(x,y);
+        xpos=xpos(:);
+        ypos=ypos(:);
+        posidx=randi(length(xpos));
+        p.trial.dotposX=centerX+xpos(posidx);
+        p.trial.dotposY=p.trial.stimulus.centerY+ypos(posidx);
     else
-        p.trial.stimulus.offset = p.conditions{p.trial.pldaps.iTrial}.offset(2);
+        %fixed position
+        p.trial.dotposX=centerX;
+        p.trial.dotposY=p.trial.stimulus.centerY;
     end
-    p.trial.stimulus.centerX = p.trial.stimulus.centerX+p.trial.stimulus.offset;
     
-    %stimulus duration
-    p.trial.stimulus.durStim = p.trialMem.durStim;
-    
-    %initialize frame
+
+    %frames
     p.trial.stimulus.frameI = 0;
-    
-    %initialize dot positions - these need to be in pixels from center
-    randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
-    randpos(1,:)=(randpos(1,:)-0.5)*p.trial.stimulus.pWidth;
-    randpos(2,:)=(randpos(2,:)-0.5)*p.trial.stimulus.pHeight;
-    
-    %initialize noise vector
-    nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
-    noisevec=zeros(p.trial.stimulus.nrDots,1);
-    noisevec(1:nrSignal)=1;
-    
-    %initialize directions: correct displacement for signal, random for noise
-    %side is either 1 or 2; 1 should equal direction=0, 2 direction=180
-    randdir=zeros(p.trial.stimulus.nrDots,1);
-    randdir(1:end)=p.trial.stimulus.direction;
-    idx=find(noisevec==0);
-    randdir(idx)=randi([0,359],length(idx),1);
-    
-    
-    %initialize lifetime vector
-    if p.trial.stimulus.dotLifeFr>0
-        lifetime=randi(p.trial.stimulus.dotLifeFr,p.trial.stimulus.nrDots,1);
-    end
-    
-    %compute nr frames
     p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
-    
-    %save misc variables
-    p.trial.stimulus.randpos = randpos;
-    p.trial.stimulus.randdir = randdir;
-    p.trial.stimulus.lifetime = lifetime;
-    
-    
+          
     %set state
     p.trial.state=p.trial.stimulus.states.START;
     if p.trial.camera.use
@@ -327,58 +275,22 @@ function p=trialSetup(p)
 function showStimulus(p)
     p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
     if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
-        f = p.trial.stimulus.frameI;
-        randpos = p.trial.stimulus.randpos;
-        randdir = p.trial.stimulus.randdir;
-        deltaF = p.trial.stimulus.deltaF;
-        lifetime = p.trial.stimulus.lifetime;
-        %compute vectors for necessary frames
-        %move all dots according to their direction
-        xproj=-cos(randdir*pi/180);
-        yproj=-sin(randdir*pi/180);
-    
-        randpos(1,:)=randpos(1,:)+deltaF*xproj';
-        randpos(2,:)=randpos(2,:)+deltaF*yproj';
-    
-        %now deal with wrap around - we pick the axis on which to replot a dot
-        %based on the dots direction
-        idx=find(abs(randpos(1,:))>p.trial.stimulus.pWidth/2 | abs(randpos(2,:))>p.trial.stimulus.pHeight/2);
-    
-        rvec=rand(size(idx)); %btw 0 and 1
-        for i=1:length(idx)
-            if rvec(i)<=abs(xproj(idx(i)))/(abs(xproj(idx(i)))+abs(yproj(idx(i))))
-                randpos(1,idx(i))=-1*sign(xproj(idx(i)))*p.trial.stimulus.pWidth/2;
-                randpos(2,idx(i))=(rand(1)-0.5)*p.trial.stimulus.pHeight;
+        
+        %flash dot if necessary (will go to flash color)
+        p.trial.stimulus.dotColor=p.trial.stimulus.dotColor;
+        if p.trial.stimulus.flashDot==1
+            if mod(p.trial.stimulus.frameI,p.trial.stimulus.flashRate)==0
+                p.trialMem.dotColor=~p.trialMem.dotColor;
+            end
+            if p.trialMem.dotColor==1
+                p.trial.stimulus.dotColor=p.trial.stimulus.dotColor;
             else
-                randpos(1,idx(i))=(rand(1)-0.5)*p.trial.stimulus.pWidth;
-                randpos(2,idx(i))=-1*sign(yproj(idx(i)))*p.trial.stimulus.pHeight/2;
+                p.trial.stimulus.dotColor=p.trial.stimulus.flashColor;
             end
         end
-    
-    
-        %if lifetime is expired, randomly assign new direction
-        if p.trial.stimulus.dotLifeFr>0
-            idx=find(lifetime==0);
-            %directions are drawn based on coherence level
-            rvec=rand(size(idx));
-            for i=1:length(idx)
-                if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
-                    randdir(idx(i))=p.trial.stimulus.direction;
-                else
-                    randdir(idx(i))=randi([0,359],1,1);
-                end
-            end
-    
-            lifetime=lifetime-1;
-            lifetime(idx)=p.trial.stimulus.dotLifeFr;
-        end
-        p.trial.stimulus.lifetime = lifetime;
-        p.trial.stimulus.dotpos{f}=randpos;
-        p.trial.stimulus.randpos = randpos;
-        p.trial.stimulus.randdir = randdir;
-        Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
-            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
-            [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
+
+        Screen('DrawDots', p.trial.display.ptr, [p.trial.stimulus.dotposX;p.trial.stimulus.dotposY], ...
+            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor,[],1);
     end
 
 %------------------------------------------------------------------%
@@ -402,33 +314,10 @@ function cleanUpandSave(p)
     %num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     %    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
     
-    dotC=round(p.trialMem.dotCoherence*100); %will not work otherwise for some reason
-    idx=find(p.trialMem.stats.count.coh(:,1)==dotC);
-    p.trialMem.stats.count.coh(idx,2)=p.trialMem.stats.count.coh(idx,2)+1;
-
+   
     disp(num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
         p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)))
-    disp(p.trialMem.stats.count.coh)
     
-    %update coherence value
-    disp(p.trial.stimulus.stair)
-    if p.trial.stimulus.stair == 1
-        %staircase
-        if p.trial.pldaps.goodtrial & p.trialMem.correct == 2
-            p.trialMem.dotCoherence = p.trialMem.dotCoherence - p.trial.stimulus.step;
-            if p.trialMem.dotCoherence<0
-                p.trialMem.dotCoherence=0;
-            end
-            p.trialMem.correct = 0;
-        elseif ~p.trial.pldaps.goodtrial
-            p.trialMem.dotCoherence = p.trialMem.dotCoherence + p.trial.stimulus.step;
-            if p.trialMem.dotCoherence>1
-                p.trialMem.dotCoherence=1;
-            end
-            p.trialMem.correct = 0;
-        end
-        disp(['Coherence on the next trial: ' num2str(p.trialMem.dotCoherence)]);
-    end
     
     %change stimulus duration if needed
     if p.trial.userInput==1

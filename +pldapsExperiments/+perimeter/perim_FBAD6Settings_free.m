@@ -1,4 +1,4 @@
-function s = dots_FBAD6Settings_patchStair
+function s = perim_FBAD6Settings_free
 
 %FEMALE
 %664901 = ANIMAL ID
@@ -10,28 +10,22 @@ function s = dots_FBAD6Settings_patchStair
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 
 %set stimulus parameters
-s.stimulus.dotSize = 1.25;% original 1.5
-s.stimulus.dotDensity = 0.13; %dots/deg^2
-s.stimulus.dotColor = 0;
-s.stimulus.dotCoherence =  1.0; %regulated by staircase, this is start value
-s.stimulus.dotSpeed = 48; %deg/sec
-s.stimulus.dotLifetime = 25; %ms, 
-s.stimulus.direction = [0 180];
-s.stimulus.patchWidth=15; %deg ORGINAL 12
-s.stimulus.patchHeight= 15; %deg
-s.stimulus.centerX=990; %pixels
-s.stimulus.centerY=810;
-s.stimulus.offset= [500 500]; %can now accept different offsets for left and right
+s.stimulus.dotSize = 1.25;% deg; original 1.5
+s.stimulus.windowWidth=300; %pixels
+s.stimulus.windowHeight= 300; %pixels
+s.stimulus.centerY=810;%pixels
+s.stimulus.offset= 200; %in pixels, relative to center, should be larger than windowWidth/2
 s.stimulus.stimSide= [-1 1]; % set to [-1 1] to alternate sides
-
+s.stimulus.randPos=[0 1]; %0 is off - fixed position at x=centerScreen+offset, y=centerY; [0 1] puts it on the spacebar
+s.stimulus.posSpacing = 50; %spacing between sampled positions in pixels
+s.stimulus.flashDot=1; %0 is off
+s.stimulus.flashRate=10; %frames
+s.stimulus.dotColor = 0; %default color, 0 = black
+s.stimulus.flashColor = 1; %alternate color when flashing
 s.display.bgColor = [.5 .5 .5]; 
 
-%staircase parameters
-s.stimulus.stair= [0 1]; %[0 1] if on space bar;
-s.stimulus.step=0.05;
 
 %viewing parameters
-
 s.display.viewdist = 60; %cm
 s.stimulus.startStim = 0.10; %start at .35, down to .20 RV 20230920
 s.stimulus.durStim = 0.20; %sec - shorten from .3 to .2 on 9/18/23
