@@ -1,7 +1,7 @@
-function s = dots_FBAD5Settings_patchSize
+function s = dots_FBAD6Settings_patchSize
 
-%FEMALE
-%664901 = ANIMAL ID
+%FEMALE w/headpost
+%669371 = ANIMAL ID
 
 % % turn saving off
 % s.pldaps.nosave = 1;
@@ -15,12 +15,12 @@ s.stimulus.dotDensity = 0.13; %dots/deg^2
 s.stimulus.dotColor = 0;
 s.stimulus.dotCoherence =  1.0 ; %can be regulated by staircase, this is start value
 s.stimulus.dotSpeed = 48; %deg/sec
-s.stimulus.dotLifetime = 25; %ms, 
+s.stimulus.dotLifetime = 1000; %ms, 
 s.stimulus.direction = [0 180];
-s.stimulus.patchWidth=[15 20 25]; %deg ORGINAL 12, 50 is full
-s.stimulus.patchHeight= 15; %deg
+s.stimulus.patchWidth=[30 20 15]; %deg ORGINAL 12, 50 is full
+s.stimulus.patchHeight= 20; %deg, 30 is full
 s.stimulus.centerX= 990; %pixels
-s.stimulus.centerY= 810; %500 puts in center
+s.stimulus.centerY= 810; %500 puts in center, 810 is bottom
 s.stimulus.offset= 0;% first is setting 0, increase with spacebar
 s.stimulus.stimSide= -1; % set to [-1 1] to alternate sides
 
@@ -34,7 +34,7 @@ s.stimulus.step=0.05;
 
 s.display.viewdist = 60; %cm
 s.stimulus.startStim = 0.35;
-s.stimulus.durStim = 0.3; %sec - can be further regulated with user keys
+s.stimulus.durStim = 15.0; %seconds dots play
 s.stimulus.frameRate = 120;
 s.stimulus.duration.ITI = 0.2;
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline

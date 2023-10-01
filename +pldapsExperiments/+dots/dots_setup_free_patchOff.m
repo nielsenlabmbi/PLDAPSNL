@@ -17,11 +17,13 @@ p.trial.stimulus.forceCorrect = 1;
 side.par = 'direction';
 side.match=p.defaultParameters.stimulus.direction;
 
-%staircase on space bar
+%staircase on space bar %8/7/2023 think this is where I Need to add stair
+%as the variable on the spacebar
 for i = 1:length(p.defaultParameters.stimulus.offset)
+     cond(i).stair=p.defaultParameters.stimulus.stair;%added by RV 8/7/23
      cond(i).direction=p.defaultParameters.stimulus.direction;
      cond(i).stimSide=p.defaultParameters.stimulus.stimSide;
-     cond(i).offset=p.defaultParameters.stimulus.offset(i);
+     cond(i).offset=p.defaultParameters.stimulus.offset; %RV removed the (i)
      c{i}=generateCondList(cond(i),side,'pseudo',250);
 end
 

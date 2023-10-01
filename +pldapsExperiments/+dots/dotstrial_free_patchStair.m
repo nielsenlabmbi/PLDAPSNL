@@ -1,4 +1,4 @@
-function dotstrial_free_patchOff(p,state)
+function dotstrial_free_patchStair(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -252,6 +252,7 @@ function p=trialSetup(p)
     p.trial.stimulus.dotLifeFr = round(p.trial.stimulus.dotLifetime*p.trial.stimulus.frameRate/1000);
     
     %dot coherence/staircase
+    p.trial.stimulus.stair=p.conditions{p.trial.pldaps.iTrial}.stair;
     if p.trial.stimulus.stair ==0
         p.trialMem.stairstart=1;
         p.trialMem.dotCoherence=p.trial.stimulus.dotCoherence; %for bookkeeping
@@ -394,9 +395,12 @@ function cleanUpandSave(p)
     end
     
     %show stats
-    pds.behavior.countTrial(p,p.trial.pldaps.goodtrial); %updates counters
-
-    idx=find(p.trialMem.stats.count.coh(:,1)==p.trialMem.dotCoherence);
+    pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
+    %num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+    %    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
+    
+    dotC=round(p.trialMem.dotCoherence*100); %will not work otherwise for some reason
+    idx=find(p.trialMem.stats.count.coh(:,1)==dotC);
     p.trialMem.stats.count.coh(idx,2)=p.trialMem.stats.count.coh(idx,2)+1;
 
     disp(num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
@@ -404,7 +408,7 @@ function cleanUpandSave(p)
     disp(p.trialMem.stats.count.coh)
     
     %update coherence value
-    dis(p.trial.stimulus.stair)
+    disp(p.trial.stimulus.stair)
     if p.trial.stimulus.stair == 1
         %staircase
         if p.trial.pldaps.goodtrial & p.trialMem.correct == 2

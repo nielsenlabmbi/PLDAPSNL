@@ -15,7 +15,7 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            Screen(p.trial.display.ptr, 'FillRect', 0)
+            Screen(p.trial.display.ptr, 'FillRect', p.trial.display.bgColor)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             showStimulus(p);
         end
@@ -47,7 +47,7 @@ switch p.trial.state
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
             %send trigger pulse to camera
-            if p.trial.camera.use 
+            if p.trial.camera.use % this tells a camera if being used to capture time and frame?
                 pds.behavcam.triggercam(p,1);
                 p.trial.stimulus.timeCamOn = p.trial.ttime;
                 p.trial.stimulus.frameCamOn = p.trial.iFrame;
@@ -361,9 +361,16 @@ end
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
-num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
-    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
+%num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+%    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100))
 
+dotC=round(p.trialMem.dotCoherence*100); %will not work otherwise for some reason
+idx=find(p.trialMem.stats.count.coh(:,1)==dotC);
+p.trialMem.stats.count.coh(idx,2)=p.trialMem.stats.count.coh(idx,2)+1;
+
+disp(num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+    p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)))
+disp(p.trialMem.stats.count.coh)
 
 if p.trial.stimulus.stair == 1
     %staircase 
@@ -384,12 +391,11 @@ if p.trial.stimulus.stair == 1
 end
 
 % %show stats
-% pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 % disp(['C: ' num2str(p.trialMem.stats.val)])
 % disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
 % disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
-
-%user function test
+% 
+% %user function test
 if p.trial.userInput==1
     disp('decrement offset:')
     p.trialMem.stimulus.offset=p.trialMem.stimulus.offset+p.trial.stimulus.deltaOffset;

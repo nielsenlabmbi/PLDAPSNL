@@ -39,8 +39,8 @@ activePort=find(p.trial.ports.status==1);
 
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
-        if activePort %port activated
-            
+         if ismember(activePort, [p.trial.stimulus.port.LEFT ...
+                 p.trial.stimulus.port.RIGHT p.trial.stimulus.port.START])   
             %deliver reward
             %play tone
                 pds.audio.playDatapixxAudio(p,'reward_short');
