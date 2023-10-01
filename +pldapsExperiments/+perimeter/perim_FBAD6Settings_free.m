@@ -14,12 +14,12 @@ s.stimulus.dotSize = 1.25;% deg; original 1.5
 s.stimulus.windowWidth=300; %pixels
 s.stimulus.windowHeight= 300; %pixels
 s.stimulus.centerY=810;%pixels
-s.stimulus.offset= 200; %in pixels, relative to center, should be larger than windowWidth/2
+s.stimulus.offset= 400; %in pixels, relative to center, should be larger than windowWidth/2
 s.stimulus.stimSide= [-1 1]; % set to [-1 1] to alternate sides
 s.stimulus.randPos=[0 1]; %0 is off - fixed position at x=centerScreen+offset, y=centerY; [0 1] puts it on the spacebar
 s.stimulus.posSpacing = 50; %spacing between sampled positions in pixels
 s.stimulus.flashDot=1; %0 is off
-s.stimulus.flashRate=10; %frames
+s.stimulus.flashRate=3; %frames
 s.stimulus.dotColor = 0; %default color, 0 = black
 s.stimulus.flashColor = 1; %alternate color when flashing
 s.display.bgColor = [.5 .5 .5]; 

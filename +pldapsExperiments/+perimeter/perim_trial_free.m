@@ -245,18 +245,20 @@ function p=trialSetup(p)
     if p.trial.stimulus.randPos==1
         %choose random position
         %positions come from a grid of possible positions
-        x=[0:p.trial.stimulus.posSpacing:p.trial.stimulus.windowWidth];
-        y=[0:p.trial.stimulus.posSpacing:p.trial.stimulus.windowHeight];
+        x=[0:p.trial.stimulus.posSpacing:p.trial.stimulus.windowWidth]-...
+            round(p.trial.stimulus.windowWidth/2);
+        y=[0:p.trial.stimulus.posSpacing:p.trial.stimulus.windowHeight]-...
+            round(p.trial.stimulus.windowHeight/2);
         [xpos,ypos]=meshgrid(x,y);
         xpos=xpos(:);
         ypos=ypos(:);
         posidx=randi(length(xpos));
-        p.trial.dotposX=centerX+xpos(posidx);
-        p.trial.dotposY=p.trial.stimulus.centerY+ypos(posidx);
+        p.trial.stimulus.dotposX=centerX+xpos(posidx);
+        p.trial.stimulus.dotposY=p.trial.stimulus.centerY+ypos(posidx);
     else
         %fixed position
-        p.trial.dotposX=centerX;
-        p.trial.dotposY=p.trial.stimulus.centerY;
+        p.trial.stimulus.dotposX=centerX;
+        p.trial.stimulus.dotposY=p.trial.stimulus.centerY;
     end
     
 
@@ -264,6 +266,8 @@ function p=trialSetup(p)
     p.trial.stimulus.frameI = 0;
     p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
           
+    
+
     %set state
     p.trial.state=p.trial.stimulus.states.START;
     if p.trial.camera.use

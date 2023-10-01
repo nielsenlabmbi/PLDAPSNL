@@ -23,7 +23,7 @@ for i = 1:length(p.defaultParameters.stimulus.stair)
      cond(i).stair=p.defaultParameters.stimulus.stair(i);%added by RV 8/7/23
      cond(i).direction=p.defaultParameters.stimulus.direction;
      cond(i).stimSide=p.defaultParameters.stimulus.stimSide;
-     cond(i).offset=p.defaultParameters.stimulus.offset; %RV removed the (i)
+     %cond(i).offset=p.defaultParameters.stimulus.offset; %RV removed the (i)
      c{i}=generateCondList(cond(i),side,'pseudo',250);
 end
 

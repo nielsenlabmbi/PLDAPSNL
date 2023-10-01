@@ -272,9 +272,9 @@ function p=trialSetup(p)
     %stimulus center
     p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
     if p.trial.stimulus.stimSide==-1 %left
-        p.trial.stimulus.offset = -1*p.conditions{p.trial.pldaps.iTrial}.offset(1);
+        p.trial.stimulus.offset = -1*p.trial.stimulus.offset(1);
     else
-        p.trial.stimulus.offset = p.conditions{p.trial.pldaps.iTrial}.offset(2);
+        p.trial.stimulus.offset = p.trial.stimulus.offset(2);
     end
     p.trial.stimulus.centerX = p.trial.stimulus.centerX+p.trial.stimulus.offset;
     
