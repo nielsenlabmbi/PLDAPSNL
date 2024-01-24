@@ -18,10 +18,10 @@ s.stimulus.dotSpeed = 48; %deg/sec
 s.stimulus.dotLifetime = 25; %ms, 
 s.stimulus.direction = [0 180];
 s.stimulus.patchWidth=15; %deg ORGINAL 12
-s.stimulus.patchHeight= 20; %deg
+s.stimulus.patchHeight= 15; %deg
 s.stimulus.centerX=990; %pixels
 s.stimulus.centerY=810;
-s.stimulus.offset= [500 500]; %can now accept different offsets for left and right
+s.stimulus.offset= [600 600]; %can now accept different offsets for left and right
 s.stimulus.stimSide= [-1 1]; % set to [-1 1] to alternate sides
 
 s.display.bgColor = [.5 .5 .5]; 

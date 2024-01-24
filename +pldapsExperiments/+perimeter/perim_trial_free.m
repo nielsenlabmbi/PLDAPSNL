@@ -239,8 +239,9 @@ function p=trialSetup(p)
     p.trial.stimulus.offset = p.conditions{p.trial.pldaps.iTrial}.offset;
     p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
     p.trial.stimulus.randPos = p.conditions{p.trial.pldaps.iTrial}.randPos;
-    centerX = round(p.trial.display.pWidth/2)+...
+    centerX = p.trial.stimulus.centerX+...
         p.conditions{p.trial.pldaps.iTrial}.stimSide*p.conditions{p.trial.pldaps.iTrial}.offset;
+    
     
     if p.trial.stimulus.randPos==1
         %choose random position
@@ -281,20 +282,22 @@ function showStimulus(p)
     if p.trial.stimulus.frameI<=p.trial.stimulus.nrFrames
         
         %flash dot if necessary (will go to flash color)
-        p.trial.stimulus.dotColor=p.trial.stimulus.dotColor;
+        
         if p.trial.stimulus.flashDot==1
             if mod(p.trial.stimulus.frameI,p.trial.stimulus.flashRate)==0
                 p.trialMem.dotColor=~p.trialMem.dotColor;
             end
             if p.trialMem.dotColor==1
-                p.trial.stimulus.dotColor=p.trial.stimulus.dotColor;
+                dotColor=p.trial.stimulus.dotColor;
             else
-                p.trial.stimulus.dotColor=p.trial.stimulus.flashColor;
+                dotColor=p.trial.stimulus.flashColor;
             end
+        else
+            dotColor=p.trial.stimulus.dotColor;
         end
 
         Screen('DrawDots', p.trial.display.ptr, [p.trial.stimulus.dotposX;p.trial.stimulus.dotposY], ...
-            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor,[],1);
+            p.trial.stimulus.dotSizePix, dotColor,[],1);
     end
 
 %------------------------------------------------------------------%

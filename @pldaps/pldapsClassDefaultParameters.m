@@ -97,6 +97,7 @@ s.  datapixx.   dio.    useForReward = 0;
  s.	display.	viewdist = 75;
  s.	display.	widthcm = 52;
  s. display.    enableBacklight = true;
+ %s. display.    gamma = 2.3;
 
 %s.	display.	movie.
  s.	display.	movie.	create = false;

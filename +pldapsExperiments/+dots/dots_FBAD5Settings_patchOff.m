@@ -24,7 +24,7 @@ s.stimulus.centerY=810;
 s.stimulus.offset= 500;% 8/7/23 Is on spacebar - fix so the status of on stair is instead
 s.stimulus.stimSide= [-1 1]; % set to [-1 1] to alternate sides
 
-s.display.bgColor = [.5 .5 .5]; 
+s.display.bgColor = [.5 .5 .5]; %initial setting should be .5 .5 .5
 
 %staircase parameters
 s.stimulus.stair= [0 1]; %[0 1] if on space bar;

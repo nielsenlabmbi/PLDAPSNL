@@ -1,4 +1,4 @@
-function s = perim_FBAD6Settings_free
+function s = perim_FBAD3Settings_free
 
 %FEMALE
 % = ANIMAL ID
