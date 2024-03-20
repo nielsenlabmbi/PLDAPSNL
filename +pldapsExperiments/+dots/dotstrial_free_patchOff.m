@@ -404,7 +404,7 @@ function cleanUpandSave(p)
     disp(p.trialMem.stats.count.coh)
     
     %update coherence value
-    dis(p.trial.stimulus.stair)
+    disp(p.trial.stimulus.stair)
     if p.trial.stimulus.stair == 1
         %staircase
         if p.trial.pldaps.goodtrial & p.trialMem.correct == 2

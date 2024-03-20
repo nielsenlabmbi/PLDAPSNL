@@ -84,8 +84,10 @@ switch p.trial.state
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         %check whether any port chosen
-        if p.trial.stimulus.midpointIR & find(p.trial.ports.status==1)==p.trial.stimulus.port.MIDDLE
-            p.trial.stimulus.midpointCrossed = 1;
+        if p.trial.stimulus.midpointIR
+            if activePort==p.trial.stimulus.port.MIDDLE
+                p.trial.stimulus.midpointCrossed = 1;
+            end
         end
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             %note time
