@@ -20,13 +20,13 @@ switch state
             Screen(p.trial.display.ptr, 'FillRect', 0.5)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             if p.trial.stimulus.midpointIR 
-                if p.trial.stimulus.midpointCrossed
+                if p.trial.stimulus.stimOff
                    Screen(p.trial.display.ptr, 'FillRect', 0.5) 
                 else
                     Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
                 end
             else
-            Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+                Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
             end
         end
      
@@ -80,13 +80,24 @@ switch p.trial.state
             
             %advance state
             p.trial.state=p.trial.stimulus.states.STIMON;
+           
         end
         
+        
+
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         %check whether any port chosen
         if p.trial.stimulus.midpointIR
             if activePort==p.trial.stimulus.port.MIDDLE
                 p.trial.stimulus.midpointCrossed = 1;
+                p.trial.stimulus.timeTrialCross = p.trial.ttime;
+                p.trial.stimulus.frameTrialCross = p.trial.iFrame;
+            end
+            if p.trial.stimulus.midpointCrossed & ...
+                    p.trial.ttime > p.trial.stimulus.timeTrialCross + p.trial.stimulus.offStim
+                p.trial.stimulus.stimOff = 1;
+                p.trial.stimulus.timeOff = p.trial.ttime;
+                p.trial.stimulus.frameOff = p.trial.iFrame;
             end
         end
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
@@ -189,7 +200,7 @@ end
         
 
         
-%------------------------------------------------------------------%
+%% ------------------------------------------------------------------%
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
 
@@ -210,6 +221,12 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
+if ~isfield(p.trialMem,'offStim') %only runs at start
+    p.trialMem.offStim=p.trial.stimulus.offStim;
+end
+
+p.trial.stimulus.offStim = p.trialMem.offStim;
+
 p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
 p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle;
 p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
@@ -218,60 +235,56 @@ p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
 p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
 
 %make grating
-%make grating
-    %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
-    %PixPerDeg = 1/DegPerPix;
+%DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+%PixPerDeg = 1/DegPerPix;
 
-    % GET GRATING SPECIFICATIONS
-%     nCycles = 24*p.trial.stimulus.sf;
-%     DegPerCyc = 1/p.trial.stimulus.sf;
-    ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
+ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
 
-    % CREATE A MESHGRID THE SIZE OF THE GRATING
-    x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);%-p.trial.stimulus.shift(p.trial.side);
-    y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
-    [x,y] = meshgrid(x,y);
+% CREATE A MESHGRID THE SIZE OF THE GRATING
+x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);%-p.trial.stimulus.shift(p.trial.side);
+y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
+[x,y] = meshgrid(x,y);
 
+% Transform to account for orientation
+% note: transformation changed from headfixed
+sdom=x*sin(p.trial.stimulus.angle*pi/180)-y*cos(p.trial.stimulus.angle*pi/180);
 
-    % Transform to account for orientation
-    % note: transformation changed from headfixed
-    sdom=x*sin(p.trial.stimulus.angle*pi/180)-y*cos(p.trial.stimulus.angle*pi/180);
+% GRATING
+sdom=sdom*p.trial.stimulus.sf*2*pi;
+sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
 
-    % GRATING
-    sdom=sdom*p.trial.stimulus.sf*2*pi;
-    sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
+if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
+    grating = sdom1;
+else
+    % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
+    r = sqrt(x.^2 + y.^2);
+    sigmaDeg = ApertureDeg/16.5;
+    MaskLimit=.6*ApertureDeg/2;
+    maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
+    maskdom(r<MaskLimit) = 1;
+    grating = sdom1.*maskdom;
+end
 
-    if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
-        grating = sdom1;
-    else
-        % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
-        r = sqrt(x.^2 + y.^2);
-        sigmaDeg = ApertureDeg/16.5;
-        MaskLimit=.6*ApertureDeg/2;
-        maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
-        maskdom(r<MaskLimit) = 1;
-        grating = sdom1.*maskdom;
-    end
+% TRANSFER THE GRATING INTO AN IMAGE
+grating = round(grating*p.trial.stimulus.range) + 127;
 
-    % TRANSFER THE GRATING INTO AN IMAGE
-    grating = round(grating*p.trial.stimulus.range) + 127;
-
-    p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
-    p.trial.gratPos = [0 0 1920 1080];
+p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
+p.trial.gratPos = [0 0 1920 1080];
 
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
 if p.trial.stimulus.midpointIR
     p.trial.stimulus.midpointCrossed = 0;
+    p.trial.stimulus.stimOff=0;
 end
-if p.trial.camera.use;
+if p.trial.camera.use
     pds.behavcam.startcam(p);
 end
 
 
 
-%------------------------------------------------------------------%
+%% ------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
 %stop camera and set trigger to low
@@ -290,6 +303,15 @@ pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
+%change stimulus duration if needed
+if p.trial.userInput==1
+    p.trialMem.offStim=p.trialMem.offStim+0.1;
+    disp(['increased offset time to ' num2str(p.trialMem.durStim)])
+end
+if p.trial.userInput==2
+    p.trialMem.offStim=max(p.trialMem.offStim-0.1,0);
+    disp(['decreased offset time to ' num2str(p.trialMem.durStim)]')
+end
 
 
 % %show stats
@@ -299,8 +321,8 @@ num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
 % disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
     
 
+%% -------------------------------------------------------------------%
 %%%%%%Helper functions
-%-------------------------------------------------------------------%
 %check whether a particular port choice is correct
 function correct=checkPortChoice(activePort,p)
 

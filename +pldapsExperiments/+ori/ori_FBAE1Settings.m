@@ -5,6 +5,7 @@ function s = ori_FBAE1Settings
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 %set orientation and offsets
 s.stimulus.midpointIR = 0; %use midpoint IR beam to turn off stimulus (o off, 1 on)
+s.stimulus.offStim = 0.5; %stimulus turns off offStim sec after midpoint (if selected)
 %s.stimulus.offsets = horzcat({[25]},{[25]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[25 15 10 8 5]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[6]});
