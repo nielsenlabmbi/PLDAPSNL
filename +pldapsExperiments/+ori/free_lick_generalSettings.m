@@ -19,7 +19,8 @@ s.mouse.useAsPort = 0;
 s.mouse.use = 0;
 
 %set reward amounts
-s. behavior.   reward. amount = [0.02 0.07 0.07 0.02];
+%s. behavior.   reward. amount = [0.02 0.07 0.07 0.02];
+s. behavior.   reward. amount = [0.02 0.02 0.02 0.02]; %using this for left lick or right lick code
 s.behavior.reward.amountDelta = 0.01;
 %s. behavior.reward. manualAmount = 0.02;
 %turn saving off
@@ -27,7 +28,7 @@ s.pldaps.nosave = 1;
 
 %misc
 s.stimulus.baseline = 0.5;
-s.stimulus.lickdelay = 3600;
+s.stimulus.lickdelay = 10;
 s.stimulus.fracInstruct = 0;
 
 %ports

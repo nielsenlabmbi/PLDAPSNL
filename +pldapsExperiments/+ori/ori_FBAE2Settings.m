@@ -3,15 +3,15 @@ function s = ori_FBAE2Settings
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 %set orientation and offsets
-s.stimulus.midpointIR = 0; %use midpoint IR beam to turn off stimulus
-s.stimulus.offStim = 0.5; %stimulus turns off offStim sec after midpoint (if selected)
+s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
+s.stimulus.offStim = 0.0; %stimulus turns off offStim sec after midpoint (if selected)
 %s.stimulus.offsets = horzcat({[25]},{[25]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[25 15 10 8 5]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[6]});
 s.stimulus.shift = [0 0];
 s.stimulus.angle = [0 90];
-s.stimulus.sf = 0.1;
-s.stimulus.range = 121;
+s.stimulus.sf = 0.2;
+s.stimulus.range = [127 100 50 20 6]; %127 = m contrast 1, 100% = m contrast ~80%
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = [0 1];
 %s.stimulus.sideMatch = [1 -1];

@@ -4,15 +4,15 @@ function s = ori_FBAE1Settings
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 %set orientation and offsets
-s.stimulus.midpointIR = 0; %use midpoint IR beam to turn off stimulus (o off, 1 on)
-s.stimulus.offStim = 0.5; %stimulus turns off offStim sec after midpoint (if selected)
+s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus (o off, 1 on)
+s.stimulus.offStim = 0.0; %stimulus turns off offStim sec after midpoint (if selected)
 %s.stimulus.offsets = horzcat({[25]},{[25]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[25 15 10 8 5]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[6]});
 s.stimulus.shift = [0 0];
 s.stimulus.angle = [0 90];
-s.stimulus.sf = 0.10;
-s.stimulus.range = 121;
+s.stimulus.sf = 0.20;
+s.stimulus.range = [127 100 50 20 6]; % 127 alone is full range of contrasts, limit by adding lower ranges to the vector
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = [0 1]; %[1 0] to start with full screen
 %s.stimulus.sideMatch = [1 -1];

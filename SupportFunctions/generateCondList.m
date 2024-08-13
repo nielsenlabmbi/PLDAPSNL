@@ -1,4 +1,4 @@
-function c=generateCondList(cond,side,randType,nrBlocks,varargin)
+function c=generateCondList(cond,side,randType,nrBlocks, varargin)
 
 %input:
 %cond: structure with basic conditions (1 field per condition)
@@ -13,6 +13,8 @@ function c=generateCondList(cond,side,randType,nrBlocks,varargin)
 
 %output:
 %structure with conditions and side assignment for every trial
+
+%nrReps in condition added 7/19/24 EO
 
 if nargin==5
     nrReps=varargin{1};

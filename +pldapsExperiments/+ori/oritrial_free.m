@@ -306,11 +306,11 @@ num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
 %change stimulus duration if needed
 if p.trial.userInput==1
     p.trialMem.offStim=p.trialMem.offStim+0.1;
-    disp(['increased offset time to ' num2str(p.trialMem.durStim)])
+    disp(['increased offset time to ' num2str(p.trialMem.offStim)])
 end
 if p.trial.userInput==2
     p.trialMem.offStim=max(p.trialMem.offStim-0.1,0);
-    disp(['decreased offset time to ' num2str(p.trialMem.durStim)]')
+    disp(['decreased offset time to ' num2str(p.trialMem.offStim)])
 end
 
 

@@ -1,11 +1,11 @@
-function p=free_center_lick_setup(p)
+function p=free_right_lick_setup(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.ori.free_center_lick';
+p.trial.pldaps.trialFunction='pldapsExperiments.ori.free_right_lick';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
