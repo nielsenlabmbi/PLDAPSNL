@@ -11,34 +11,27 @@ p.trial.pldaps.trialFunction='pldapsExperiments.shape.shape_trial';
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = p.defaultParameters.stimulus.duration.ITI; %ITI in s
+p.trial.stimulus.duration.ITI = 3; %ITI in s
 
 
 %% conditions:
+cond.posSide=[0 1]; %positive stimulus can be either on left or right
+side.par='posSide';
+side.match=[0 1];
 
-%different from usual arrangement - there are always 2 shapes on the
-%screen, but only one is rewarded
+c=generateCondList(cond,side,'pseudo',500);
 
-%pseudorandomization
-basicSide=[1 1 1 1 1 2 2 2 2 2];
-cond.side=zeros(1,500);
-for i=1:50
-    cond.side((i-1)*10+1:i*10)=basicSide(randperm(10));
-end
-c{1}=cond;
-p.trial.allconditions = c;
-p.trialMem.whichConditions = 0;
-p.conditions=p.trial.allconditions{p.trialMem.whichConditions + 1};
+p.conditions=c;
 
 p.trial.pldaps.finish = length(p.conditions);
 
 
 
 %% display stats
-%p.trialMem.stats.cond={'side'}; %conditions to display
-[A,B,C] = ndgrid(unique(horzcat(cond.angle)),unique(horzcat(cond.sf)),unique(horzcat(cond.range)));
-%p.trialMem.stats.val = [A(:),B(:),C(:)]';
-%nCond=size(p.trialMem.stats.val,2);
-%p.trialMem.stats.count.correct=zeros(1,nCond);
-%p.trialMem.stats.count.incorrect=zeros(1,nCond);
-%p.trialMem.stats.count.Ntrial=zeros(1,nCond);
+p.trialMem.stats.cond={'posSide'}; %conditions to display
+p.trialMem.stats.val=[0 1]; %values for the conditions
+
+nCond=size(p.trialMem.stats.val,2);
+p.trialMem.stats.count.correct=zeros(1,nCond);
+p.trialMem.stats.count.incorrect=zeros(1,nCond);
+p.trialMem.stats.count.Ntrial=zeros(1,nCond);

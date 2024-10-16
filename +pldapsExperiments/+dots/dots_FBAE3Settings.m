@@ -5,7 +5,7 @@ function s = dots_FBAE3Settings
 %  s.	pldaps.	draw.	eyepos.	show = 1;
  
 %set reward amounts
-s. behavior.   reward. amount = [0.01 0.07 0.07];
+s. behavior.   reward. amount = [0.01 0.07 0.05];
 s.behavior.reward.pulseFreq = 3;
 s.behavior.reward.pulseInt = 0.2;
 s.behavior.reward.amountDelta = 0.01;
@@ -53,6 +53,9 @@ s.display.viewdist = 45;
  %turn mouse input off
 s.mouse.useAsPort = 0;
 s.mouse.use = 0;
+
+s.camera.use = 1;
+s.camera.trigger.channel = 6; %this is really 5
 
 % 2P room settings
 %  s.datapixx.dio.useForReward = 1; 

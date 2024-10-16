@@ -40,13 +40,18 @@ activePort=find(p.trial.ports.status==1);
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
         
-        if p.trial.led.state==0
+        %if p.trial.led.state==0
             %turn LED on
-            pds.LED.LEDOn(p);
-            p.trial.led.state=1;
+            %pds.LED.LEDOn(p);
+            %p.trial.led.state=1;
             %note timepoint
-            p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
-            p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+            %p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
+            %p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+        %end
+        if p.trial.camera.use
+            pds.behavcam.triggercam(p,1);
+            p.trial.stimulus.timeCamOn = p.trial.ttime;
+            p.trial.stimulus.frameCamOn = p.trial.iFrame;
         end
         
         if p.trial.ttime > p.trial.stimulus.baseline && p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==0
@@ -293,6 +298,12 @@ switch p.trial.state
 %                 pds.datapixx.analogOutTime(0, 1, 0, p.trial.datapixx.dac.sampleRate);  
 %                 pds.datapixx.analogOutTime(0, 2, 0, p.trial.datapixx.dac.sampleRate);  
 %                 pds.datapixx.analogOutTime(0, 3, 0, p.trial.datapixx.dac.sampleRate);  
+
+        if p.trial.camera.use
+            pds.behavcam.triggercam(p,0);
+            p.trial.stimulus.timeCamOff = p.trial.ttime;
+            p.trial.stimulus.frameCamOff = p.trial.iFrame;
+        end
 
         %wait for ITI
         if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI + p.trial.stimulus.timeout*(~p.trial.pldaps.goodtrial)

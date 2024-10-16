@@ -16,7 +16,7 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            Screen(p.trial.display.ptr, 'FillRect', 0.5)
+            Screen(p.trial.display.ptr, 'FillRect', 0)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             %showStimulus(p);
             Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord);
@@ -36,6 +36,7 @@ end
 function p=checkState(p)
 
 activePort=find(p.trial.ports.status==1);
+%disp(activePort)
 
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
@@ -184,7 +185,7 @@ else
 end
 
 centerPosX=p.trial.display.pWidth/2;
-centerPosY=p.trial.display.pHeight/2;
+centerPosY=800;
 
 
 %positive shapes
@@ -207,9 +208,9 @@ switch p.trial.stimulus.shapePos
 end
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
 if p.trial.side==p.trial.stimulus.side.LEFT
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.shapeOffset;
+    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.stimulus.shapeOffset;
 else
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.shapeOffset;
+    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;
 end
 shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
 p.trial.stimulus.posCoord=shapeCoord;
@@ -225,9 +226,9 @@ end
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
 %move to opposite side from positive
 if p.trial.side==p.trial.stimulus.side.LEFT
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.shapeOffset;
+    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;
 else
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.shapeOffset;
+    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.stimulus.shapeOffset;
 end
 shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
 p.trial.stimulus.negCoord=shapeCoord;
@@ -252,16 +253,11 @@ end
 
 %show stats
 pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
-%num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
-%    round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
+num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+    round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
 
 
-% %show stats
-% pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
-% disp(['C: ' num2str(p.trialMem.stats.val)])
-% disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
-% disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
     
 
 %%%%%%Helper functions

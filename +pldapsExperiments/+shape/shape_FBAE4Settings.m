@@ -1,6 +1,8 @@
-function s = shape_XXXX0Settings
+function s = shape_FBAE4Settings
 % % turn saving off
 % s.pldaps.nosave = 1;
+
+s.stimulus.forceCorrect = 0;
 
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];

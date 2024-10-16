@@ -115,7 +115,7 @@ try
 
     % Behavior camera
     %-------------------------------------------------------------------------%
-    p = pds.behavcam.setupcam(p);
+    %p = pds.behavcam.setupcam(p);
     
     
     % Two-photon
@@ -292,7 +292,7 @@ try
     pds.LED.LEDOff(p);
     
     %close camera (if used)
-    pds.behavcam.closecam(p);
+    %pds.behavcam.closecam(p);
     
     %close laser (if used)
     pds.sbserver.close2P(p);
