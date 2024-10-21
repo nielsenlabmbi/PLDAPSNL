@@ -8,29 +8,29 @@ s.stimulus.midpointIR = 0; %use midpoint IR beam to turn off stimulus
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[25 15 10 8 5]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[6]});
 s.stimulus.shift = [0 0];
-%s.stimulus.angle = [0 90];
+s.stimulus.angle = [0 90];
 
-
+s.stimulus.offStim=1;
 
 
 % %testing new angle
 % % use this for psychometric testing, while keeping traditional angle
 % % commented
 % %.psych is 1 if discrimination between degrees, 0 if only using [0 90].
-s.stimulus.psych = 1;
+%s.stimulus.psych = 1;
 % %This version of angle will be a graded change in angle:
 % %If side is 90 degrees: 90 82 74 66 58 50
 % %If side is 0 degrees: 0 8 16 24 32 40
-s.stimulus.angle = [{[0]}, {[1]}, {[2]}, {[3]}, {[4]}, {[5]}, {[6]}, {[7]}, {[0,1,2,3,4,5,6,7]}, {[4,5]}, {[4,5,6]}, {[5,7]}];
+%s.stimulus.angle = [{[0]}, {[1]}, {[2]}, {[3]}, {[4]}, {[5]}, {[6]}, {[7]}, {[0,1,2,3,4,5,6,7]}, {[4,5]}, {[4,5,6]}, {[5,7]}];
 % %0 is left 180 is right
-s.stimulus.direction = [0 180];
+%s.stimulus.direction = [0 180];
 
 
 
 s.stimulus.sf = 0.25;
 s.stimulus.range = 121;
 s.stimulus.runtype = 'pseudo';
-s.stimulus.fullField = [1 0];
+s.stimulus.fullField = 1;
 %s.stimulus.sideMatch = [1 -1];
 
 
