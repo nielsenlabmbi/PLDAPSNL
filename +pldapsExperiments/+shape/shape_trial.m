@@ -203,8 +203,18 @@ switch p.trial.stimulus.shapePos
             -1 -0.5
             -1 0.5
             -0.5 0.5
-            -0.5 1
-            ];    
+            -0.5 1];
+    case 1 %star
+        shapeCoord=[0 1
+            0.25 0.25
+            1 0.25
+            0.4 -0.25
+            0.7 -1
+            0 -0.5
+            -0.7 -1
+            -0.4 -0.25
+            -1 0.25
+            -0.25 0.25];
 end
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
 if p.trial.side==p.trial.stimulus.side.LEFT
@@ -220,8 +230,12 @@ switch p.trial.stimulus.shapeNeg
     case 0 %triangle
         shapeCoord=[0 1
             1 -0.5
-            -1 -0.5
-            ];    
+            -1 -0.5];
+    case 1 %square
+        shapeCoord=[-1 1
+            1 1
+            1 -1
+            -1 -1];
 end
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
 %move to opposite side from positive
