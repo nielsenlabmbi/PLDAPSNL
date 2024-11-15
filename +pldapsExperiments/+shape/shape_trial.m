@@ -18,9 +18,9 @@ switch state
         if p.trial.state==p.trial.stimulus.states.START
             Screen(p.trial.display.ptr, 'FillRect', 0)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
-            %showStimulus(p);
-            Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord);
-            Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord);
+            showStimulus(p);
+            %Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord);
+            %Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord);
         end
      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -251,8 +251,22 @@ p.trial.stimulus.negCoord=shapeCoord;
 %set state
 p.trial.state=p.trial.stimulus.states.START;
 
+%------------------------------------------------------------------%
+%show stimulus - handles rotation and movement of grating
+function showStimulus(p)
 
+%make the positive stimulus move if selected
+p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
 
+if p.trial.stimulus.mov==1
+    offset=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
+    offset=offset.*p.trial.stimulus.movAmp;
+else
+    offset=0;
+end
+
+Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord+offset);
+Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord);
 
 %------------------------------------------------------------------%
 %display stats at end of trial

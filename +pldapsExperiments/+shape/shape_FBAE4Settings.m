@@ -13,6 +13,9 @@ s.stimulus.shapeNeg=1; %id of negative stimulus
 s.stimulus.shapeOffset=600; %offset of each stimulus to the side relative to center
 s.stimulus.shapeScale=150; %scale factor for shape (in pixels)
 s.display.bgColor = [0 0 0 ];
+s.stimulus.mov=1; %add movement?
+s.stimulus.movAmp=50; %movement amplitude in pixels
+s.stimulus.movFreq=20; %movement frequency in frames
 
 %ignore midpoint IR port
 s.datapixx.adc.channels = [2 4 6];
