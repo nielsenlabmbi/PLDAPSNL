@@ -1,4 +1,4 @@
-function oritrial_free(p,state)
+function squaretrial_free(p,state)
 %%%% Note: includes staircase functionality for spatial frequency. Set
 %%%% stimulus.step = 0 in settings file to suppress staircase. 
 
@@ -23,10 +23,10 @@ switch state
                 if p.trial.stimulus.stimOff
                    Screen(p.trial.display.ptr, 'FillRect', 0.5) 
                 else
-                    Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+                   Screen('FillPoly',p.trial.display.ptr,[0 0 0],p.trial.stimulus.rectCoord);
                 end
             else
-                Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+                Screen('FillPoly',p.trial.display.ptr,[0 0 0],p.trial.stimulus.rectCoord);
             end
         end
      
@@ -204,15 +204,7 @@ end
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
 
-if isfield(p.trial,'masktxtr')
-    Screen('Close',p.trial.masktxtr);
-end
-p.trial.masktxtr=[];
 
-if isfield(p.trial,'gtxtr')
-    Screen('Close',p.trial.gtxtr)
-end
-p.trial.gtxtr=[];
 
 %get side for condition
 if p.conditions{p.trial.pldaps.iTrial}.side==2
@@ -221,58 +213,32 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
+
 if ~isfield(p.trialMem,'offStim') %only runs at start
     p.trialMem.offStim=p.trial.stimulus.offStim;
 end
 
 p.trial.stimulus.offStim = p.trialMem.offStim;
 
-p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
-p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle;
-p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
-%p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase; % phase is pseudorandom
-p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
-p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
 
-%make grating
-%DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
-%PixPerDeg = 1/DegPerPix;
 
-ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
+p.trial.stimulus.ori = p.conditions{p.trial.pldaps.iTrial}.angle;
 
-% CREATE A MESHGRID THE SIZE OF THE GRATING
-x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);%-p.trial.stimulus.shift(p.trial.side);
-y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
-[x,y] = meshgrid(x,y);
-
-% Transform to account for orientation
-% note: transformation changed from headfixed
-sdom=x*sin(p.trial.stimulus.angle*pi/180)-y*cos(p.trial.stimulus.angle*pi/180);
-
-% GRATING
-sdom=sdom*p.trial.stimulus.sf*2*pi;
-sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
-
-%square wave
-sdom1=sign(sdom1);
-
-if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
-    grating = sdom1;
+rectCoord=[-1 1
+    1 1
+    1 -1
+    -1 -1];
+if p.trial.stimulus.ori==1
+    rectCoord(:,1)=rectCoord(:,1)*p.trial.stimulus.sizeX/2;
+    rectCoord(:,2)=rectCoord(:,2)*p.trial.stimulus.sizeY/2;
 else
-    % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
-    r = sqrt(x.^2 + y.^2);
-    sigmaDeg = ApertureDeg/16.5;
-    MaskLimit=.6*ApertureDeg/2;
-    maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
-    maskdom(r<MaskLimit) = 1;
-    grating = sdom1.*maskdom;
+    rectCoord(:,1)=rectCoord(:,1)*p.trial.stimulus.sizeY/2;
+    rectCoord(:,2)=rectCoord(:,2)*p.trial.stimulus.sizeX/2;
 end
+rectCoord(:,1)=rectCoord(:,1)+p.trial.display.pWidth/2;
+rectCoord(:,2)=rectCoord(:,2)+p.trial.display.pHeight/2;
 
-% TRANSFER THE GRATING INTO AN IMAGE
-grating = round(grating*p.trial.stimulus.range) + 127;
-
-p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
-p.trial.gratPos = [0 0 1920 1080];
+p.trial.stimulus.rectCoord=rectCoord;
 
 
 %set state

@@ -8,8 +8,8 @@ s.stimulus.forceCorrect = 0;
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 
 %set stimulus parameters
-s.stimulus.shapePos=0; %id of positive stimulus
-s.stimulus.shapeNeg=0; %id of negative stimulus
+s.stimulus.shapePos=1; %id of positive stimulus
+s.stimulus.shapeNeg=1; %id of negative stimulus
 s.stimulus.shapeOffset=600; %offset of each stimulus to the side relative to center
 s.stimulus.shapeScale=150; %scale factor for shape (in pixels)
 s.display.bgColor = [0 0 0 ];
