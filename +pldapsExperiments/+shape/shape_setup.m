@@ -15,21 +15,33 @@ p.trial.stimulus.duration.ITI = 3; %ITI in s
 
 
 %% conditions:
-cond.posSide=[0 1]; %positive stimulus can be either on left or right
+%cond.posSide=[0 1]; %positive stimulus can be either on left or right
 side.par='posSide';
 side.match=[0 1];
 
-c=generateCondList(cond,side,'pseudo',500);
 
-p.conditions=c;
+for i = 1:length(p.defaultParameters.stimulus.mov)
+    cond(i).posSide=[0 1];
+    cond(i).mov=p.defaultParameters.stimulus.mov(i);
 
-p.trial.pldaps.finish = length(p.conditions);
+    c{i}=generateCondList(cond(i),side,'pseudo',500);
+
+    p.trial.allconditions = c;
+    p.trialMem.whichConditions = 0;
+    p.conditions=p.trial.allconditions{p.trialMem.whichConditions + 1};
+    
+    p.trial.pldaps.finish = length(p.conditions);
+end
+%p.conditions=c;
+
+
 
 
 
 %% display stats
-p.trialMem.stats.cond={'posSide'}; %conditions to display
-p.trialMem.stats.val=[0 1]; %values for the conditions
+p.trialMem.stats.cond={'posSide','mov'}; %conditions to display
+[A,B] = ndgrid([0 1],[0 1]);
+p.trialMem.stats.val = [A(:),B(:)]';
 
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);

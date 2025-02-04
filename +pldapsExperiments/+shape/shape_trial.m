@@ -215,6 +215,12 @@ switch p.trial.stimulus.shapePos
             -0.4 -0.25
             -1 0.25
             -0.25 0.25];
+    case 2 %pentagon
+        shapeCoord=[0 0.7
+            -1 0
+            -0.6 -1.1
+            0.6 -1.1
+            1 0];
 end
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
 if p.trial.side==p.trial.stimulus.side.LEFT
@@ -224,6 +230,7 @@ else
 end
 shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
 p.trial.stimulus.posCoord=shapeCoord;
+
 
 %negative shape
 switch p.trial.stimulus.shapeNeg
@@ -236,6 +243,15 @@ switch p.trial.stimulus.shapeNeg
             0.7 0.7
             0.7 -0.7
             -0.7 -0.7];
+    case 2 %heart
+        shapeCoord=[-0.6 1
+            -1.2 0.8
+            -0.6 0
+            0 -1
+            0.6 0
+            1.2 0.8
+            0.6 1
+            0 0.6];
 end
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
 %move to opposite side from positive
@@ -247,6 +263,11 @@ end
 shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
 p.trial.stimulus.negCoord=shapeCoord;
 
+if ~isfield(p.trialMem,'movAmp')
+    p.trialMem.movAmp=p.trial.stimulus.movAmp;
+end
+
+p.trial.stimulus.frameI = 0;
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
@@ -258,9 +279,9 @@ function showStimulus(p)
 %make the positive stimulus move if selected
 p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
 
-if p.trial.stimulus.mov==1
+if p.conditions{p.trial.pldaps.iTrial}.mov==1
     offset=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
-    offset=offset.*p.trial.stimulus.movAmp;
+    offset=offset.*p.trialMem.movAmp;
 else
     offset=0;
 end
@@ -284,6 +305,14 @@ pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
+if p.trial.userInput==1
+    p.trialMem.movAmp=p.trialMem.movAmp+p.trial.stimulus.stepAmp;
+    disp(['increased amp to ' num2str(p.trialMem.movAmp)])
+end
+if p.trial.userInput==2
+    p.trialMem.movAmp=p.trialMem.movAmp-p.trial.stimulus.stepAmp;
+    disp(['decreased amp to ' num2str(p.trialMem.movAmp)])
+end
 
 
     

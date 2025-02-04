@@ -28,7 +28,7 @@ s.pldaps.nosave = 1;
 
 %misc
 s.stimulus.baseline = 0.5;
-s.stimulus.lickdelay = 10;
+s.stimulus.lickdelay = 3;
 s.stimulus.fracInstruct = 0;
 
 %ports

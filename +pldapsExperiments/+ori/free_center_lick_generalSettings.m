@@ -7,7 +7,7 @@ function s = free_center_lick_generalSettings
 % %turn mouse input on
 % s.mouse.useAsPort = 1;
 % s.mouse.use = 1;
-s.datapixx.useAsEyepos = 1;
+s.datapixx.useAsEyepos = 0;
  s.	pldaps.	draw.	eyepos.	use = 1;
  s.	pldaps.	draw.	eyepos.	show = 1;
 %configure ports
@@ -17,8 +17,8 @@ s.datapixx.useAsEyepos = 1;
  s.datapixx.adc.channels = [1 3 5];
  
  %turn mouse input off
-s.mouse.useAsPort = 0;
-s.mouse.use = 0;
+s.mouse.useAsPort = 1;
+s.mouse.use = 1;
 
 %set reward amounts
 s. behavior.   reward. amount = [0.075 0.07 0.07 0.07];
