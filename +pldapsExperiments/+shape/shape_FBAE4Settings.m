@@ -14,7 +14,8 @@ s.stimulus.shapeOffset=600; %offset of each stimulus to the side relative to cen
 s.stimulus.shapeScale=150; %scale factor for shape (in pixels)
 s.display.bgColor = [0 0 0 ];
 s.stimulus.mov=[1 0]; %add movement?
-s.stimulus.movAmp=15; %movement amplitude in pixels %changed to start @ 15 12/10/24
+s.stimulus.movAmpP=15; %movement amplitude in pixels %changed to start @ 15 12/10/24
+s.stimulus.movAmpN=0; %movement amplitude in pixels %changed to start @ 15 12/10/24
 s.stimulus.stepAmp=5; %change in amplitude with key press
 s.stimulus.movFreq=40; %movement frequency in frames
 

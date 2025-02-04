@@ -263,8 +263,11 @@ end
 shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
 p.trial.stimulus.negCoord=shapeCoord;
 
-if ~isfield(p.trialMem,'movAmp')
-    p.trialMem.movAmp=p.trial.stimulus.movAmp;
+if ~isfield(p.trialMem,'movAmpP')
+    p.trialMem.movAmpP=p.trial.stimulus.movAmpP;
+end
+if ~isfield(p.trialMem,'movAmpN')
+    p.trialMem.movAmpN=p.trial.stimulus.movAmpN;
 end
 
 p.trial.stimulus.frameI = 0;
@@ -280,14 +283,21 @@ function showStimulus(p)
 p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
 
 if p.conditions{p.trial.pldaps.iTrial}.mov==1
-    offset=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
-    offset=offset.*p.trialMem.movAmp;
+    offsetP=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
+    offsetP=offsetP.*p.trialMem.movAmpP;
 else
-    offset=0;
+    offsetP=0;
 end
 
-Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord+offset);
-Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord);
+if p.conditions{p.trial.pldaps.iTrial}.mov==1
+    offsetN=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
+    offsetN=offsetN.*p.trialMem.movAmpN;
+else
+    offsetN=0;
+end
+
+Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord+offsetP);
+Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord+offsetN);
 
 %------------------------------------------------------------------%
 %display stats at end of trial
@@ -305,14 +315,22 @@ pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
-if p.trial.userInput==1
-    p.trialMem.movAmp=p.trialMem.movAmp+p.trial.stimulus.stepAmp;
-    disp(['increased amp to ' num2str(p.trialMem.movAmp)])
+switch p.trial.userInput
+    case 1
+        p.trialMem.movAmpP=p.trialMem.movAmpP+p.trial.stimulus.stepAmp;
+        disp(['increased pos amp to ' num2str(p.trialMem.movAmpP)])
+    case 2
+        p.trialMem.movAmpP=p.trialMem.movAmpP-p.trial.stimulus.stepAmp;
+        disp(['decreased pos amp to ' num2str(p.trialMem.movAmpP)])
+    case 3
+        p.trialMem.movAmpN=p.trialMem.movAmpN+p.trial.stimulus.stepAmp;
+        disp(['increased neg amp to ' num2str(p.trialMem.movAmpN)])
+    case 4
+        p.trialMem.movAmpN=p.trialMem.movAmpN-p.trial.stimulus.stepAmp;
+        disp(['decreased neg amp to ' num2str(p.trialMem.movAmpN)])
 end
-if p.trial.userInput==2
-    p.trialMem.movAmp=p.trialMem.movAmp-p.trial.stimulus.stepAmp;
-    disp(['decreased amp to ' num2str(p.trialMem.movAmp)])
-end
+
+
 
 
     
