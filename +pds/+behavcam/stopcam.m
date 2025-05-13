@@ -4,6 +4,6 @@ function p=stopcam(p)
 
 if p.trial.camera.use %just to double check
     msg='S~';
-    fwrite(p.trial.camera.udpHandle,msg);
-    pds.behavcam.waitforCamResp(p);    
+    %fwrite(p.trial.camera.udpHandle,msg);
+    %pds.behavcam.waitforCamResp(p);    
 end

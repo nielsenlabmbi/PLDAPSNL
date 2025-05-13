@@ -215,14 +215,23 @@ function p=trialSetup(p)
     if ~isfield(p.trialMem,'stairstart')
         p.trialMem.stairstart = 1; %mark transition between normal and staircase
     end
+
+    if ~isfield(p.trialMem,'durStim')
+        p.trialMem.durStim=p.trial.stimulus.durStim;
+    end
+    if ~isfield(p.trialMem,'offset')
+        p.trialMem.offset=p.trial.stimulus.offset;
+    end
     
     % set up stimulus    
     DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
     PixPerDeg = 1/DegPerPix;
     
     %transform stimulus sizes into px
+    %p.trial.stimulus.width=p.conditions{p.trial.pldaps.iTrial}.width;
+    p.trial.stimulus.height=p.trial.stimulus.width;
     p.trial.stimulus.pWidth=round(p.trial.stimulus.width*PixPerDeg);
-    p.trial.stimulus.pHeight=round(p.trial.stimulus.height*PixPerDeg);
+    p.trial.stimulus.pHeight=p.trial.stimulus.pWidth;
     
     
     %number of dots - density is in dots/deg^2, size in deg
@@ -257,11 +266,15 @@ function p=trialSetup(p)
     p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
     
     %stimulus center
-    p.trial.stimulus.centerX = p.conditions{p.trial.pldaps.iTrial}.centerX;
+    p.trial.stimulus.centerX = p.trial.stimulus.centerX;
+
+    %stimulus center
+    p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
+    offsetconv = 25*tan(deg2rad(p.trialMem.offset))*36.6;
+    p.trial.stimulus.centerX = p.trial.stimulus.centerX+...
+        p.trial.stimulus.stimSide*offsetconv;
     
-    %stimulus duration
-    p.trial.stimulus.durStim = p.conditions{p.trial.pldaps.iTrial}.durStim;
-    
+
     %initialize frame
     p.trial.stimulus.frameI = 0;
     
@@ -289,7 +302,7 @@ function p=trialSetup(p)
     end
     
     %compute nr frames
-    p.trial.stimulus.nrFrames=p.trial.stimulus.durStim*p.trial.stimulus.frameRate;
+    p.trial.stimulus.nrFrames=p.trialMem.durStim*p.trial.stimulus.frameRate;
     
     %save misc variables
     p.trial.stimulus.randpos = randpos;
@@ -372,6 +385,9 @@ function cleanUpandSave(p)
     
     disp('----------------------------------')
     disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
+    disp(['Current Stim duration:  ' num2str(p.trialMem.durStim)])
+    disp(['Current Offset:  ' num2str(p.trialMem.offset) ' spatial degrees'])
+    disp(['Offset max is 30 spatial degrees'])
     %show reward amount
     if p.trial.pldaps.draw.reward.show
         pds.behavior.reward.showReward(p,{'S';'L';'R';'M'})
@@ -385,8 +401,23 @@ function cleanUpandSave(p)
 
     disp(num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
         p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)))
-    disp(p.trialMem.stats.count.coh)
+    %disp(p.trialMem.stats.count.coh)
     
+    switch p.trial.userInput
+        case 1
+            p.trialMem.durStim=p.trialMem.durStim+p.trial.stimulus.delta_durStim;
+            disp(['increased stim duration to ' num2str(p.trialMem.durStim)])
+        case 2
+            p.trialMem.durStim=p.trialMem.durStim-p.trial.stimulus.delta_durStim;
+            disp(['decreased stim duration to ' num2str(p.trialMem.durStim)])
+        case 3
+            p.trialMem.offset=p.trialMem.offset + (p.trial.stimulus.delta_offset);
+            disp(['Offset increased to ' num2str(p.trialMem.offset)])
+        case 4
+            p.trialMem.offset=p.trialMem.offset - (p.trial.stimulus.delta_offset);
+            disp(['Offset decreased to ' num2str(p.trialMem.offset)])
+    end
+
     if p.trial.stimulus.stair == 1
         %staircase
         if p.trial.pldaps.goodtrial & p.trialMem.correct == 2

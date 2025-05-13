@@ -1,4 +1,4 @@
-function oritrial_free(p,state)
+function squaretrial_free_dots(p,state)
 %%%% Note: includes staircase functionality for spatial frequency. Set
 %%%% stimulus.step = 0 in settings file to suppress staircase. 
 
@@ -23,10 +23,16 @@ switch state
                 if p.trial.stimulus.stimOff
                    Screen(p.trial.display.ptr, 'FillRect', 0.5) 
                 else
-                    Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+                   %Screen('FillPoly',p.trial.display.ptr,[0 0 0],p.trial.stimulus.rectCoord);
+                    Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos, ...
+            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
+            [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
                 end
             else
-                Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+                %Screen('FillPoly',p.trial.display.ptr,[0 0 0],p.trial.stimulus.rectCoord);
+                 Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos, ...
+            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
+            [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
             end
         end
      
@@ -204,15 +210,7 @@ end
 %setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
 
-if isfield(p.trial,'masktxtr')
-    Screen('Close',p.trial.masktxtr);
-end
-p.trial.masktxtr=[];
 
-if isfield(p.trial,'gtxtr')
-    Screen('Close',p.trial.gtxtr)
-end
-p.trial.gtxtr=[];
 
 %get side for condition
 if p.conditions{p.trial.pldaps.iTrial}.side==2
@@ -221,59 +219,68 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
+
 if ~isfield(p.trialMem,'offStim') %only runs at start
     p.trialMem.offStim=p.trial.stimulus.offStim;
 end
 
 p.trial.stimulus.offStim = p.trialMem.offStim;
 
-p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
-p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle;
-p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
-%p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase; % phase is pseudorandom
-p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
-p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
 
-%make grating
-%DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
-%PixPerDeg = 1/DegPerPix;
 
-ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
+p.trial.stimulus.ori = p.conditions{p.trial.pldaps.iTrial}.angle;
+% 
+% rectCoord=[-1 1
+%     1 1
+%     1 -1
+%     -1 -1];
+% if p.trial.stimulus.ori==1
+%     rectCoord(:,1)=rectCoord(:,1)*p.trial.stimulus.sizeX/2;
+%     rectCoord(:,2)=rectCoord(:,2)*p.trial.stimulus.sizeY/2;
+% else
+%     rectCoord(:,1)=rectCoord(:,1)*p.trial.stimulus.sizeY/2;
+%     rectCoord(:,2)=rectCoord(:,2)*p.trial.stimulus.sizeX/2;
+% end
+% rectCoord(:,1)=rectCoord(:,1)+p.trial.display.pWidth/2;
+% rectCoord(:,2)=rectCoord(:,2)+p.trial.display.pHeight/2;
+% 
+% p.trial.stimulus.rectCoord=rectCoord;
 
-% CREATE A MESHGRID THE SIZE OF THE GRATING
-x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);%-p.trial.stimulus.shift(p.trial.side);
-y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
-[x,y] = meshgrid(x,y);
 
-% Transform to account for orientation
-% note: transformation changed from headfixed
-sdom=x*sin(p.trial.stimulus.angle*pi/180)-y*cos(p.trial.stimulus.angle*pi/180);
+% set up stimulus
 
-% GRATING
-sdom=sdom*p.trial.stimulus.sf*2*pi;
-sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
-
-%square wave
-%sdom1=sign(sdom1);
-
-if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
-    grating = sdom1;
-else
-    % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
-    r = sqrt(x.^2 + y.^2);
-    sigmaDeg = ApertureDeg/16.5;
-    MaskLimit=.6*ApertureDeg/2;
-    maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
-    maskdom(r<MaskLimit) = 1;
-    grating = sdom1.*maskdom;
+if ~isfield(p.trialMem,'dotSize') %only runs at start
+    p.trialMem.dotSize=p.trial.stimulus.dotSize;
+end
+if ~isfield(p.trialMem,'dotDensity') %only runs at start
+    p.trialMem.dotDensity=p.trial.stimulus.dotDensity;
 end
 
-% TRANSFER THE GRATING INTO AN IMAGE
-grating = round(grating*p.trial.stimulus.range) + 127;
+DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+PixPerDeg = 1/DegPerPix;
 
-p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
-p.trial.gratPos = [0 0 1920 1080];
+p.trial.stimulus.dotSize = p.trialMem.dotSize; %.5;% original 1.5
+p.trial.stimulus.dotDensity =p.trialMem.dotDensity; %0.005; %dots/deg^2
+p.trial.stimulus.dotColor = 0;
+p.trial.stimulus.centerX= 990; %pixels
+p.trial.stimulus.centerY= 510; %500 puts in center, 810 is bottom
+%number of dots - density is in dots/deg^2, size in deg
+p.trial.stimulus.nrDots=round(p.trial.stimulus.dotDensity*p.trial.stimulus.sizeX*...
+    p.trial.stimulus.sizeY);
 
+%dot size
+p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
+
+ %initialize dot positions - these need to be in pixels from center
+ randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
+ if p.trial.stimulus.ori==1
+ randpos(1,:)=(randpos(1,:)-0.5)*p.trial.stimulus.sizeX;
+ randpos(2,:)=(randpos(2,:)-0.5)*p.trial.stimulus.sizeY;
+ else
+     randpos(1,:)=(randpos(1,:)-0.5)*p.trial.stimulus.sizeY;
+ randpos(2,:)=(randpos(2,:)-0.5)*p.trial.stimulus.sizeX;
+ end
+p.trial.stimulus.dotpos =randpos;
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
@@ -307,13 +314,19 @@ num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
 %change stimulus duration if needed
-if p.trial.userInput==1
-    p.trialMem.offStim=p.trialMem.offStim+0.1;
-    disp(['increased offset time to ' num2str(p.trialMem.offStim)])
-end
-if p.trial.userInput==2
-    p.trialMem.offStim=max(p.trialMem.offStim-0.1,0);
-    disp(['decreased offset time to ' num2str(p.trialMem.offStim)])
+switch p.trial.userInput
+    case 1
+        p.trialMem.dotSize=p.trialMem.dotSize-p.trial.stimulus.stepSize;
+        disp(['decreased dot size to ' num2str(p.trialMem.dotSize)])
+    case 2
+        p.trialMem.dotSize=p.trialMem.dotSize+p.trial.stimulus.stepSize;
+        disp(['increased dot size to ' num2str(p.trialMem.dotSize)])
+    case 3
+        p.trialMem.dotDensity=p.trialMem.dotDensity+p.trial.stimulus.stepDens;
+        disp(['increased dot dens to ' num2str(p.trialMem.dotDensity)])
+    case 4
+        p.trialMem.dotDensity=p.trialMem.dotDensity-p.trial.stimulus.stepDens;
+        disp(['decreased dot dens to ' num2str(p.trialMem.dotDensity)])
 end
 
 

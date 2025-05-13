@@ -39,10 +39,12 @@ end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Uarrow) %right arrow = user 2
     p.trial.userInput=3;
+    disp('up key')
 end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Darrow) %right arrow = user 2
     p.trial.userInput=4;
+    disp('down key')
 end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.spaceKey) %change trials list

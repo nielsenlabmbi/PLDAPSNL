@@ -5,7 +5,7 @@ function p = dots_setup_free_patch(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.dots.dotstrial_free_patch';
+p.trial.pldaps.trialFunction='pldapsExperiments.lesion.dotstrial_free_patch';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
@@ -18,11 +18,12 @@ side.par = 'direction';
 side.match=p.defaultParameters.stimulus.direction;
 
 %staircase on space bar
-for i = 1:length(p.defaultParameters.stimulus.durStim)
-     cond(i).stair=p.defaultParameters.stimulus.stair;
+for i = 1:length(p.defaultParameters.stimulus.stair)
+     cond(i).stair=p.defaultParameters.stimulus.stair(i);
      cond(i).direction=p.defaultParameters.stimulus.direction;
-     cond(i).centerX=p.defaultParameters.stimulus.centerX;
-     cond(i).durStim=p.defaultParameters.stimulus.durStim(i);
+     %cond(i).width=p.defaultParameters.stimulus.width;
+     %cond(i).durStim = p.defaultParameters.stimulus.durStim;
+     cond(i).stimSide=p.defaultParameters.stimulus.stimSide;
      c{i}=generateCondList(cond(i),side,'pseudo',250);
 end
 
@@ -37,8 +38,18 @@ p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
 %we want percent correct for left/right and the positions to check for bias
-p.trialMem.stats.cond={'direction', 'centerX'}; %conditions to display
-[A,B] = ndgrid(cond(1).direction,cond(1).centerX);
+
+%p.trialMem.stats.cond={'direction', 'width'}; %conditions to display
+%[A,B] = ndgrid(cond(1).direction,cond(1).width);
+
+p.trialMem.stats.cond={'direction', 'stimSide'}; %conditions to display
+%if length(cond)>1
+    [A,B] = ndgrid(cond(1).direction,[cond(:).stimSide]);
+%else
+    %[A,B] = ndgrid(cond(1).direction,cond(1).durStim);
+
+%end
+
 p.trialMem.stats.val = [A(:),B(:)]';
 nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);

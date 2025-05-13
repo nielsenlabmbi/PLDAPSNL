@@ -1,4 +1,4 @@
-function s = ori_FBAD7Settings
+function s = ori_FBAE5Settings
 
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
@@ -13,24 +13,11 @@ s.stimulus.angle = [0 90];
 s.stimulus.offStim=1;
 
 
-% %testing new angle
-% % use this for psychometric testing, while keeping traditional angle
-% % commented
-% %.psych is 1 if discrimination between degrees, 0 if only using [0 90].
-%s.stimulus.psych = 1;
-% %This version of angle will be a graded change in angle:
-% %If side is 90 degrees: 90 82 74 66 58 50
-% %If side is 0 degrees: 0 8 16 24 32 40
-%s.stimulus.angle = [{[0]}, {[1]}, {[2]}, {[3]}, {[4]}, {[5]}, {[6]}, {[7]}, {[0,1,2,3,4,5,6,7]}, {[4,5]}, {[4,5,6]}, {[5,7]}];
-% %0 is left 180 is right
-%s.stimulus.direction = [0 180];
 
-
-
-s.stimulus.sf = 0.25;
+s.stimulus.sf = 0.1;
 s.stimulus.range = 121;
 s.stimulus.runtype = 'pseudo';
-s.stimulus.fullField = 1;
+s.stimulus.fullField = [1 0];
 %s.stimulus.sideMatch = [1 -1];
 
 
@@ -45,6 +32,10 @@ s.display.viewdist = 75;
 %2/23/25 - Issue w/ IR ports after IR slot expansion; adding these lines
 s.datapixx.adc.channels = [2 4 6];
 s.ports.nports=3;
+
+p.trial.camera.use = 
+
+%s.datapixx.adc.channels = [1 3 5];
 
 % 
 % % Debugging settings

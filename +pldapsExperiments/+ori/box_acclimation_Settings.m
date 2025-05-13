@@ -9,6 +9,9 @@ s.pldaps.nosave = 1;
 s.stimulus.baseline = 0.5;
 s.stimulus.lickdelay = 0.35;
 s.stimulus.fracInstruct = 0;
+
+s.datapixx.adc.channels = [2 4 6];
+s.ports.nports=3;
 % 
 % %debugging
 % %turn adc channels off
