@@ -33,7 +33,14 @@ switch state
                  Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos, ...
             p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
             [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
+            if p.trial.stimulus.backgroundDot
+                Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotposB, ...
+            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
+            [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
+            else
             end
+            end
+            
         end
      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -224,6 +231,7 @@ if ~isfield(p.trialMem,'offStim') %only runs at start
     p.trialMem.offStim=p.trial.stimulus.offStim;
 end
 
+
 p.trial.stimulus.offStim = p.trialMem.offStim;
 
 
@@ -255,12 +263,17 @@ end
 if ~isfield(p.trialMem,'dotDensity') %only runs at start
     p.trialMem.dotDensity=p.trial.stimulus.dotDensity;
 end
+if ~isfield(p.trialMem, 'backgroundDot')
+    p.trialMem.backgroundDot=p.trial.stimulus.backgroundDot;
+end
+
 
 DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
 PixPerDeg = 1/DegPerPix;
 
 p.trial.stimulus.dotSize = p.trialMem.dotSize; %.5;% original 1.5
 p.trial.stimulus.dotDensity =p.trialMem.dotDensity; %0.005; %dots/deg^2
+p.trial.stimulus.backgroundDot=p.trialMem.backgroundDot;
 p.trial.stimulus.dotColor = 0;
 p.trial.stimulus.centerX= 990; %pixels
 p.trial.stimulus.centerY= 510; %500 puts in center, 810 is bottom
@@ -281,6 +294,28 @@ p.trial.stimulus.dotSizePix = round(p.trial.stimulus.dotSize*PixPerDeg);
  randpos(2,:)=(randpos(2,:)-0.5)*p.trial.stimulus.sizeX;
  end
 p.trial.stimulus.dotpos =randpos;
+
+if p.trial.stimulus.backgroundDot
+p.trial.stimulus.nrDotsB=round(p.trial.stimulus.dotDensity*.75*p.trial.stimulus.sizeX*...
+    p.trial.stimulus.sizeY);
+randposB=rand(2,p.trial.stimulus.nrDotsB); %this gives numbers between 0 and 1
+ if p.trial.stimulus.ori==1
+ randposB(1,:)=(randposB(1,:)-0.5)*2000;
+ randposB(2,:)=(randposB(2,:)-0.5)*1000;
+ randposB=randposB(:,randposB(1,:)<-.5*p.trial.stimulus.sizeX|randposB(1,:)>.5*p.trial.stimulus.sizeX|...
+     randposB(2,:)<-.5*p.trial.stimulus.sizeY|randposB(2,:)>.5*p.trial.stimulus.sizeY);
+
+ else
+ randposB(1,:)=(randposB(1,:)-0.5)*2000;
+ randposB(2,:)=(randposB(2,:)-0.5)*1000;
+ randposB=randposB(:,randposB(2,:)<-.5*p.trial.stimulus.sizeX|randposB(2,:)>.5*p.trial.stimulus.sizeX|...
+     randposB(1,:)<-.5*p.trial.stimulus.sizeY|randposB(1,:)>.5*p.trial.stimulus.sizeY);
+ end
+ p.trial.stimulus.dotposB =randposB;
+
+else
+end
+
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
@@ -316,11 +351,15 @@ num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
 %change stimulus duration if needed
 switch p.trial.userInput
     case 1
-        p.trialMem.dotSize=p.trialMem.dotSize-p.trial.stimulus.stepSize;
-        disp(['decreased dot size to ' num2str(p.trialMem.dotSize)])
+%         p.trialMem.dotSize=p.trialMem.dotSize-p.trial.stimulus.stepSize;
+%         disp(['decreased dot size to ' num2str(p.trialMem.dotSize)])
+p.trialMem.backgroundDot=0;
+disp(['background dots off'])
     case 2
-        p.trialMem.dotSize=p.trialMem.dotSize+p.trial.stimulus.stepSize;
-        disp(['increased dot size to ' num2str(p.trialMem.dotSize)])
+%         p.trialMem.dotSize=p.trialMem.dotSize+p.trial.stimulus.stepSize;
+%         disp(['increased dot size to ' num2str(p.trialMem.dotSize)])
+p.trialMem.backgroundDot=1;
+disp(['background dots on'])
     case 3
         p.trialMem.dotDensity=p.trialMem.dotDensity+p.trial.stimulus.stepDens;
         disp(['increased dot dens to ' num2str(p.trialMem.dotDensity)])

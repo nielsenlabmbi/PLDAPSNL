@@ -22,15 +22,15 @@ s.stimulus.sizeY=175;
 % s.stimulus.sizeY=50;
 
 s.stimulus.offStim=1;
-s.stimulus.dotSize = .5;% original 1.5
-s.stimulus.dotDensity = 0.005; %dots/deg^2
+s.stimulus.dotSize = .3;% original 1.5
+s.stimulus.dotDensity = 0.0035; %dots/deg^2
 s.stimulus.dotColor = 0;
 s.stimulus.centerX= 990; %pixels
 s.stimulus.centerY= 510;
-s.stimulus.stepSize=.1; 
+s.stimulus.stepSize=.05; 
 s.stimulus.stepDens=.0005; 
 s.stimulus.runtype = 'pseudo';
-
+s.stimulus.backgroundDot=0;
 s.stimulus.duration.ITI = 1.5;
 %changed 2 to 1.5 11/12/24
 

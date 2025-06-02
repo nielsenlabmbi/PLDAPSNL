@@ -1,6 +1,7 @@
-function p=triggercam(p,value)
+function p=triggerFLIR(p,value)
 
-%set trigger that starts actual movie acquisition
+%send a trigger pulse to FLIR that alerts camera to when animal has crossed
+%start port IR beam. Set trigger then, trigger off
 
 if p.trial.camera.use %just to double check
    
@@ -14,7 +15,13 @@ if p.trial.camera.use %just to double check
     maskvec(port)=1;
     mask=bi2de(maskvec);
 
-    %set digital channels
+    %set digital channels on
     Datapixx('SetDoutValues', word,mask);
     Datapixx('RegWrRd');
+
+    %doing this hiccup step because I do not want constant triggering
+
+    %set digital channels off
+    Datapixx('SetDoutValues', 0)
+    Datapixx('RegWrRd')
 end

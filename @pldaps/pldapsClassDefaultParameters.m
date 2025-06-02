@@ -23,7 +23,7 @@ function s=pldapsClassDefaultParameters(s)
  s. camera.     cameraIP='172.30.11.123';
  s. camera.     udpRemotePort = 8000;
  s. camera.     udpLocalPort = 9000;
- s. camera.     trigger. channel = 4;
+ s. camera.     trigger. channel = 6;
  
  %s.daq
  s. daq.        use = 0;
@@ -139,6 +139,7 @@ s.  datapixx.   dio.    useForReward = 0;
 %s. led.
  s. led.    channel = 24;
  s. led.    use = 1;
+ s. led.    channel2 = 22; %5/30/25 - EO added to use second stimuli for stim off (camera)
  
 %s.	mouse.
  s.	mouse.	use = false;

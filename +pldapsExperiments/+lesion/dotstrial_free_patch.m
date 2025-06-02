@@ -18,6 +18,7 @@ switch state
             Screen(p.trial.display.ptr, 'FillRect', p.trial.display.bgColor);
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             showStimulus(p);
+            
         end
      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -82,12 +83,14 @@ switch p.trial.state
         if activePort==p.trial.stimulus.port.MIDDLE
             %advance state
             p.trial.state=p.trial.stimulus.states.STIMON;
+            pds.LED.stimLEDOn(p)
         end
 
         
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         %check whether left or right port chosen
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
+            pds.LED.stimLEDOff(p);
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
             p.trial.stimulus.frameTrialFirstResp = p.trial.iFrame;
@@ -372,6 +375,10 @@ function showStimulus(p)
         Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
             p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
             [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
+        %pause(p.trialMem.durStim)
+        if f == p.trial.stimulus.nrFrames
+            pds.LED.stimLEDOff(p);
+        end
     end
 
 %------------------------------------------------------------------%

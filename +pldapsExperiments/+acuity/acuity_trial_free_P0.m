@@ -1,4 +1,4 @@
-function acuity_trial_free(p,state)
+function acuity_trial_free_P0(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -238,7 +238,7 @@ sdom=sdom*p.trial.stimulus.sf*2*pi;
 sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
 
 %square wave
-%sdom1=sign(sdom1);
+sdom1=sign(sdom1);
 
 if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
     grating = sdom1;

@@ -27,7 +27,7 @@ s.stimulus.delta_offset = 5;%in deg
 %offset is converted to pixel space from dimensions off rig/monitor
 %36.6 = PPcm
 %25cm from tunnel wall mouth to screen
-s.stimulus.stimSide= [-1 1];
+s.stimulus.stimSide= [1];
 
 s.display.bgColor = [.5 .5 .5]; 
 
@@ -38,8 +38,8 @@ s.stimulus.step=0.05;
 %viewing parameters
 
 s.display.viewdist = 75; %cm
-s.stimulus.durStim = 1.5; %sec start duration
-s.stimulus.delta_durStim = 0.25;
+s.stimulus.durStim = 0.5; %sec start duration
+s.stimulus.delta_durStim = 0.1;
 s.stimulus.frameRate = 120;
 s.stimulus.duration.ITI = 0.2;
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
