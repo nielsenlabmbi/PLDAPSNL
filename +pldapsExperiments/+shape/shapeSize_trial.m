@@ -232,7 +232,7 @@ switch p.conditions{p.trial.pldaps.iTrial}.shapePos
             -1 0];
         shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
 end
-shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
+shapeCoord=shapeCoord*p.trial.stimulus.shapeScale*p.conditions{p.trial.pldaps.iTrial}.shapeSize;
 if p.trial.side==p.trial.stimulus.side.LEFT
     shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.stimulus.shapeOffset;
 else
@@ -277,7 +277,7 @@ switch p.conditions{p.trial.pldaps.iTrial}.shapeNeg %p.trial.stimulus.shapeNeg
             -1 0.7];
         shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
 end
-shapeCoord=shapeCoord*p.trial.stimulus.shapeScale*p.trial.stimulus.shapeSize;
+shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
 %move to opposite side from positive
 if p.trial.side==p.trial.stimulus.side.LEFT
     shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;

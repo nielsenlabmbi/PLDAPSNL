@@ -20,7 +20,7 @@ s.stimulus.movAmpP=15; %movement amplitude in pixels %changed to start @ 15 12/1
 s.stimulus.movAmpN=0; %movement amplitude in pixels %changed to start @ 15 12/10/24
 s.stimulus.stepAmp=5; %change in amplitude with key press
 s.stimulus.movFreq=40; %movement frequency in frames
-s.stimulus.shapeSize={1,[1:3]};%randomly scale shape size
+s.stimulus.shapeSize={1;[0.5 1 2]};%randomly scale shape size
 %s.stimulus.rotNeg=[0 1];
 
 %ignore midpoint IR port

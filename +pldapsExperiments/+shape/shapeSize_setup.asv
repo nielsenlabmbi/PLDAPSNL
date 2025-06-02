@@ -30,8 +30,11 @@ for i = 1:length(p.defaultParameters.stimulus.shapeSize)
     if length(cond(i).shapeSize) > 1
         c{i}=generateCondList_sides(cond(i),side,'pseudo',500);
     else
-        c{i}=generateCondList(cond(i),side,'pseudo',500);
+        c{i}=generateCondList(cond(i),side,'pseudo',ceil(500/(length(cond(i).dotCoherence)*2)));
     end
+
+
+    c{i}=generateCondList(cond(i),side,'pseudo',500);
 
     p.trial.allconditions = c;
     p.trialMem.whichConditions = 0;
