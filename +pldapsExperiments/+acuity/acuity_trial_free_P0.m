@@ -1,4 +1,6 @@
 function acuity_trial_free_P0(p,state)
+%%%% Note: includes staircase functionality for spatial frequency. Set
+%%%% stimulus.step = 0 in settings file to suppress staircase. 
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -16,9 +18,13 @@ switch state
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
             Screen(p.trial.display.ptr, 'FillRect', 0.5)
-        elseif p.trial.state==p.trial.stimulus.states.STIMON 
-            if p.trial.stimulus.midpointIR==1 && p.trial.stimulus.midpointCrossed == 1          
-                Screen(p.trial.display.ptr, 'FillRect', 0.5)
+        elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
+            if p.trial.stimulus.midpointIR 
+                if p.trial.stimulus.stimOff
+                   Screen(p.trial.display.ptr, 'FillRect', 0.5) 
+                else
+                    Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+                end
             else
                 Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
             end
@@ -49,9 +55,8 @@ switch p.trial.state
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
             %send trigger pulse to camera
-            if p.trial.camera.use
-                pds.behavcam.triggercam(p,1); %GENERAL
-                %pds.behavcam.triggerFLIR(p,1); %for use with BLACKFLY-S
+            if p.trial.camera.use 
+                pds.behavcam.triggercam(p,1);
                 p.trial.stimulus.timeCamOn = p.trial.ttime;
                 p.trial.stimulus.frameCamOn = p.trial.iFrame;
             end
@@ -88,7 +93,12 @@ switch p.trial.state
                 p.trial.stimulus.timeTrialCross = p.trial.ttime;
                 p.trial.stimulus.frameTrialCross = p.trial.iFrame;
             end
-          
+            if p.trial.stimulus.midpointCrossed & ...
+                    p.trial.ttime > p.trial.stimulus.timeTrialCross + p.trial.stimulus.offStim
+                p.trial.stimulus.stimOff = 1;
+                p.trial.stimulus.timeOff = p.trial.ttime;
+                p.trial.stimulus.frameOff = p.trial.iFrame;
+            end
         end
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             %note time
@@ -211,12 +221,18 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
+if ~isfield(p.trialMem,'offStim') %only runs at start
+    p.trialMem.offStim=p.trial.stimulus.offStim;
+end
 
-p.trial.stimulus.sf = p.trial.stimulus.sf;
+p.trial.stimulus.offStim = p.trialMem.offStim;
+
+p.trial.stimulus.sf = p.conditions{p.trial.pldaps.iTrial}.sf;
 p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle;
 p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
+%p.trial.stimulus.phase = p.conditions{p.trial.pldaps.iTrial}.phase; % phase is pseudorandom
 p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
-p.trial.stimulus.fullField = p.trial.stimulus.fullField;
+p.trial.stimulus.fullField = p.conditions{p.trial.pldaps.iTrial}.fullField;
 
 %make grating
 %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
@@ -263,6 +279,7 @@ p.trial.gratPos = [0 0 1920 1080];
 p.trial.state=p.trial.stimulus.states.START;
 if p.trial.stimulus.midpointIR
     p.trial.stimulus.midpointCrossed = 0;
+    p.trial.stimulus.stimOff=0;
 end
 if p.trial.camera.use
     pds.behavcam.startcam(p);
@@ -289,7 +306,15 @@ pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
-
+%change stimulus duration if needed
+if p.trial.userInput==1
+    p.trialMem.offStim=p.trialMem.offStim+0.1;
+    disp(['increased offset time to ' num2str(p.trialMem.offStim)])
+end
+if p.trial.userInput==2
+    p.trialMem.offStim=max(p.trialMem.offStim-0.1,0);
+    disp(['decreased offset time to ' num2str(p.trialMem.offStim)])
+end
 
 
 % %show stats

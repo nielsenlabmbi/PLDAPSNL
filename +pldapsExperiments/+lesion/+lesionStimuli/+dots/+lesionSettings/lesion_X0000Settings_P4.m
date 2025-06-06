@@ -1,7 +1,8 @@
-function s = dots_FBAE7Settings_patch
+function s = lesion_X0000Settings_P4
+%This phase adjusts the stimulus offset
 
 %FEMALE
-%702861 = ANIMAL ID
+%702781 = ANIMAL ID
 
 % % turn saving off
 % s.pldaps.nosave = 1;
@@ -14,20 +15,31 @@ s.stimulus.dotSize = 0.7;
 s.stimulus.dotDensity = 0.75; %dots/deg^2
 s.stimulus.dotColor = 0;
 s.stimulus.dotCoherence =  1; %regulated by staircase, this is start value
-s.stimulus.dotSpeed = 24; %deg/sec
+s.stimulus.dotSpeed = 48; %deg/sec
 s.stimulus.dotLifetime = 25; %ms, 
 s.stimulus.direction = [0 180];
-%s.stimulus.width=[100 40]; %deg %DEFAULT
-s.stimulus.width=10; %deg %[20 10]
+s.stimulus.width=10; %deg
 %s.stimulus.height=; %deg
 s.stimulus.centerX=990; %pixels
 s.stimulus.centerY=540;
-s.stimulus.offset=15; %start offset in deg
-s.stimulus.delta_offset = 5;%in deg
+
+s.stimulus.offset=5; %start offset in deg
+s.stimulus.delta_offset = 2.5;%in deg
+
+%settings at lower scale
+%s.stimulus.durStim = 2
+%s.stimulus.delta_durStim = 0.25 
+
 %offset is converted to pixel space from dimensions off rig/monitor
-%36.6 = PPcm
+%calculate c = sqrt(height_cm^2 + width_cm^2)
+%calculate p = sqrt(resolution_height^2 + resolution_width^2)
+%ppcm = p/c
+s.stimulus.ppcm = 36.6; %<-pix/cm %JHU Specific
+
 %25cm from tunnel wall mouth to screen
-s.stimulus.stimSide= [-1, 1];
+s.stimulus.tunnel_exit = 25; %cm %JHU Specific
+
+s.stimulus.stimSide= [-1 1];
 
 s.display.bgColor = [.5 .5 .5]; 
 
@@ -38,8 +50,8 @@ s.stimulus.step=0.05;
 %viewing parameters
 
 s.display.viewdist = 75; %cm
-s.stimulus.durStim = 0.5; %sec start duration
-s.stimulus.delta_durStim = 0.1;
+s.stimulus.durStim = 30; %sec
+s.stimulus.delta_durStim = 1;
 s.stimulus.frameRate = 120;
 s.stimulus.duration.ITI = 0.2;
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline

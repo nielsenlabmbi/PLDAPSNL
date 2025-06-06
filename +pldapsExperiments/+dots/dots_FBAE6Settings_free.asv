@@ -26,7 +26,7 @@ s.stimulus.fractionBlack = 0;
 %can always cut and adjust
 
 %USE THIS ONE
-%s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 0.8 0.6 0.4 0.2]}];
+s.stimulus.dotCoherence =  [{[1]}, {[0.8]}, {[0.6]}, {[0.4]}, {[0.2]}, {[1 0.8 0.6 0.4 0.2]}];
 s.stimulus.dotCoherence =  {[1], [0.8], [0.6], [0.4], [0.2], [1, 0.8, 0.6, 0.4, 0.2]};
 %during training, slip in a .4 coherence at 10% rate
 %s.stimulus.dotCoherence =  [ {[1 1 0.4 1 1 1 1 1 1 1]}];
