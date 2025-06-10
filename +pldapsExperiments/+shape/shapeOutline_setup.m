@@ -11,7 +11,7 @@ p.trial.pldaps.trialFunction='pldapsExperiments.shape.shapeOutline_trial';
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = 3; %ITI in s
+p.trial.stimulus.duration.ITI = 1; %ITI in s
 
 
 %% conditions:
@@ -41,7 +41,7 @@ p.trial.pldaps.finish = length(p.conditions);
 
 %% display stats
 p.trialMem.stats.cond={'posSide','shapeType'}; %conditions to display
-[A,B] = ndgrid([0 1],[1 3]);
+[A,B] = ndgrid([0 1],[0 1]);
 p.trialMem.stats.val = [A(:),B(:)]';
 
 nCond=size(p.trialMem.stats.val,2);

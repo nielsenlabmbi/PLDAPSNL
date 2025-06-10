@@ -21,7 +21,7 @@ s.stimulus.sizeY=175;
 % s.stimulus.sizeX=100;
 % s.stimulus.sizeY=50;
 
-s.stimulus.offStim=1;
+s.stimulus.offStim=1.5;
 s.stimulus.dotSize = .3;% original 1.5
 s.stimulus.dotDensity = 0.0035; %dots/deg^2
 s.stimulus.dotColor = 0;

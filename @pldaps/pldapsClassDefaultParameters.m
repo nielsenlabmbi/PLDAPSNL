@@ -139,7 +139,7 @@ s.  datapixx.   dio.    useForReward = 0;
 %s. led.
  s. led.    channel = 24;
  s. led.    use = 1;
- s. led.    channel2 = 22; %5/30/25 - EO added to use second stimuli for stim off (camera)
+ s. led.    channel2 = 21; %5/30/25 - EO added to use second stimuli for stim off (camera)
  
 %s.	mouse.
  s.	mouse.	use = false;

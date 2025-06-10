@@ -42,7 +42,7 @@ switch p.trial.state
         if p.trial.led.state==0
             %turn LED on
             pds.LED.LEDOn(p);
-            pds.LED.AnyLEDOn(p,23);
+            %pds.LED.AnyLEDOn(p,23);
             p.trial.led.state=1;
             %note timepoint
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
@@ -150,7 +150,7 @@ switch p.trial.state
                     %note time
                     p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
                     p.trial.stimulus.frameTrialFinalResp = p.trial.iFrame;
-                    pds.LED.AnyLEDOff(p,23);
+                    %pds.LED.AnyLEDOff(p,23);
                     
                     if activePort==p.trial.stimulus.port.LEFT
                         amount=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
@@ -388,7 +388,7 @@ function cleanUpandSave(p)
     pds.behavcam.stopcam(p);
     pds.behavcam.triggercam(p,0);
     
-    pds.LED.AnyLEDOff(p,23);
+    %pds.LED.AnyLEDOff(p,23);
     
     disp('----------------------------------')
     disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])

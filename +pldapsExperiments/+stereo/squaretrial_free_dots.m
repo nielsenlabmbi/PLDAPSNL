@@ -23,10 +23,16 @@ switch state
                 if p.trial.stimulus.stimOff
                    Screen(p.trial.display.ptr, 'FillRect', 0.5) 
                 else
-                   %Screen('FillPoly',p.trial.display.ptr,[0 0 0],p.trial.stimulus.rectCoord);
+                    %Screen('FillPoly',p.trial.display.ptr,[0 0 0],p.trial.stimulus.rectCoord);
                     Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos, ...
-            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
-            [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
+                        p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
+                        [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
+                    if p.trial.stimulus.backgroundDot
+                        Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotposB, ...
+                            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
+                            [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
+                    else
+                    end
                 end
             else
                 %Screen('FillPoly',p.trial.display.ptr,[0 0 0],p.trial.stimulus.rectCoord);
@@ -92,11 +98,23 @@ switch p.trial.state
             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             
             %advance state
-            p.trial.state=p.trial.stimulus.states.STIMON;
+            %p.trial.state=p.trial.stimulus.states.STIMON;%add info for
+            %midline crossing 6/8/25
+            if p.trial.stimulus.midpointIR %needs to cross midline first to show stimulus
+                p.trial.state=p.trial.stimulus.states.MOVE;
+            else %immediately show stimulus
+                p.trial.state=p.trial.stimulus.states.STIMON;
+            end
            
         end
         
-        
+     
+    case p.trial.stimulus.states.MOVE %wait for ferret to cross midline
+        if activePort==p.trial.stimulus.port.MIDDLE
+            %advance state
+            p.trial.state=p.trial.stimulus.states.STIMON;
+            pds.LED.stimLEDOn(p)
+        end    
 
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         %check whether any port chosen

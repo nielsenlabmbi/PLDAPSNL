@@ -298,7 +298,7 @@ switch p.trial.stimulus.shapeNeg
         shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
 end
 
-scale
+%scale
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
 if scaleNeg==1
     shapeCoord=shapeCoord*p.conditions{p.trial.pldaps.iTrial}.shapeSizeN;
