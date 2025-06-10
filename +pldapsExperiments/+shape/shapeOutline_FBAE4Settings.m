@@ -1,4 +1,4 @@
-function s = shapeSize_FBAE4Settings
+function s = shapeOutline_FBAE4Settings
 % % turn saving off
 % s.pldaps.nosave = 1;
 
@@ -18,24 +18,10 @@ s.stimulus.movAmpP=15; %movement amplitude in pixels %changed to start @ 15 12/1
 s.stimulus.movAmpN=0; %movement amplitude in pixels %changed to start @ 15 12/10/24
 s.stimulus.stepAmp=5; %change in amplitude with key press
 s.stimulus.movFreq=40; %movement frequency in frames
-s.stimulus.shapeSizeP= [0.5 1 2];  %was: {1;[0.5 1 2]};%randomly scale shape size
-s.stimulus.shapeSizeN= [0.5 1 2];  %was: {1;[0.5 1 2]};%randomly scale shape size
-s.stimulus.sizeType=[0:3]; %0 - no shape, 1 - only positive shape; 2 - only negative shape; 3 - both shapes
+s.stimulus.shapeType=[0 1]; %no outline, outline
+s.stimulus.lineWidth=5;
 
 %ignore midpoint IR port
 s.datapixx.adc.channels = [2 4 6];
 s.ports.nports=3;
 
-% 
-% % Debugging settings
-% 
-% %turn adc channels off
-% s.datapixx.useAsPorts = 0;
-% s.datapixx.adc.channels = [];
-% 
-% %turn mouse input on
-% s.mouse.useAsPort = 1;
-% s.mouse.use = 1;
-% 
-% % turn saving off
-% s.pldaps.nosave = 1;

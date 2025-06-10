@@ -1,4 +1,4 @@
-function shapeSize_trial(p,state)
+function shapeOutline_trial(p,state)
 %%%Doty et al shape discrimination - one positive, one negative shape 
 
 %use normal functionality in states
@@ -187,19 +187,6 @@ end
 centerPosX=p.trial.display.pWidth/2;
 centerPosY=800;
 
-%determine which shape gets scaled
-%0 - no shape, 1 - only positive shape; 2 - only negative shape; 3 - both shapes
-scalePos=0; %default - no scaling
-scaleNeg=0;
-switch p.conditions{p.trial.pldaps.iTrial}.sizeType
-    case 1
-        scalePos=1;
-    case 2
-        scaleNeg=1;
-    case 3
-        scalePos=1;
-        scaleNeg=1;
-end
 
 %positive shapes
 %coordinates: matrix, row specifies x, y vertices
@@ -245,14 +232,7 @@ switch p.trial.stimulus.shapePos
             -1 0];
         shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
 end
-
-%scale shape  - shapeScale is fixed scale factor to go from 0/1 to
-%reasonable size
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
-if scalePos==1
-    shapeCoord=shapeCoord*p.conditions{p.trial.pldaps.iTrial}.shapeSizeP;
-end
-
 if p.trial.side==p.trial.stimulus.side.LEFT
     shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.stimulus.shapeOffset;
 else
@@ -263,7 +243,7 @@ p.trial.stimulus.posCoord=shapeCoord;
 
 
 %negative shape
-switch p.trial.stimulus.shapeNeg 
+switch p.trial.stimulus.shapeNeg
     case 0 %triangle
         shapeCoord=[0 1
             1 -0.5
@@ -297,13 +277,8 @@ switch p.trial.stimulus.shapeNeg
             -1 0.7];
         shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
 end
-
-scale
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
-if scaleNeg==1
-    shapeCoord=shapeCoord*p.conditions{p.trial.pldaps.iTrial}.shapeSizeN;
-end%move to opposite side from positive
-
+%move to opposite side from positive
 if p.trial.side==p.trial.stimulus.side.LEFT
     shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;
 else
@@ -345,8 +320,14 @@ else
     offsetN=0;
 end
 
-Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord+offsetP);
-Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord+offsetN);
+if p.conditions{p.trial.pldaps.iTrial}.shapeType==0
+    Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord+offsetP);
+    Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord+offsetN);
+else
+    penW=p.trial.stimulus.lineWidth;
+    Screen('FramePoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord+offsetP,penW);
+    Screen('FramePoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord+offsetN,penW);
+end
 
 %------------------------------------------------------------------%
 %display stats at end of trial

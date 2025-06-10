@@ -1,11 +1,11 @@
-function p=shapeSize_setup(p)
+function p=shapeOutline_setup(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.shape.shapeSize_trial';
+p.trial.pldaps.trialFunction='pldapsExperiments.shape.shapeOutline_trial';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
@@ -20,30 +20,27 @@ side.par='posSide';
 side.match=[0 1];
 
 
-for i=1:length(p.defaultParameters.stimulus.sizeType)
+for i = 1:length(p.defaultParameters.stimulus.shapeType)
 
     cond(i).posSide=[0 1];
-    cond(i).shapeSizeP=p.defaultParameters.stimulus.shapeSizeP; %we may not use these based on type, but just generate them
-    cond(i).shapeSizeN=p.defaultParameters.stimulus.shapeSizeN;
-    cond(i).sizeType=p.defaultParameters.stimulus.sizeType(i);
+    cond(i).shapeType=p.defaultParameters.stimulus.shapeType(i);
 
-    c{i}=generateCondList_sides(cond(i),side,'pseudo',500);
+    c{i}=generateCondList(cond(i),side,'pseudo',500);
 
 end
 
-p.trial.allconditions=c;
-p.trialMem.whichConditions=0;
+p.trial.allconditions = c;
+p.trialMem.whichConditions = 0;
 p.conditions=p.trial.allconditions{p.trialMem.whichConditions + 1};
-    
+
 p.trial.pldaps.finish = length(p.conditions);
 
 
 
 
-%% display stats
-%p.trialMem.stats.cond={'posSide','shapeNeg'}; %conditions to display
-p.trialMem.stats.cond={'posSide','shapeSizeP'}; %conditions to display
 
+%% display stats
+p.trialMem.stats.cond={'posSide','shapeType'}; %conditions to display
 [A,B] = ndgrid([0 1],[1 3]);
 p.trialMem.stats.val = [A(:),B(:)]';
 

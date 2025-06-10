@@ -203,7 +203,7 @@ end
 
 %positive shapes
 %coordinates: matrix, row specifies x, y vertices
-switch p.trial.stimulus.shapePos
+switch p.conditions{p.trial.pldaps.iTrial}.shapePos
     case 0 %plus sign
         shapeCoord=[0.5 1
             0.5 0.5
@@ -263,7 +263,7 @@ p.trial.stimulus.posCoord=shapeCoord;
 
 
 %negative shape
-switch p.trial.stimulus.shapeNeg 
+switch p.conditions{p.trial.pldaps.iTrial}.shapeNeg %p.trial.stimulus.shapeNeg
     case 0 %triangle
         shapeCoord=[0 1
             1 -0.5
@@ -297,13 +297,10 @@ switch p.trial.stimulus.shapeNeg
             -1 0.7];
         shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
 end
-
-scale
 shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
-if scaleNeg==1
-    shapeCoord=shapeCoord*p.conditions{p.trial.pldaps.iTrial}.shapeSizeN;
+if scalePos==1
+    shapeCoord=shapeCoord*p.conditions{p.trial.pldaps.iTrial}.shapeSizeP;
 end%move to opposite side from positive
-
 if p.trial.side==p.trial.stimulus.side.LEFT
     shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;
 else
@@ -331,14 +328,14 @@ function showStimulus(p)
 %make the positive stimulus move if selected
 p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
 
-if p.trial.stimulus.mov==1
+if p.conditions{p.trial.pldaps.iTrial}.mov==1
     offsetP=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
     offsetP=offsetP.*p.trialMem.movAmpP;
 else
     offsetP=0;
 end
 
-if p.trial.stimulus.mov==1
+if p.conditions{p.trial.pldaps.iTrial}.mov==1
     offsetN=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
     offsetN=offsetN.*p.trialMem.movAmpN;
 else
