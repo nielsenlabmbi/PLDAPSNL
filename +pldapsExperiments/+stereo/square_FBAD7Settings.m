@@ -3,10 +3,10 @@ function s = square_FBAD7Settings
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 %set orientation and offsets
-s.stimulus.midpointIR = 0; %use midpoint IR beam to turn off stimulus
+s.stimulus.midpointIR = 0; %use midpoint IR beam 
 s.stimulus.angle = [0 1];
 s.datapixx.adc.channels = [2 4 6];
-s.ports.nports=3;
+%s.ports.nports=3; %commented out for midpoint
 
 
 %Full Size
