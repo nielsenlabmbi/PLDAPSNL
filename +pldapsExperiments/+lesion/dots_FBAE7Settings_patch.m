@@ -1,3 +1,4 @@
+
 function s = dots_FBAE7Settings_patch
 
 %FEMALE
@@ -38,8 +39,8 @@ s.stimulus.step=0.05;
 %viewing parameters
 
 s.display.viewdist = 75; %cm
-s.stimulus.durStim = 0.25; %sec start duration
-s.stimulus.delta_durStim = 0.1;
+s.stimulus.durStim = 0.2; %sec start duration
+s.stimulus.delta_durStim = 0.05;
 s.stimulus.frameRate = 120;
 s.stimulus.duration.ITI = 0.2;
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline

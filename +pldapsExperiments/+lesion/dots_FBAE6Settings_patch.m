@@ -37,8 +37,8 @@ s.stimulus.step=0.05;
 %viewing parameters
 
 s.display.viewdist = 75; %cm
-s.stimulus.durStim = .6; %sec
-s.stimulus.delta_durStim = .1;
+s.stimulus.durStim = .4; %sec
+s.stimulus.delta_durStim = .05;
 s.stimulus.frameRate = 120;
 s.stimulus.duration.ITI = 0.2;
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline

@@ -1,5 +1,4 @@
-function shapeSize_trial(p,state)
-%%%Doty et al shape discrimination - one positive, one negative shape 
+function acuity_trial_free_P3(p,state)
 
 %use normal functionality in states
 pldapsDefaultTrialFunction(p,state);
@@ -16,11 +15,13 @@ switch state
         
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
-            Screen(p.trial.display.ptr, 'FillRect', 0)
-        elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
-            showStimulus(p);
-            %Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord);
-            %Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord);
+            Screen(p.trial.display.ptr, 'FillRect', 0.5)
+        elseif p.trial.state==p.trial.stimulus.states.STIMON 
+            if p.trial.stimulus.midpointIR==1 && p.trial.stimulus.midpointCrossed == 1          
+                Screen(p.trial.display.ptr, 'FillRect', 0.5)
+            else
+                Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);
+            end
         end
      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -36,7 +37,6 @@ end
 function p=checkState(p)
 
 activePort=find(p.trial.ports.status==1);
-%disp(activePort)
 
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
@@ -48,6 +48,13 @@ switch p.trial.state
             %note timepoint
             p.trial.stimulus.timeTrialLedOn = p.trial.ttime;
             p.trial.stimulus.frameTrialLedOn = p.trial.iFrame;
+            %send trigger pulse to camera
+            if p.trial.camera.use
+                pds.behavcam.triggercam(p,1); %GENERAL
+                %pds.behavcam.triggerFLIR(p,1); %for use with BLACKFLY-S
+                p.trial.stimulus.timeCamOn = p.trial.ttime;
+                p.trial.stimulus.frameCamOn = p.trial.iFrame;
+            end
         end
         
         if activePort==p.trial.stimulus.port.START %start port activated
@@ -68,10 +75,21 @@ switch p.trial.state
             
             %advance state
             p.trial.state=p.trial.stimulus.states.STIMON;
+           
         end
         
+        
+
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         %check whether any port chosen
+        if p.trial.stimulus.midpointIR
+            if activePort==p.trial.stimulus.port.MIDDLE
+                p.trial.stimulus.midpointCrossed = 1;
+                p.trial.stimulus.timeTrialCross = p.trial.ttime;
+                p.trial.stimulus.frameTrialCross = p.trial.iFrame;
+            end
+          
+        end
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
@@ -172,10 +190,19 @@ end
         
 
         
-%------------------------------------------------------------------%
-%setup trial parameters, prep stimulus as far as possible (here: compute
-%polygon coordinates)
+%% ------------------------------------------------------------------%
+%setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
+
+if isfield(p.trial,'masktxtr')
+    Screen('Close',p.trial.masktxtr);
+end
+p.trial.masktxtr=[];
+
+if isfield(p.trial,'gtxtr')
+    Screen('Close',p.trial.gtxtr)
+end
+p.trial.gtxtr=[];
 
 %get side for condition
 if p.conditions{p.trial.pldaps.iTrial}.side==2
@@ -184,170 +211,71 @@ else
     p.trial.side=p.trial.stimulus.side.RIGHT;
 end
 
-centerPosX=p.trial.display.pWidth/2;
-centerPosY=800;
 
-%determine which shape gets scaled
-%0 - no shape, 1 - only positive shape; 2 - only negative shape; 3 - both shapes
-scalePos=0; %default - no scaling
-scaleNeg=0;
-switch p.conditions{p.trial.pldaps.iTrial}.sizeType
-    case 1
-        scalePos=1;
-    case 2
-        scaleNeg=1;
-    case 3
-        scalePos=1;
-        scaleNeg=1;
-end
+p.trial.stimulus.sf = p.trial.stimulus.sf;
+p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle;
+p.trial.stimulus.phase = mod(180, (rand < 0.5)*180 + 180); % phase is random 0 or 180
+p.trial.stimulus.range = p.conditions{p.trial.pldaps.iTrial}.range;
+p.trial.stimulus.fullField = p.trial.stimulus.fullField;
 
-%positive shapes
-%coordinates: matrix, row specifies x, y vertices
-switch p.conditions{p.trial.pldaps.iTrial}.shapePos
-    case 0 %plus sign
-        shapeCoord=[0.5 1
-            0.5 0.5
-            1 0.5
-            1 -0.5
-            0.5 -0.5
-            0.5 -1
-            -0.5 -1
-            -0.5 -0.5
-            -1 -0.5
-            -1 0.5
-            -0.5 0.5
-            -0.5 1];
-    case 1 %star
-        shapeCoord=[0 1
-            0.25 0.25
-            1 0.25
-            0.4 -0.25
-            0.7 -1
-            0 -0.5
-            -0.7 -1
-            -0.4 -0.25
-            -1 0.25
-            -0.25 0.25];
-    case 2 %pentagon
-        shapeCoord=[0 0.7
-            -1 0
-            -0.6 -1.1
-            0.6 -1.1
-            1 0];
-    case 3 %u
-        shapeCoord=[-1 1
-            1 1
-            1 0
-            0.6 0
-            0.6 0.6
-            -0.6 0.6
-            -0.6 0
-            -1 0];
-        shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
-end
+%make grating
+%DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+%PixPerDeg = 1/DegPerPix;
 
-%scale shape  - shapeScale is fixed scale factor to go from 0/1 to
-%reasonable size
-shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
-if scalePos==1
-    shapeCoord=shapeCoord*p.conditions{p.trial.pldaps.iTrial}.shapeSizeP;
-end
+ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
 
-if p.trial.side==p.trial.stimulus.side.LEFT
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.stimulus.shapeOffset;
+% CREATE A MESHGRID THE SIZE OF THE GRATING
+x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);%-p.trial.stimulus.shift(p.trial.side);
+y=linspace(-(p.trial.display.dHeight/2),p.trial.display.dHeight/2,p.trial.display.pHeight);
+[x,y] = meshgrid(x,y);
+
+% Transform to account for orientation
+% note: transformation changed from headfixed
+sdom=x*sin(p.trial.stimulus.angle*pi/180)-y*cos(p.trial.stimulus.angle*pi/180);
+
+% GRATING
+sdom=sdom*p.trial.stimulus.sf*2*pi;
+sdom1=cos(sdom-p.trial.stimulus.phase*pi/180);
+
+%square wave
+%sdom1=sign(sdom1);
+
+if isfield(p.trial.stimulus,'fullField') && p.trial.stimulus.fullField == 1
+    grating = sdom1;
 else
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;
-end
-shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
-p.trial.stimulus.posCoord=shapeCoord;
-
-
-%negative shape
-switch p.conditions{p.trial.pldaps.iTrial}.shapeNeg %p.trial.stimulus.shapeNeg
-    case 0 %triangle
-        shapeCoord=[0 1
-            1 -0.5
-            -1 -0.5];
-    case 1 %square
-        shapeCoord=[-0.7 0.7
-            0.7 0.7
-            0.7 -0.7
-            -0.7 -0.7];
-    case 2 %heart
-        shapeCoord=[-0.6 1
-            -1.2 0.8
-            -0.6 0
-            0 -1
-            0.6 0
-            1.2 0.8
-            0.6 1
-            0 0.6];
-    case 3 %S
-        shapeCoord=[-1 1
-            1 1
-            1 0.7
-            0.4 0.7
-            0.4 0.3
-            1 0.3
-            1 0
-            -1 0
-            -1 0.3
-            -0.4 0.3
-            -0.4 0.7
-            -1 0.7];
-        shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
-end
-shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
-if scalePos==1
-    shapeCoord=shapeCoord*p.conditions{p.trial.pldaps.iTrial}.shapeSizeP;
-end%move to opposite side from positive
-if p.trial.side==p.trial.stimulus.side.LEFT
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;
-else
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.stimulus.shapeOffset;
-end
-shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
-p.trial.stimulus.negCoord=shapeCoord;
-
-if ~isfield(p.trialMem,'movAmpP')
-    p.trialMem.movAmpP=p.trial.stimulus.movAmpP;
-end
-if ~isfield(p.trialMem,'movAmpN')
-    p.trialMem.movAmpN=p.trial.stimulus.movAmpN;
+    % CREATE A GAUSSIAN TO SMOOTH THE OUTER 10% OF THE GRATING
+    r = sqrt(x.^2 + y.^2);
+    sigmaDeg = ApertureDeg/16.5;
+    MaskLimit=.6*ApertureDeg/2;
+    maskdom = exp(-.5*(r-MaskLimit).^2/sigmaDeg.^2);
+    maskdom(r<MaskLimit) = 1;
+    grating = sdom1.*maskdom;
 end
 
-p.trial.stimulus.frameI = 0;
+% TRANSFER THE GRATING INTO AN IMAGE
+grating = round(grating*p.trial.stimulus.range) + 127;
+
+p.trial.gratTex = Screen('MakeTexture',p.trial.display.ptr,grating);
+p.trial.gratPos = [0 0 1920 1080];
+
 
 %set state
 p.trial.state=p.trial.stimulus.states.START;
-
-%------------------------------------------------------------------%
-%show stimulus - handles rotation and movement of grating
-function showStimulus(p)
-
-%make the positive stimulus move if selected
-p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
-
-if p.conditions{p.trial.pldaps.iTrial}.mov==1
-    offsetP=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
-    offsetP=offsetP.*p.trialMem.movAmpP;
-else
-    offsetP=0;
+if p.trial.stimulus.midpointIR
+    p.trial.stimulus.midpointCrossed = 0;
+end
+if p.trial.camera.use
+    pds.behavcam.startcam(p);
 end
 
-if p.conditions{p.trial.pldaps.iTrial}.mov==1
-    offsetN=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
-    offsetN=offsetN.*p.trialMem.movAmpN;
-else
-    offsetN=0;
-end
 
-Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord+offsetP);
-Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord+offsetN);
 
-%------------------------------------------------------------------%
+%% ------------------------------------------------------------------%
 %display stats at end of trial
 function cleanUpandSave(p)
+%stop camera and set trigger to low
+pds.behavcam.stopcam(p);
+pds.behavcam.triggercam(p,0);
 
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
@@ -361,28 +289,18 @@ pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
-switch p.trial.userInput
-    case 1
-        p.trialMem.movAmpP=p.trialMem.movAmpP+p.trial.stimulus.stepAmp;
-        disp(['increased pos amp to ' num2str(p.trialMem.movAmpP)])
-    case 2
-        p.trialMem.movAmpP=p.trialMem.movAmpP-p.trial.stimulus.stepAmp;
-        disp(['decreased pos amp to ' num2str(p.trialMem.movAmpP)])
-    case 3
-        p.trialMem.movAmpN=p.trialMem.movAmpN+p.trial.stimulus.stepAmp;
-        disp(['increased neg amp to ' num2str(p.trialMem.movAmpN)])
-    case 4
-        p.trialMem.movAmpN=p.trialMem.movAmpN-p.trial.stimulus.stepAmp;
-        disp(['decreased neg amp to ' num2str(p.trialMem.movAmpN)])
-end
 
 
 
-
+% %show stats
+% pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
+% disp(['C: ' num2str(p.trialMem.stats.val)])
+% disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
+% disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
     
 
+%% -------------------------------------------------------------------%
 %%%%%%Helper functions
-%-------------------------------------------------------------------%
 %check whether a particular port choice is correct
 function correct=checkPortChoice(activePort,p)
 

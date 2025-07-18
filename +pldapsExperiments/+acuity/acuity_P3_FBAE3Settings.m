@@ -1,9 +1,9 @@
-function s = acuity_P0_FBAE3Settings
+function s = acuity_P3_FBAE3Settings
 
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 %set orientation and offsets
-s.stimulus.midpointIR = 0; %use midpoint IR beam to turn off stimulus
+s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
 %s.stimulus.offsets = horzcat({[25]},{[25]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[25 15 10 8 5]});
 %s.stimulus.offsets = horzcat({[22]},{[22]},{[6]});
@@ -17,7 +17,7 @@ s.stimulus.offStim=1;
 s.stimulus.sf = 0.2;
 s.stimulus.range = 121;
 s.stimulus.runtype = 'pseudo';
-s.stimulus.fullField = [1 0];
+s.stimulus.fullField = [0];
 %s.stimulus.sideMatch = [1 -1];
 
 
@@ -29,9 +29,9 @@ s.stimulus.duration.ITI = 1;
 %set up the viewing distance
 s.display.viewdist = 75; 
 
-%2/23/25 - Issue w/ IR ports after IR slot expansion; adding these lines
-s.datapixx.adc.channels = [2 4 6];
-s.ports.nports=3;
+% %2/23/25 - Issue w/ IR ports after IR slot expansion; adding these lines
+% s.datapixx.adc.channels = [2 4 6];
+% s.ports.nports=3;
 
 s.camera.use = 1;
 s.camera.trigger.channel = 1;

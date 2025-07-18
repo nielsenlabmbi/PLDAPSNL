@@ -1,11 +1,11 @@
-function p=acuity_setup_free_P1(p)
+function p=acuity_setup_free_P3(p)
 %experiment setup file for a simple test experiment
 
 %% basic definitions
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.acuity.acuity_trial_free_P1';
+p.trial.pldaps.trialFunction='pldapsExperiments.acuity.acuity_trial_free_P3';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;

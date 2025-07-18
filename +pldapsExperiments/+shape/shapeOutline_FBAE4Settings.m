@@ -19,7 +19,7 @@ s.stimulus.movAmpN=0; %movement amplitude in pixels %changed to start @ 15 12/10
 s.stimulus.stepAmp=5; %change in amplitude with key press
 s.stimulus.movFreq=40; %movement frequency in frames
 s.stimulus.shapeType=[0 1]; %no outline, outline
-s.stimulus.lineWidth=10;
+s.stimulus.lineWidth=40;
 
 %ignore midpoint IR port
 s.datapixx.adc.channels = [2 4 6];

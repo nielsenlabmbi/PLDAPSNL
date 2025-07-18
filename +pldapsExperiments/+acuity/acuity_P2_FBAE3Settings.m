@@ -1,4 +1,4 @@
-function s = acuity_P0_FBAE3Settings
+function s = acuity_P2_FBAE3Settings
 
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
