@@ -123,7 +123,7 @@ disp('****************************************************************')
 disp('****************************************************************')
 fprintf('Opening screen %d with background %02.2f in stereo mode %d\r', p.trial.display.scrnNum, p.trial.display.bgColor(1), p.trial.display.stereoMode)
 disp('****************************************************************')
-[ptr, winRect]=PsychImaging('OpenWindow', p.trial.display.scrnNum, p.trial.display.bgColor, p.trial.display.screenSize, [], [], p.trial.display.stereoMode, 0);
+[ptr, winRect]=PsychImaging('OpenWindow', 1, p.trial.display.bgColor, p.trial.display.screenSize, [], [], p.trial.display.stereoMode, 0);
 p.trial.display.ptr=ptr;
 p.trial.display.winRect=winRect;
 
