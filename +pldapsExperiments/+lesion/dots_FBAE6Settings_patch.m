@@ -44,8 +44,8 @@ s.stimulus.duration.ITI = 0.2;
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 
 %2/23/25 - Issue w/ IR ports after IR slot expansion; adding these lines
-%s.datapixx.adc.channels = [2 4 6];
-%s.ports.nports=3;
+s.datapixx.adc.channels = [2 4 6 8 10];
+s.ports.nPorts=5;
 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;

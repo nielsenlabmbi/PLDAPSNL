@@ -45,20 +45,20 @@ shapeCoordN=[-0.7 0.7
             -0.7 -0.7];
 shapeCoordN=shapeCoordN*stimulus.shapeScale;
 shapeCoordN=shapeCoordN*stimulus.shapeSizeN;
-shapeCoordN(:,1)=shapeCoordN(:,1)+centerPosX-stimulus.shapeOffset;
+shapeCoordN(:,1)=shapeCoordN(:,1)+centerPosX+stimulus.shapeOffset;
 shapeCoordN(:,2)=shapeCoordN(:,2)+centerPosY;
 
 Screen('FillPoly',ptr,[1 1 1],shapeCoordP);
-Screen('FillPoly',ptr,[1 1 1],shapeCoordN);
+%Screen('FillPoly',ptr,[1 1 1],shapeCoordN);
 
 %% flip screen
 Screen('Flip',ptr);
 
 %get image
-imgArray=Screen('GetImage',ptr)
+imgArray=Screen('GetImage',ptr);
 
 %close psychtoolbox
-KBStrokeWait;
-Screen('CloseAll');
+%KBStrokeWait;
+%Screen('CloseAll');
 
 

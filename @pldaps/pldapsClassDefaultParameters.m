@@ -233,7 +233,7 @@ s.	pldaps.	dirs.	dataTmp = '~/pldapsTemp';
 %s. ports.
  s. ports.   use = true;
  s. ports.   nPorts = 4;
- s. ports.   movable = true;
+ s. ports.   movable = false;
  s. ports.   adc.  portMapping = 'datapixx.adc.ports'; %adc channels for port contact
  s. ports.   adc.  portThreshold = 2;
  s. ports.   adc.  portAvg = 0;
