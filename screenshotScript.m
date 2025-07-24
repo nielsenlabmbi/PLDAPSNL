@@ -17,7 +17,7 @@ stimulus.shapeOffset=600; %offset of each stimulus to the side relative to cente
 stimulus.shapeScale=150; %scale factor for shape (in pixels)
 
 stimulus.shapeSizeP=0.5;  %was: {1;[0.5 1 2]};%randomly scale shape size
-stimulus.shapeSizeN=1;  %was: {1;[0.5 1 2]};%randomly scale shape size
+stimulus.shapeSizeN=2;  %was: {1;[0.5 1 2]};%randomly scale shape size
 
 centerPosX=1920/2;
 centerPosY=800;
@@ -48,8 +48,8 @@ shapeCoordN=shapeCoordN*stimulus.shapeSizeN;
 shapeCoordN(:,1)=shapeCoordN(:,1)+centerPosX+stimulus.shapeOffset;
 shapeCoordN(:,2)=shapeCoordN(:,2)+centerPosY;
 
-Screen('FillPoly',ptr,[1 1 1],shapeCoordP);
-%Screen('FillPoly',ptr,[1 1 1],shapeCoordN);
+%Screen('FillPoly',ptr,[1 1 1],shapeCoordP);
+Screen('FillPoly',ptr,[1 1 1],shapeCoordN);
 
 %% flip screen
 Screen('Flip',ptr);

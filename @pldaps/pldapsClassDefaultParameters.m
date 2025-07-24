@@ -174,8 +174,8 @@ s.  datapixx.   dio.    useForReward = 0;
  s.	pldaps.	useFileGUI = false;
 
 %s.	pldaps.	dirs.
- s.	pldaps.	dirs.	data = '~/pldapsData';
-s.	pldaps.	dirs.	dataTmp = '~/pldapsTemp'; 
+ s.	pldaps.	dirs.	data = '/data/pldapsData';
+s.	pldaps.	dirs.	dataTmp = '/data/pldapsTemp'; 
  s.	pldaps.	dirs.	wavfiles = '~/PLDAPSNL/beepsounds';
 
 %s.	pldaps.	draw.
