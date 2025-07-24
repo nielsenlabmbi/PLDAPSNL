@@ -5,7 +5,6 @@ s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 
 %set orientation and offsets
 s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
-s.stimulus.shift = [0 0];
 s.stimulus.angle = [0 90];
 
 
@@ -24,16 +23,11 @@ s.stimulus.duration.ITI = 2;
 %set up the viewing distance
 s.display.viewdist = 46; 
 
-%2/23/25 - Issue w/ IR ports after IR slot expansion; adding these lines
-%s.datapixx.adc.channels = [2 4 6];
-%s.ports.nports=3;
-
+%camera
 s.camera.use = 0;
 s.camera.trigger.channel = 6;
 
 
-
-%s.datapixx.adc.channels = [1 3 5];
 
 % 
 % % Debugging settings

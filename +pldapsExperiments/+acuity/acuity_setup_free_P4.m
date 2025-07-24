@@ -43,3 +43,7 @@ nCond=size(p.trialMem.stats.val,2);
 p.trialMem.stats.count.correct=zeros(1,nCond);
 p.trialMem.stats.count.incorrect=zeros(1,nCond);
 p.trialMem.stats.count.Ntrial=zeros(1,nCond);
+p.trialMem.stats.count.Nleft=0;
+p.trialMem.stats.count.Nright=0;
+p.trialMem.stats.count.NleftCorr=0;
+p.trialMem.stats.count.NrightCorr=0;

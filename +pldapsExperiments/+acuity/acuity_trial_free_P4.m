@@ -289,15 +289,13 @@ pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
 num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
     round(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100,1)))
 
+pds.behavior.countTrialSide(p,p.trial.pldaps.goodtrial);
+disp(['NL: ' num2str(p.trialMem.stats.count.Nleft) ' NR: ' num2str(p.trialMem.stats.count.Nright)])
+disp(['CL: ' num2str(p.trialMem.stats.count.NleftCorr) ' CR: ' num2str(p.trialMem.stats.count.NrightCorr)])
+disp(['CL: ' num2str(round(p.trialMem.stats.count.NleftCorr/p.trialMem.stats.count.Nleft)) ...
+    ' CR: ' num2str(round(p.trialMem.stats.count.NrightCorr/p.trialMem.stats.count.Nright))])
 
 
-
-% %show stats
-% pds.behavior.countTrial(p,p.trial.pldaps.goodtrial);
-% disp(['C: ' num2str(p.trialMem.stats.val)])
-% disp(['N: ' num2str(p.trialMem.stats.count.Ntrial)])
-% disp(['P: ' num2str(p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)])
-    
 
 %% -------------------------------------------------------------------%
 %%%%%%Helper functions
