@@ -37,15 +37,16 @@ s.stimulus.step=0.05;
 %viewing parameters
 
 s.display.viewdist = 75; %cm
-s.stimulus.durStim = .4; %sec
+s.stimulus.durStim = 2; %sec
 s.stimulus.delta_durStim = .05;
 s.stimulus.frameRate = 120;
 s.stimulus.duration.ITI = 0.2;
-s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 
 %2/23/25 - Issue w/ IR ports after IR slot expansion; adding these lines
-%s.datapixx.adc.channels = [2 4 6 8 10];
-%s.ports.nPorts=5;
+s.datapixx.adc.channels = [2 4 6 8 10];
+s.ports.nPorts=5;
+s.ports.adc.portThreshold = [2 2 2 2 0.1]';
+s.ports.adc.portPol = [1 1 1 1 -1]';
 
 % %turn adc channels off
 % s.datapixx.useAsPorts = 0;

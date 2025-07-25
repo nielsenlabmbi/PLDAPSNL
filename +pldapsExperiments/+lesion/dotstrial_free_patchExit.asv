@@ -90,7 +90,8 @@ switch p.trial.state
         end
 
 
-    case p.trial.stimulus.states.STIMOFF %stimulus shown; port selected in response
+    %    case p.trial.stimulus.states.STIMOFF
+    case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
         %check whether left or right port chosen
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             pds.LED.stimLEDOff(p);

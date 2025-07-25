@@ -5,7 +5,7 @@ function p=acuity_setup_free_P4(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.acuity.acuity_trial_free';
+p.trial.pldaps.trialFunction='pldapsExperiments.acuity.acuity_trial_free_P4';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;

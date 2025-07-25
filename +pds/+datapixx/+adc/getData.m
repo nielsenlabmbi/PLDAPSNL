@@ -54,7 +54,8 @@ for imap=1:nMaps
                 nAvg=max(p.trial.ports.adc.portAvg,size(bufferData,2));
                 tmpData=bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},end-nAvg+1:end);
             end
-            
+            %disp(size(tmpData))
+            tmpData=tmpData.*p.trial.ports.adc.portPol;
             p.trial.ports.status = (tmpData < p.trial.ports.adc.portThreshold);
         end
     end
