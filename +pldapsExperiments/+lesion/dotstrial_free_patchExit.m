@@ -92,6 +92,9 @@ switch p.trial.state
 
     case p.trial.stimulus.states.STIMOFF %stimulus shown; port selected in response
         %check whether left or right port chosen
+
+        activePort=activePort(activePort~=p.trial.stimulus.port.EXIT);
+
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             pds.LED.stimLEDOff(p);
             %note time
@@ -144,6 +147,7 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
+        activePort=activePort(activePort~=p.trial.stimulus.port.EXIT);
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial            
             %check whether any port chosen
             if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])

@@ -15,7 +15,7 @@ if nargin < 2
 end
 
 
-if p.trial.newEraSyringePump.use(logical(p.trial.ports.status))    
+if p.trial.newEraSyringePump.usePumps
     pds.newEraSyringePump.give(p,amount);
 elseif p.trial.datapixx.use
     if  p.trial.datapixx.useForReward

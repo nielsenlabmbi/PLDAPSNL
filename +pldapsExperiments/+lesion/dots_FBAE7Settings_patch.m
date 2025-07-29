@@ -39,7 +39,7 @@ s.stimulus.step=0.05;
 %viewing parameters
 
 s.display.viewdist = 75; %cm
-s.stimulus.durStim = 0.2; %sec start duration
+s.stimulus.durStim = 3; %sec start duration
 s.stimulus.delta_durStim = 0.05;
 s.stimulus.frameRate = 120;
 s.stimulus.duration.ITI = 0.2;

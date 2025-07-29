@@ -5,8 +5,8 @@ s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 %set orientation and offsets
 s.stimulus.midpointIR = 0; %use midpoint IR beam 
 s.stimulus.angle = [0 1];
-s.datapixx.adc.channels = [2 4 6]; %comment out for midpoint
-s.ports.nports=3; %commented out for midpoint
+%s.datapixx.adc.channels = [2 4 6]; %comment out for midpoint
+%s.ports.nports=3; %commented out for midpoint
 
 
 %Full Size

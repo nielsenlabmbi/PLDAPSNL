@@ -23,8 +23,8 @@ s.stimulus.shapeSizeN=1;  %was: {1;[0.5 1 2]};%randomly scale shape size
 s.stimulus.sizeType=[0 1 2 3]; %0 - no shape, 1 - only positive shape; 2 - only negative shape; 3 - both shapes
 
 %ignore midpoint IR port
-s.datapixx.adc.channels = [2 4 6];
-s.ports.nports=3;
+%s.datapixx.adc.channels = [2 4 6];
+%s.ports.nports=3;
 
 % 
 % % Debugging settings

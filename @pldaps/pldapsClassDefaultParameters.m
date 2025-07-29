@@ -154,8 +154,8 @@ s.  datapixx.   dio.    useForReward = 0;
  s.	newEraSyringePump.	lowNoiseMode = 0;
  s.	newEraSyringePump.	port = '/dev/ttyUSB0';
  s.	newEraSyringePump.	rate = 2120; %mL/hr
- s.	newEraSyringePump.	use = [0 0 0 0];
-%  s. newEraSyringePump.  noPumps = length(find(s.newEraSyringePump.use));
+ s.	newEraSyringePump.	use = [0 0 0 0]; 
+ s. newEraSyringePump.  usePumps = 0;
 
 %s.	pldaps.
  s.	pldaps.	eyeposMovAv = 1;

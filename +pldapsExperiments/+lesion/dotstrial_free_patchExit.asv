@@ -90,10 +90,14 @@ switch p.trial.state
         end
 
 
-    %    case p.trial.stimulus.states.STIMOFF
-    case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
+    case p.trial.stimulus.states.STIMOFF %stimulus shown; port selected in response
         %check whether left or right port chosen
+
+        activePort=activePort(activePort~=p.trial.stimulus.port.EXIT);
+        disp(['x ' num2str(activePort')])
+
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
+            disp(['a ' num2str(activePort)])
             pds.LED.stimLEDOff(p);
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
@@ -111,9 +115,11 @@ switch p.trial.state
                 
                 %give reward
                 if activePort==p.trial.stimulus.port.LEFT
+                    disp('l')
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                 else
+                    disp('r')
                     amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                 end
@@ -145,6 +151,7 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
+        activePort=activePort(activePort~=p.trial.stimulus.port.EXIT);
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial            
             %check whether any port chosen
             if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])

@@ -30,8 +30,8 @@ s.stimulus.duration.ITI = 1;
 s.display.viewdist = 75; 
 
 %2/23/25 - Issue w/ IR ports after IR slot expansion; adding these lines
-s.datapixx.adc.channels = [2 4 6];
-s.ports.nports=3;
+% s.datapixx.adc.channels = [2 4 6];
+% s.ports.nports=3;
 
 s.camera.use = 1;
 s.camera.trigger.channel = 1;
