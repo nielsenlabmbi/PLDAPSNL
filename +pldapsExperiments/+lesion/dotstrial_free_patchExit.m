@@ -16,7 +16,8 @@ switch state
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
             Screen(p.trial.display.ptr, 'FillRect', p.trial.display.bgColor);
-        elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
+        %elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
+        elseif p.trial.state==p.trial.stimulus.states.STIMON %|| p.trial.state==p.trial.stimulus.states.INCORRECT
             showStimulus(p);
             
         end
