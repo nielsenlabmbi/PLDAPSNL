@@ -19,8 +19,7 @@ switch state
             Screen(p.trial.display.ptr, 'FillRect', 0)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             showStimulus(p);
-            %Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord);
-            %Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord);
+
         end
      
     case p.trial.pldaps.trialStates.trialCleanUpandSave
@@ -177,6 +176,8 @@ end
 %polygon coordinates)
 function p=trialSetup(p)
 
+
+
 %get side for condition
 if p.conditions{p.trial.pldaps.iTrial}.side==2
     p.trial.side=p.trial.stimulus.side.LEFT;
@@ -187,111 +188,52 @@ end
 centerPosX=p.trial.display.pWidth/2;
 centerPosY=800;
 
-
-%positive shapes
-%coordinates: matrix, row specifies x, y vertices
-switch p.conditions{p.trial.pldaps.iTrial}.shapePos
-    case 0 %plus sign
-        shapeCoord=[0.5 1
-            0.5 0.5
-            1 0.5
-            1 -0.5
-            0.5 -0.5
-            0.5 -1
-            -0.5 -1
-            -0.5 -0.5
-            -1 -0.5
-            -1 0.5
-            -0.5 0.5
-            -0.5 1];
-    case 1 %star
-        shapeCoord=[0 1
-            0.25 0.25
-            1 0.25
-            0.4 -0.25
-            0.7 -1
-            0 -0.5
-            -0.7 -1
-            -0.4 -0.25
-            -1 0.25
-            -0.25 0.25];
-    case 2 %pentagon
-        shapeCoord=[0 0.7
-            -1 0
-            -0.6 -1.1
-            0.6 -1.1
-            1 0];
-    case 3 %u
-        shapeCoord=[-1 1
-            1 1
-            1 0
-            0.6 0
-            0.6 0.6
-            -0.6 0.6
-            -0.6 0
-            -1 0];
-        shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
-end
-shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
-if p.trial.side==p.trial.stimulus.side.LEFT
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.stimulus.shapeOffset;
-else
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;
-end
-shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
-p.trial.stimulus.posCoord=shapeCoord;
-
+%read images
+%positive shape
+imgPos=imread(fullfile(p.trial.stimulus.imgBase,[p.trial.stimulus.posImg p.trial.stimulus.filetype]));
+imgPos=double(imgPos);
+imgPos=imgPos./255;
+p.trial.stimulus.posShape = Screen(screenPTR, 'MakeTexture', imgout);
 
 %negative shape
-switch p.conditions{p.trial.pldaps.iTrial}.shapeNeg %p.trial.stimulus.shapeNeg
-    case 0 %triangle
-        shapeCoord=[0 1
-            1 -0.5
-            -1 -0.5];
-    case 1 %square
-        shapeCoord=[-0.7 0.7
-            0.7 0.7
-            0.7 -0.7
-            -0.7 -0.7];
-    case 2 %heart
-        shapeCoord=[-0.6 1
-            -1.2 0.8
-            -0.6 0
-            0 -1
-            0.6 0
-            1.2 0.8
-            0.6 1
-            0 0.6];
-    case 3 %S
-        shapeCoord=[-1 1
-            1 1
-            1 0.7
-            0.4 0.7
-            0.4 0.3
-            1 0.3
-            1 0
-            -1 0
-            -1 0.3
-            -0.4 0.3
-            -0.4 0.7
-            -1 0.7];
-        shapeCoord(:,2)=shapeCoord(:,2)*1.5-0.5;
-end
-shapeCoord=shapeCoord*p.trial.stimulus.shapeScale;
-%move to opposite side from positive
-if p.trial.side==p.trial.stimulus.side.LEFT
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX+p.trial.stimulus.shapeOffset;
-else
-    shapeCoord(:,1)=shapeCoord(:,1)+centerPosX-p.trial.stimulus.shapeOffset;
-end
-shapeCoord(:,2)=shapeCoord(:,2)+centerPosY;
-p.trial.stimulus.negCoord=shapeCoord;
+imgNeg=imread(fullfile(p.trial.stimulus.imgBase,[p.trial.stimulus.negImg p.trial.stimulus.filetype]));
+imgNeg=double(imgNeg);
+imgNeg=imgNeg./255;
+p.trial.stimulus.negShape = Screen(screenPTR, 'MakeTexture', imgout);
 
-if ~isfield(p.trialMem,'movAmpP')
-    p.trialMem.movAmpP=p.trial.stimulus.movAmpP;
+
+
+%determine plotting positions
+stimDstT = [0 0 size(imgPos,2)-1 size(imgPos,1)-1];
+p.trial.stimulus.stimSrcPos=stimDstT;
+if p.trial.side==p.trial.stimulus.side.LEFT
+    p.trial.stimulus.stimDstPos=CenterRectOnPoint(stimDstT,centerPosX-p.trial.stimulus.shapeOffset,centerPosY);
+else
+    p.trial.stimulus.stimDstPos=CenterRectOnPoint(stimDstT,centerPosX+p.trial.stimulus.shapeOffset,centerPosY);
 end
-if ~isfield(p.trialMem,'movAmpN')
-    p.trialMem.movAmpN=p.trial.stimulus.movAmpN;
+
+stimDstT = [0 0 size(imgNeg,2)-1 size(imgNeg,1)-1];
+p.trial.stimulus.stimSrcNeg=stimDstT;
+if p.trial.side==p.trial.stimulus.side.LEFT
+    p.trial.stimulus.stimDstNeg=CenterRectOnPoint(stimDstT,centerPosX+p.trial.stimulus.shapeOffset,centerPosY);
+else
+    p.trial.stimulus.stimDstNeg=CenterRectOnPoint(stimDstT,centerPosX-p.trial.stimulus.shapeOffset,centerPosY);
+end
+
+%determine rotation
+switch p.conditions{p.trial.pldaps.iTrial}.rotType
+    case 0 %no rotation
+        p.trial.stimulus.rotPos=0;
+        p.trial.stimulus.rotNeg=0;
+    case 1 %positive shape only
+        p.trial.stimulus.rotPos=p.conditions{p.trial.pldaps.iTrial}.rotPos;
+        p.trial.stimulus.rotNeg=0;
+    case 2 %negative shape only
+        p.trial.stimulus.rotPos=0;
+        p.trial.stimulus.rotNeg=p.conditions{p.trial.pldaps.iTrial}.rotNeg;
+    case 3
+        p.trial.stimulus.rotPos=p.conditions{p.trial.pldaps.iTrial}.rotPos;
+        p.trial.stimulus.rotNeg=p.conditions{p.trial.pldaps.iTrial}.rotNeg;
 end
 
 p.trial.stimulus.frameI = 0;
@@ -303,25 +245,15 @@ p.trial.state=p.trial.stimulus.states.START;
 %show stimulus - handles rotation and movement of grating
 function showStimulus(p)
 
-%make the positive stimulus move if selected
-p.trial.stimulus.frameI=p.trial.stimulus.frameI+1;
+%positive
+Screen('DrawTexture', p.trial.display.ptr, p.trial.stimulus.posShape,...
+    p.trial.stimulus.stimSrcPos,p.trial.stimulus.stimDstPos,p.trial.stimulus.rotPos);
 
-if p.conditions{p.trial.pldaps.iTrial}.mov==1
-    offsetP=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
-    offsetP=offsetP.*p.trialMem.movAmpP;
-else
-    offsetP=0;
-end
 
-if p.conditions{p.trial.pldaps.iTrial}.mov==1
-    offsetN=sin(2*pi*p.trial.stimulus.frameI/p.trial.stimulus.movFreq);
-    offsetN=offsetN.*p.trialMem.movAmpN;
-else
-    offsetN=0;
-end
+%negative
+Screen('DrawTexture', p.trial.display.ptr, p.trial.stimulus.negShape,...
+    p.trial.stimulus.stimSrcNeg,p.trial.stimulus.stimDstNeg,p.trial.stimulus.rotNeg);
 
-Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.posCoord+offsetP);
-Screen('FillPoly',p.trial.display.ptr,[1 1 1],p.trial.stimulus.negCoord+offsetN);
 
 %------------------------------------------------------------------%
 %display stats at end of trial
