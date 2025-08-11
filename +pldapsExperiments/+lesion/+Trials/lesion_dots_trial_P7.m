@@ -17,7 +17,7 @@ switch state
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
             Screen(p.trial.display.ptr, 'FillRect', p.trial.display.bgColor);
-        elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
+        elseif p.trial.state==p.trial.stimulus.states.STIMON 
             showStimulus(p); %we adjust duration in this function
             
         end
@@ -36,6 +36,12 @@ function p=checkState(p)
 
 activePort=find(p.trial.ports.status==1);
 
+%remove exit port from trial.port.status list since it is triggered with
+%other ports in too many instances, with the exception of the state we need
+%it in
+if p.trial.state ~= p.trial.stimulus.states.STIMON
+    activePort=activePort(activePort~=p.trial.stimulus.port.EXIT);
+end
 
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
@@ -72,21 +78,27 @@ switch p.trial.state
             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             
             %advance state
-            if p.trial.stimulus.midpointIR %needs to cross midline first to show stimulus
-                p.trial.state=p.trial.stimulus.states.MOVE;
-            else %immediately show stimulus
-                p.trial.state=p.trial.stimulus.states.STIMON;
-            end
+            p.trial.state=p.trial.stimulus.states.MOVE;
         end
 
     case p.trial.stimulus.states.MOVE %wait for ferret to cross midline
         if activePort==p.trial.stimulus.port.MIDDLE
             %advance state
             p.trial.state=p.trial.stimulus.states.STIMON;
+            pds.LED.stimLEDOn(p)
         end
         
-    case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
+    case p.trial.stimulus.states.STIMON
+        if ismember(p.trial.stimulus.port.EXIT, activePort)
+            p.trial.stimulus.timeExitCross = p.trial.ttime;
+            p.trial.stimulus.frameExitCross = p.trial.iFrame;
+            p.trial.state=p.trial.stimulus.states.STIMOFF;
+        end
+
+
+    case p.trial.stimulus.states.STIMOFF %stimulus shown; port selected in response
         %check whether left or right port chosen
+
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
@@ -142,6 +154,7 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
+
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial            
             %check whether any port chosen
             if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
@@ -281,8 +294,13 @@ function p=trialSetup(p)
     p.trial.stimulus.centerX = p.trial.display.pWidth/2;
     p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
     p.trial.stimulus.offsetPx=round(p.trial.stimulus.offset*PixPerDeg);
-    p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
-        p.trial.stimulus.stimSide*p.trial.stimulus.offsetPx;
+    
+    %offsetconv = 25*tan(deg2rad(p.trial.stimulus.offset))*36.6;
+    %p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
+    %    p.trial.stimulus.stimSide*offsetconv;
+
+     p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
+         p.trial.stimulus.stimSide*p.trial.stimulus.offsetPx;
 
         
     %number of dots - density is in dots/deg^2, size in deg

@@ -19,15 +19,16 @@ p.trial.stimulus.duration.ITI = 3; %ITI in s
 side.par='posSide';
 side.match=[0 1];
 
+rotAngles=linspace(0,360,p.defaultParameters.stimulus.Nrot+1);
+rotAngles=rotAngles(1:end-1);
 
-%for i = 1:length(p.defaultParameters.stimulus.shapeNeg)
-for i = 1:length(p.defaultParameters.stimulus.shapePos)
+
+for i = 1:length(p.defaultParameters.stimulus.rotShape)
 
     cond(i).posSide=[0 1];
-    cond(i).mov=p.defaultParameters.stimulus.mov;
-    cond(i).shapeNeg=p.defaultParameters.stimulus.shapeNeg;
-    cond(i).shapePos=p.defaultParameters.stimulus.shapePos(i);
-
+    cond(i).rotType=p.defaultParameters.stimulus.rotShape(i);
+    cond(i).rotPos=rotAngles; %we may not use these based on type, but just generate them
+    cond(i).rotNeg=rotAngles;
 
     c{i}=generateCondList(cond(i),side,'pseudo',500);
 
@@ -45,7 +46,7 @@ end
 
 %% display stats
 %p.trialMem.stats.cond={'posSide','shapeNeg'}; %conditions to display
-p.trialMem.stats.cond={'posSide','shapePos'}; %conditions to display
+p.trialMem.stats.cond={'posSide','rotType'}; %conditions to display
 
 [A,B] = ndgrid([0 1],[1 3]);
 p.trialMem.stats.val = [A(:),B(:)]';
