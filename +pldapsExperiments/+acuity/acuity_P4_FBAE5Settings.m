@@ -1,18 +1,17 @@
-function s = acuity_FBAE3Settings
+function s = acuity_P4_FBAE5Settings
 
 %set reward amounts
-s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
+s.behavior.reward.amount = [0.15 0.25 0.25 0.25];
 
 %set orientation and offsets
-s.stimulus.midpointIR = 0; %use midpoint IR beam to turn off stimulus
-s.stimulus.shift = [0 0];
+s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
 s.stimulus.angle = [0 90];
 
 
 s.stimulus.sf = 0.2;
-s.stimulus.range = {127;[127 100 50 20 6]};
+s.stimulus.range = {127;[127 100 50 20 6]; [127 50 25 15 10 6]};
 s.stimulus.runtype = 'pseudo';
-s.stimulus.fullField = 1;
+s.stimulus.fullField = 0;
 
 
 %set viewing parameters
@@ -24,15 +23,11 @@ s.stimulus.duration.ITI = 2;
 %set up the viewing distance
 s.display.viewdist = 46; 
 
-%2/23/25 - Issue w/ IR ports after IR slot expansion; adding these lines
-%s.datapixx.adc.channels = [2 4 6];
-%s.ports.nports=3;
-
+%camera
 s.camera.use = 0;
 s.camera.trigger.channel = 6;
 
 
-%s.datapixx.adc.channels = [1 3 5];
 
 % 
 % % Debugging settings

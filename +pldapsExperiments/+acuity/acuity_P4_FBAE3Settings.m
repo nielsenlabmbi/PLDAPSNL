@@ -8,7 +8,7 @@ s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
 s.stimulus.angle = [0 90];
 
 
-s.stimulus.sf = 0.2;
+s.stimulus.sf = 0.1;
 s.stimulus.range = {127;[127 100 50 20 6]; [127 50 25 15 10 6]};
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 0;

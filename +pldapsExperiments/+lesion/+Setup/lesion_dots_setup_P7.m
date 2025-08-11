@@ -2,7 +2,7 @@ function p = lesion_dots_setup_P7(p)
 %This phase adjusts the stimulus duration
 
 %% basic definitions
-p = pdsDefaultTrialStructureBL(p); 
+p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
 p.trial.pldaps.trialFunction='pldapsExperiments.lesion.Trials.lesion_dots_trial_P7';

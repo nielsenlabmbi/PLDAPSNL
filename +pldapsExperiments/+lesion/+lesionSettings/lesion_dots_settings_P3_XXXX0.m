@@ -7,7 +7,7 @@ s.stimulus.dotSize = 1.5; %start size (deg)
 s.stimulus.delta_size = .1; %step size for size (up/down key)
 s.stimulus.dotDensity = 0.12; %start density (dots/deg^2)
 s.stimulus.delta_den = .15; %step size for density (left/right key)
-s.display.viewdist = 75; %cm
+s.display.viewdist = 38; %cm
 s.stimulus.duration.ITI = 0.2;
 
 %%%these parameters should not be changed without discussion

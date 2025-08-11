@@ -291,7 +291,7 @@ function p=trialSetup(p)
     p.trial.stimulus.centerX = p.trial.display.pWidth/2;
     p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
     p.trial.stimulus.offsetPx=round(p.trial.stimulus.offset*PixPerDeg);
-    offsetconv = 25*tan(deg2rad(p.trial.stimulus.offset))*36.6;
+    offsetconv = 75*tan(deg2rad(p.trial.stimulus.offset))*36.6;
     p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
         p.trial.stimulus.stimSide*offsetconv;
 
