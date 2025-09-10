@@ -23,7 +23,7 @@ s.stimulus.sizeY=175;
 
 s.stimulus.offStim=1.5;
 s.stimulus.dotSize = .3;% original 1.5
-s.stimulus.dotDensity = 0.003; %dots/deg^2
+s.stimulus.dotDensity = 0.02; %dots/deg^2
 s.stimulus.dotColorR = [1 0 0];
 s.stimulus.dotColorL = [0 0 1];
 s.stimulus.centerX= 990; %pixels
@@ -34,8 +34,10 @@ s.stimulus.runtype = 'pseudo';
 s.stimulus.backgroundDot=0;
 s.stimulus.duration.ITI = 1.5;
 %changed 2 to 1.5 11/12/24
-s.stimulus.disp= 5; 
+s.stimulus.disp= .75; 
 
 %set up the viewing distance
 s.display.viewdist = 75; 
-
+%s.display.colorclamp=0; 
+%s.display.normalizeColor=0; 
+s.display.useOverlay=0;

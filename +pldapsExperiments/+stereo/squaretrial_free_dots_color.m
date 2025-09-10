@@ -292,7 +292,7 @@ p.trial.stimulus.dotSize = p.trialMem.dotSize; %.5;% original 1.5
 p.trial.stimulus.dotDensity =p.trialMem.dotDensity; %0.005; %dots/deg^2
 p.trial.stimulus.backgroundDot=p.trialMem.backgroundDot;
 p.trial.stimulus.dotColorR = [1 0 0];
-p.trial.stimulus.dotColorL= [0 0 1];
+p.trial.stimulus.dotColorL= [0 0 .7];
 p.trial.stimulus.centerX= 990; %pixels
 p.trial.stimulus.centerY= 510; %500 puts in center, 810 is bottom
 %number of dots - density is in dots/deg^2, size in deg
@@ -321,18 +321,18 @@ randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
  if p.trial.stimulus.ori==1
  randpos(1,:)=(randpos(1,:)-0.5)*2000;
  randpos(2,:)=(randpos(2,:)-0.5)*1000;
- randposind=(randpos(1,:)>-.5*p.trial.stimulus.sizeX|randpos(1,:)<.5*p.trial.stimulus.sizeX|...
-     randpos(2,:)>-.5*p.trial.stimulus.sizeY|randpos(2,:)<.5*p.trial.stimulus.sizeY)
+ randposind=(randpos(1,:)>-.5*p.trial.stimulus.sizeX&randpos(1,:)<.5*p.trial.stimulus.sizeX&...
+     randpos(2,:)>-.5*p.trial.stimulus.sizeY&randpos(2,:)<.5*p.trial.stimulus.sizeY);
 
  else
  randpos(1,:)=(randpos(1,:)-0.5)*2000;
  randpos(2,:)=(randpos(2,:)-0.5)*1000;
- randposind=(randpos(2,:)>-.5*p.trial.stimulus.sizeX|randpos(2,:)<.5*p.trial.stimulus.sizeX|...
-     randpos(1,:)>-.5*p.trial.stimulus.sizeY|randpos(1,:)<.5*p.trial.stimulus.sizeY)
+ randposind=(randpos(2,:)>-.5*p.trial.stimulus.sizeX&randpos(2,:)<.5*p.trial.stimulus.sizeX&...
+     randpos(1,:)>-.5*p.trial.stimulus.sizeY&randpos(1,:)<.5*p.trial.stimulus.sizeY);
  end
  randposL=randpos;
  randposR=randpos;
- randposR(randposind)=randpos(randposind)+p.trial.stimulus.dispPix; 
+ randposR(1,randposind)=randpos(1,randposind)+p.trial.stimulus.dispPix; 
  p.trial.stimulus.dotposL =randposL;
  p.trial.stimulus.dotposR=randposR;
 

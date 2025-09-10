@@ -12,7 +12,7 @@ s.stimulus.delta_cohL =  0.2; %coherence staircase step L
 s.stimulus.stairR=0; %staircase state R 
 s.stimulus.dotCoherenceR =  1; %start level R
 s.stimulus.delta_cohR =  0.2; %coherence staircase step R
-s.display.viewdist = 75; %cm
+s.display.viewdist = 38; %cm
 s.stimulus.duration.ITI = 0.2;
 
 
@@ -22,7 +22,7 @@ s.stimulus.dotDensity = 0.75; %dots/deg^2
 s.stimulus.dotCohDefaultL=1; %level if there is no staircase
 s.stimulus.dotCohDefaultR=1; %level if there is no staircase
 s.stimulus.dotColor = 0;
-s.stimulus.dotSpeed = 48; %deg/sec
+s.stimulus.dotSpeed = 56; %deg/sec
 s.stimulus.dotLifetime = 25; %ms, 
 s.stimulus.direction = [0 180];
 s.stimulus.frameRate = 120;

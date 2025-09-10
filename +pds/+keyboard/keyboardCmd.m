@@ -37,14 +37,29 @@ if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Rarrow) %right arrow = us
     disp('right key')
 end
 
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Uarrow) %right arrow = user 2
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Uarrow) %up arrow = user 3
     p.trial.userInput=3;
     disp('up key')
 end
 
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Darrow) %right arrow = user 2
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.Darrow) %down arrow = user 4
     p.trial.userInput=4;
     disp('down key')
+end
+
+%edit 8/28/25 added N and M and O key for non-match, match, and all conditions
+%for lesion experiments
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.mKey) %right arrow = user 5
+    p.trial.userInput=5;
+    disp('M key')
+end
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.nKey) %right arrow = user 6
+    p.trial.userInput=6;
+    disp('N key')
+end
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.oKey) %right arrow = user 7
+    p.trial.userInput=7;
+    disp('O key')
 end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.spaceKey) %change trials list

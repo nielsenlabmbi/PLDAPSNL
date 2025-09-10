@@ -216,6 +216,12 @@ function p=trialSetup(p)
         p.trialMem.offset=p.trial.stimulus.offset;
     end
 
+    if ~isfield(p.trialMem,'matchType')
+        p.trialMem.matchType=p.trial.stimulus.matchType;
+    end
+
+
+
     % set up stimulus    
     DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
     PixPerDeg = 1/DegPerPix;
@@ -225,9 +231,45 @@ function p=trialSetup(p)
     p.trial.stimulus.pWidth=round(p.trial.stimulus.width*PixPerDeg);
     p.trial.stimulus.pHeight=p.trial.stimulus.pWidth;
 
+    %direction %8/28/25 moved stimulus direction up before stimulus center
+    %as well as moved stimSide up before matchType loop
+    %MAYBE I DON'T NEED THIS IF INSDE OF SWITCH CASE 0
+    p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+    p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
+    %disp(p.trial.stimulus.direction)
+    %disp(p.trialMem.matchType)
+    switch p.trialMem.matchType
+        case 1
+            if p.trial.stimulus.direction == 0
+                p.trial.stimulus.stimSide = 1;
+%                 disp(p.trial.stimulus.stimSide)
+%                 disp(p.trial.stimulus.direction)
+%                 disp('\n')
+            elseif p.trial.stimulus.direction == 180
+                p.trial.stimulus.stimSide = -1;
+%                 disp(p.trial.stimulus.stimSide)
+%                 disp(p.trial.stimulus.direction)
+%                 disp('\n')
+            end
+        case 2
+            if p.trial.stimulus.direction == 0
+                p.trial.stimulus.stimSide = -1;
+%                 disp(p.trial.stimulus.stimSide)
+%                 disp(p.trial.stimulus.direction)
+%                 disp('\n')
+            elseif p.trial.stimulus.direction == 180
+                p.trial.stimulus.stimSide = 1;
+%                 disp(p.trial.stimulus.stimSide)
+%                 disp(p.trial.stimulus.direction)
+%                 disp('\n')
+            end
+    end
+
     %stimulus center
     p.trial.stimulus.centerX = p.trial.display.pWidth/2;
-    p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
+                                                        %moved stimSide
+                                                        %initiation higher
+                                                        %up
     p.trial.stimulus.offsetPx=round(p.trialMem.offset*PixPerDeg);
     p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
         p.trial.stimulus.stimSide*p.trial.stimulus.offsetPx;
@@ -247,7 +289,7 @@ function p=trialSetup(p)
     p.trial.stimulus.dotLifeFr = round(p.trial.stimulus.dotLifetime*p.trial.stimulus.frameRate/1000);
        
     %direction
-    p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+    %p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
     
 
     %initialize frame
@@ -289,6 +331,8 @@ function p=trialSetup(p)
     if p.trial.camera.use
         pds.behavcam.startcam(p);
     end
+
+    
 
 %------------------------------------------------------------------%
 %% show stimulus 
@@ -376,6 +420,15 @@ function cleanUpandSave(p)
         case 2 %right key
             p.trialMem.offset=p.trialMem.offset - (p.trial.stimulus.delta_offset);
             disp(['Offset decreased to ' num2str(p.trialMem.offset)])
+        case 5 %M key
+            p.trialMem.matchType = 2;
+            disp('Matching Response Condition if [Bad% Good%][Good% Bad%]')
+        case 6 %N key
+            p.trialMem.matchType = 1;
+            disp('Non-Matching Response Condition if [Good% Bad%][Bad% Good%]')
+        case 7 %O key
+            p.trialMem.matchType = 0;
+            disp('A return to all 4 Response Conditions')
     end
 
 %% Helper functions
