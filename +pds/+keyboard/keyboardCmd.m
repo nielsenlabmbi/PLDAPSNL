@@ -63,10 +63,13 @@ if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.oKey) %right arrow = user
 end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.spaceKey) %change trials list
-    p.trialMem.whichConditions = mod(p.trialMem.whichConditions+1,length(p.trial.allconditions));
-    p.conditions = p.trial.allconditions{p.trialMem.whichConditions + 1};
-    disp(['Switched to trials list:' num2str(p.trialMem.whichConditions) ]);
+    pds.behavior.updateTrialList(p); %keeping it minimal here; counters etc happen in trial file
     p.trial.userInput= -1;
+
+    % p.trialMem.whichConditions = mod(p.trialMem.whichConditions+1,length(p.trial.allconditions));
+    % p.conditions = p.trial.allconditions{p.trialMem.whichConditions + 1};
+    % disp(['Switched to trials list:' num2str(p.trialMem.whichConditions) ]);
+    % 
 end
 
 %%%%%change reward amounts
