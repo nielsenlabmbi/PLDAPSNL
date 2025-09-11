@@ -1,4 +1,4 @@
-function c=generateCondList_Gellerm(Ncond)%
+function c=generateCondList_Gellerm(Ncond)
 
 % use Gellermann sequences to generate L/R sequences; only produce list of
 % condition indices, mapping onto stimulus configuration is then handled in
