@@ -356,13 +356,14 @@ function cleanUpandSave(p)
     
     %switch trial list - reset condition counter
     if p.trial.userInput==-1
-        pds.behavior.resetCondCounter(p,p.trial.stimulus.cond.counterNames);
+        disp(p.trialMem.whichConditions)
+        pds.behavior.resetCondCounter(p,p.trial.stimulus.cond.counterNames,p.trialMem.whichConditions+1);
     end
 
     %show stats
     pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1); %updates counters
     pds.behavior.printCounter(p.trialMem.stats.sideCounter,p.trialMem.stats.sideCounterNames)
-    pds.behavior.printCounter(p.trialMem.stats.condCounter,p.trial.stimulus.cond.counterNames)
+    pds.behavior.printCounter(p.trialMem.stats.condCounter,p.trialMem.stats.condCounterNames)
 
 
 %% Helper functions

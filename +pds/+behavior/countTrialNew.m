@@ -24,7 +24,7 @@ end
 
 %increment condition counters
 if countCond==1
-    if nargin==2 %no varargin
+    if nargin==3 %no varargin
         condIdx=currCond.condIdx;
     else
         condIdx=varargin{1};

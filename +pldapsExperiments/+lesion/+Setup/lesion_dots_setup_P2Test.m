@@ -5,7 +5,7 @@ function p = lesion_dots_setup_P2Test(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.lesion.Trials.lesion_dots_trial_P2';
+p.trial.pldaps.trialFunction='pldapsExperiments.lesion.Trials.lesion_dots_trial_P2Test';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;
@@ -34,7 +34,7 @@ p.trial.pldaps.finish = length(p.conditions);
 pds.behavior.resetSideCounter(p);
 
 %condition counter
-pds.behavior.resetCondCounter(p,p.trial.stimulus.cond.counterNames);
+pds.behavior.resetCondCounter(p,p.trial.stimulus.cond.counterNames,1);
 
 %percent correct for left right
 %p.trialMem.stats.cond={'direction'}; %condition to display
