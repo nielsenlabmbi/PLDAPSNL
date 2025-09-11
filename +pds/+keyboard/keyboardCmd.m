@@ -57,9 +57,9 @@ if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.nKey) %right arrow = user
     p.trial.userInput=6;
     disp('N key')
 end
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.oKey) %right arrow = user 7
+if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.rKey)  %r = user 7
     p.trial.userInput=7;
-    disp('O key')
+    disp('R key')
 end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.spaceKey) %change trials list
