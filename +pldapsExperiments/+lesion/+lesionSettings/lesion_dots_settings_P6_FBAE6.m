@@ -1,17 +1,10 @@
-function s = lesion_dots_settings_P7_FBAE7
-%measure psychometric functions for both sides using staircase
-%left arrpw turns left staircase on/off
-%right arrow turns right staircase on/off
+function s = lesion_dots_settings_P6_FBAE6
+%This phase adjusts the stimulus duration
 
 %%%these parameters can get changed
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
-s.stimulus.durStim = 0.5; %ferret specific stimulus duration (sec)
-s.stimulus.stairL=0; %staircase state L (off initially)
-s.stimulus.dotCoherenceL =  1; %start level L
-s.stimulus.delta_cohL =  0.2; %coherence staircase step L
-s.stimulus.stairR=0; %staircase state R 
-s.stimulus.dotCoherenceR =  1; %start level R
-s.stimulus.delta_cohR =  0.2; %coherence staircase step R
+s.stimulus.durStim = 2; %start stimulus duration (sec)
+s.stimulus.delta_durStim = 0.1; %step size stimulus duration (sec)
 s.display.viewdist = 38; %cm
 s.stimulus.duration.ITI = 0.2;
 
@@ -19,9 +12,8 @@ s.stimulus.duration.ITI = 0.2;
 %%%these parameters should not be changed without discussion
 s.stimulus.dotSize=0.7; %deg
 s.stimulus.dotDensity = 0.75; %dots/deg^2
-s.stimulus.dotCohDefaultL=1; %level if there is no staircase
-s.stimulus.dotCohDefaultR=1; %level if there is no staircase
 s.stimulus.dotColor = 0;
+s.stimulus.dotCoherence =  1; 
 s.stimulus.dotSpeed = 48; %deg/sec
 s.stimulus.dotLifetime = 25; %ms, 
 s.stimulus.direction = [0 180];
@@ -36,4 +28,5 @@ s.datapixx.adc.channels = [2 4 6 8 10];
 s.ports.nPorts=5;
 s.ports.adc.portThreshold = [2 2 2 2 0.1]';
 s.ports.adc.portPol = [1 1 1 1 -1]';
+
 
