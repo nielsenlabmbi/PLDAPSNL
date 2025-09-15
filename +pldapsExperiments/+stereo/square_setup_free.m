@@ -5,7 +5,7 @@ function p=square_setup_free(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.stereo.squaretrial_free_dots';
+p.trial.pldaps.trialFunction='pldapsExperiments.stereo.squaretrial_free_dots_color';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;

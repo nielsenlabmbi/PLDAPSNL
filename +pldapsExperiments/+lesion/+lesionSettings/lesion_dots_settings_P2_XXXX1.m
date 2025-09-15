@@ -19,6 +19,7 @@ s.stimulus.frameRate = 120;
 s.display.bgColor = [.5 .5 .5]; 
 s.stimulus.durStim = 30; %sec
 
+%s.stimulus.cond.Ncond=2;
 s.stimulus.cond.Ncond=[2 2];
 %s.stimulus.cond.counterIdx=[1 2]; %index into the counter, one per condition; alternatively 
 s.stimulus.cond.counterIdx={[1 2];[1 2]};

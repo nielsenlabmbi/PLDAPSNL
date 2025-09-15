@@ -89,6 +89,7 @@ switch p.trial.state
         if activePort==p.trial.stimulus.port.MIDDLE
             %advance state
             p.trial.state=p.trial.stimulus.states.STIMON;
+            pds.LED.stimLEDOn(p);
         end
         
     case p.trial.stimulus.states.STIMON
@@ -96,6 +97,7 @@ switch p.trial.state
             p.trial.stimulus.timeExitCross = p.trial.ttime;
             p.trial.stimulus.frameExitCross = p.trial.iFrame;
             p.trial.state=p.trial.stimulus.states.STIMOFF;
+            pds.LED.stimLEDOff(p);
         end
 
     case p.trial.stimulus.states.STIMOFF %stimulus shown; port selected in response
