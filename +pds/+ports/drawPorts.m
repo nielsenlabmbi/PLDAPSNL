@@ -8,6 +8,7 @@ function drawPorts(portWindow,portPos,portStatus,lowColor,highColor)
 
 idx=find(portStatus==0);
 if ~isempty(idx)
+    %drawdots draws squares by default
     Screen('Drawdots',portWindow,portPos(:,idx),20,lowColor);
 end
 

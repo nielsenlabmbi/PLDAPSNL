@@ -14,4 +14,7 @@ if p.trial.ephys.use
     %start recording
     fwrite(p.trial.ephys.msg,'record');
     
+    %set trigger status to 0
+    p.trial.ephys.trigger.state=0;
+
 end
