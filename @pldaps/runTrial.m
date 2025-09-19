@@ -6,6 +6,7 @@ function p = runTrial(p)
 % 03/2014 jk    Used jly's code to get the PLDAPS structure and frame it into a class
 %               might change to ASYNC buffer flipping. but won't for now.
 
+
     %the trialFunctionHandle
     tfh=str2func(p.trial.pldaps.trialFunction);
     
@@ -43,8 +44,9 @@ function p = runTrial(p)
     p.trial.pldaps.trialStates.frameFlip=8;
     
     p.trial.currentFrameState=1;    
-    
+
     tfh(p, p.trial.pldaps.trialStates.trialSetup);
+
     
 %     timeNeeded(p.trial.pldaps.trialStates.frameUpdate)=0.5;
 %     timeNeeded(p.trial.pldaps.trialStates.framePrepareDrawing)=2;

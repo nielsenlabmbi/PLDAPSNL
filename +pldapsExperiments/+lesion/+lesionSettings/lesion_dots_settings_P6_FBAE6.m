@@ -30,3 +30,9 @@ s.ports.adc.portThreshold = [2 2 2 2 0.1]';
 s.ports.adc.portPol = [1 1 1 1 -1]';
 
 
+s.datapixx.adc.channels = [2 4 6 8 10];
+s.ports.nPorts=5;
+s.ports.adc.portThreshold = [2 2 2 0.1 2]';
+s.ports.adc.portPol = [1 1 1 -1 1]';
+
+

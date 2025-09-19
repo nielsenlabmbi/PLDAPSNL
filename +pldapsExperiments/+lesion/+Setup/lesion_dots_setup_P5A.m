@@ -15,13 +15,13 @@ p.trial.stimulus.forceCorrect = 1;
 
 %iterate over trials lists accesible with space bar (each has an entry in
 %Ncond)
-c=generateCondList_Gellerm(p.trial.stimulus.cond.Ncond);
+c{1}=generateCondList_Gellerm(p.trial.stimulus.cond.Ncond);
 
 
 %build complete set
 p.trial.allconditions = c;
 p.trialMem.whichConditions = 0; %index into trialslist; 0 is easier for mod
-p.conditions=p.trial.allconditions; %set to first trials list
+p.conditions=p.trial.allconditions{1}; %set to first trials list
 
 
 p.trial.pldaps.finish = length(p.conditions);
