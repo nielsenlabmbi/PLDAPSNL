@@ -41,11 +41,13 @@ switch p.trial.state
 
     %baseline period without spout in place
     case p.trial.stimulus.states.BASELINE
-        if p.trial.ephys.trigger.state==0 %this is set in setupIntan
-            % send trigger, note time
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
-            p.trial.trialStartTrigger = p.trial.ttime;
-            p.trial.ephys.trigger.state = p.trial.trigger.states.TRIALSTART;
+        if p.trial.ephys.use==1
+                if p.trial.ephys.trigger.state==0 %this is set in setupIntan
+                % send trigger, note time
+                p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,1); %for intan
+                p.trial.trialStartTrigger = p.trial.ttime;
+                p.trial.ephys.trigger.state = p.trial.trigger.states.TRIALSTART;
+                end
         end
         if p.trial.ttime > p.trial.stimulus.baseline
             %advance state
@@ -60,11 +62,13 @@ switch p.trial.state
     case p.trial.stimulus.states.STIMON %stimulus shown; port selected in response
 
          % trigger
-        if p.trial.ephys.trigger.state ~= p.trial.trigger.states.STIMON
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1);
-            p.trial.triggerState = p.trial.trigger.states.STIMON;
-            p.trial.stimOnTrigger = p.trial.ttime;
-        end
+         if p.trial.ephys.use==1
+             if p.trial.ephys.trigger.state ~= p.trial.trigger.states.STIMON
+                 p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,1);
+                 p.trial.triggerState = p.trial.trigger.states.STIMON;
+                 p.trial.stimOnTrigger = p.trial.ttime;
+             end
+         end
 
         %advance state
         if p.trial.ttime > p.trial.stimulus.timeStimOn+p.trial.stimulus.durStim
@@ -83,15 +87,17 @@ switch p.trial.state
         end
 
         % trigger
-        if p.trial.ephys.trigger.state ~= p.trial.trigger.states.SPOUTS
-            %turn stim trigger off
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0);
-            p.trial.stimOffTrigger = p.trial.ttime;
-            p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,1);
-            p.trial.startSpoutTrigger = p.trial.ttime;
-            p.trial.ephys.trigger.state = p.trial.trigger.states.SPOUTS;
+        if p.trial.ephys.use==1
+            if p.trial.ephys.trigger.state ~= p.trial.trigger.states.SPOUTS
+                %turn stim trigger off
+                p = pds.intan.send_intan(p,p.trial.ephys.trigger.stimon,0);
+                p.trial.stimOffTrigger = p.trial.ttime;
+                p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,1);
+                p.trial.startSpoutTrigger = p.trial.ttime;
+                p.trial.ephys.trigger.state = p.trial.trigger.states.SPOUTS;
+            end
         end
-        
+
         if activePort==p.trial.stimulus.port.START %middle port activated
             
             %note timepoint
@@ -110,13 +116,14 @@ switch p.trial.state
 
         %contacted spout, deliver reward (this will keep delivering for a
         %certain amount of time
-        if p.trial.ttime < p.trial.stimulus.timeStartResp + 0.5 & activePort==p.trial.stimulus.port.START %middle port activated
+        if p.trial.ttime < p.trial.stimulus.timeStartResp + p.trial.stimulus.durReward & ...
+                activePort==p.trial.stimulus.port.START %middle port activated
             amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
 
         end
 
-        if p.trial.ttime > p.trial.stimulus.timeStartResp + 0.5
+        if p.trial.ttime > p.trial.stimulus.timeStartResp + p.trial.stimulus.durReward
             if p.trial.ports.position(p.trial.stimulus.side.MIDDLE)==1
                 pds.ports.movePort(p.trial.stimulus.side.MIDDLE,0,p);
             end
@@ -129,12 +136,14 @@ switch p.trial.state
   
     case p.trial.stimulus.states.FINALRESP
         %wait for ITI
-        if p.trial.ttime > p.trial.stimulus.timeTrialFinalResp + p.trial.stimulus.duration.ITI 
+        if p.trial.ttime > p.trial.stimulus.timeFinalResp + p.trial.stimulus.duration.ITI 
             %trial done
-            if p.trial.ephys.trigger.state ~= p.trial.trigger.states.TRIALCOMPLETE
-                p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,0);
-                p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,0);
-                p.trial.ephys.trigger.state = p.trial.trigger.states.TRIALCOMPLETE;
+            if p.trial.ephys.use==1
+                if p.trial.ephys.trigger.state ~= p.trial.trigger.states.TRIALCOMPLETE
+                    p = pds.intan.send_intan(p,p.trial.ephys.trigger.spouts,0);
+                    p = pds.intan.send_intan(p,p.trial.ephys.trigger.trialstart,0);
+                    p.trial.ephys.trigger.state = p.trial.trigger.states.TRIALCOMPLETE;
+                end
             end
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.flagNextTrial = true;

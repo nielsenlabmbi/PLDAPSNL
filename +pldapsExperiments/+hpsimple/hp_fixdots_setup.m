@@ -9,7 +9,6 @@ p.trial.pldaps.trialFunction='pldapsExperiments.hpsimple.hp_fixdots_trial';
 
 %% set general parameters
 
-
 %% conditions 
 %we will use the usual Gellerman code here simply to run the randomization
 %and generate a correctly formatted conditions structure; the side
@@ -18,7 +17,6 @@ p.trial.pldaps.trialFunction='pldapsExperiments.hpsimple.hp_fixdots_trial';
 %iterate over trials lists accesible with space bar (each has an entry in
 %Ncond)
 c{1}=generateCondList_Gellerm(p.trial.stimulus.cond.Ncond);
-
 
 %build complete set
 p.trial.allconditions = c;
