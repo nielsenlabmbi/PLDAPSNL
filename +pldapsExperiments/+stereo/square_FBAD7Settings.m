@@ -20,8 +20,8 @@ s.stimulus.sizeY=175;
 %very small
 % s.stimulus.sizeX=100;
 % s.stimulus.sizeY=50;
-%s.stimulus.dotColor=[1 0 0]; %red
-s.stimulus.dotColor=[0 0 1]; %blue
+s.stimulus.dotColor=[1 0 0]; %red
+%s.stimulus.dotColor=[0 0 1]; %blue
 % s.stimulus.dotColor=[0]; %black 
 s.stimulus.offStim=1.5;
 s.stimulus.dotSize = .3;% original 1.5

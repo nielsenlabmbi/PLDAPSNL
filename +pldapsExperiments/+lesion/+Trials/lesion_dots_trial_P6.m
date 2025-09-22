@@ -88,6 +88,8 @@ switch p.trial.state
     case p.trial.stimulus.states.MOVE %wait for ferret to cross midline
         if activePort==p.trial.stimulus.port.MIDDLE
             %advance state
+            p.trial.stimulus.timeTrialMidResp = p.trial.ttime;
+            p.trial.stimulus.frameTrialMidResp = p.trial.iFrame;
             p.trial.state=p.trial.stimulus.states.STIMON;
             pds.LED.stimLEDOn(p);
         end
