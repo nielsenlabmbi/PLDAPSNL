@@ -27,7 +27,11 @@ end
 
 %transform data:
 bufferData=diag(p.trial.datapixx.adc.channelGains)*(bufferData+diag(p.trial.datapixx.adc.channelOffsets)*ones(size(bufferData)));
-
+%disp(size(bufferData))
+%hack for noisy 5th port, to be deleted eventually
+%if length(p.trial.ports.adc.portPol)==5
+%    bufferData(5,:)=movmean(bufferData(5,:),5);
+%end
 
 starti=p.trial.datapixx.adc.dataSampleCount+1;
 endi=p.trial.datapixx.adc.dataSampleCount+adcStatus.newBufferFrames;
@@ -51,10 +55,10 @@ for imap=1:nMaps
             if p.trial.ports.adc.portAvg==0
                 tmpData=bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},end);
             else
-                nAvg=max(p.trial.ports.adc.portAvg,size(bufferData,2));
-                tmpData=bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},end-nAvg+1:end);
+            %    nAvg=max(p.trial.ports.adc.portAvg,size(bufferData,2));
+                tmpData=mean(bufferData(p.trial.datapixx.adc.channelMappingChannelInds{imap},:),2);
             end
-            %disp(size(tmpData))
+            
             tmpData=tmpData.*p.trial.ports.adc.portPol;
             p.trial.ports.status = (tmpData < p.trial.ports.adc.portThreshold);
         end

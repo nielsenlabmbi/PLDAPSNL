@@ -1,4 +1,4 @@
-function lesion_dots_trial_P6(p,state)
+function lesion_dots_trial_P6A(p,state)
 %This phase adjusts the stimulus duration
 
 %use normal functionality in states
@@ -226,12 +226,12 @@ function p=trialSetup(p)
             p.trial.side=p.trial.stimulus.side.MIDDLE;
     end
     
-    if ~isfield(p.trialMem,'correct')
-        p.trialMem.correct = 0;
+    if ~isfield(p.trialMem,'condIdx')
+        p.trialMem.condIdx=1;
     end
 
-    if ~isfield(p.trialMem,'durStim')
-        p.trialMem.durStim=p.trial.stimulus.durStim;
+    if ~isfield(p.trialMem,'matchType')
+        p.trialMem.matchType=p.trial.stimulus.iniMatchType;
     end
 
     % set up stimulus    
@@ -243,12 +243,48 @@ function p=trialSetup(p)
     p.trial.stimulus.pWidth=round(p.trial.stimulus.width*PixPerDeg);
     p.trial.stimulus.pHeight=p.trial.stimulus.pWidth;
 
+    %determine direction and side; we'll keep direction and adjust side as
+    %needed for match condition
+    %direction is tethered to response side, using that to make code
+    %simpler
+
+    sideResp=p.conditions{p.trial.pldaps.iTrial}.side;
+    p.trial.stimulus.dir = p.trial.stimulus.direction(sideResp);
+
+    %figure out side based on match type
+    switch p.trialMem.matchType
+        case 0 %full cross
+            
+            p.trialMem.condIdx=p.conditions{p.trial.pldaps.iTrial}.condIdx; %we need this for counting
+            sideIdx = mod(p.trialMem.condIdx-1,2)+1; %cond 1, 3 = L = side 1, cond 2, 4 = R = side 2
+            p.trial.stimulus.sSide = p.trial.stimulus.stimSide(sideIdx);
+             
+        case 1 % either 0 & R, or 180 & L
+            if p.trial.stimulus.dir == 0
+                p.trial.stimulus.sSide = 1;
+                %overwrite condition idx to end up in the correct counter
+                %bin
+                p.trialMem.condIdx=2;
+            elseif p.trial.stimulus.dir == 180
+                p.trial.stimulus.sSide = -1;
+                p.trialMem.condIdx=3;
+            end
+        case 2 % either 0 & L, or 180 & R
+            if p.trial.stimulus.dir == 0
+                p.trial.stimulus.sSide = -1;
+                p.trialMem.condIdx=1;
+            elseif p.trial.stimulus.dir == 180
+                p.trial.stimulus.sSide = 1;
+                p.trialMem.condIdx=4;
+            end
+    end
+
     %stimulus center
     p.trial.stimulus.centerX = p.trial.display.pWidth/2;
-    p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
     p.trial.stimulus.offsetPx=round(p.trial.stimulus.offset*PixPerDeg);
     p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
-        p.trial.stimulus.stimSide*p.trial.stimulus.offsetPx;
+        p.trial.stimulus.sSide*p.trial.stimulus.offsetPx;
+
 
         
     %number of dots - density is in dots/deg^2, size in deg
@@ -263,10 +299,7 @@ function p=trialSetup(p)
     
     %dot lifetime in frames (lifetime is in ms)
     p.trial.stimulus.dotLifeFr = round(p.trial.stimulus.dotLifetime*p.trial.stimulus.frameRate/1000);
-       
-    %direction
-    p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
-    
+           
 
     %initialize frame
     p.trial.stimulus.frameI = 0;
