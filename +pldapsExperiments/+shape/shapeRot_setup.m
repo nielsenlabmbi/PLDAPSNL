@@ -11,7 +11,7 @@ p.trial.pldaps.trialFunction='pldapsExperiments.shape.shapeRot_trial';
 p.trial.stimulus.forceCorrect = 1;
 
 %% set timing parameters
-p.trial.stimulus.duration.ITI = 3; %ITI in s
+p.trial.stimulus.duration.ITI = 2; %ITI in s
 
 
 %% conditions:
@@ -30,7 +30,7 @@ for i = 1:length(p.defaultParameters.stimulus.rotShape)
     cond(i).rotPos=rotAngles; %we may not use these based on type, but just generate them
     cond(i).rotNeg=rotAngles;
 
-    c{i}=generateCondList(cond(i),side,'pseudo',500);
+    c{i}=generateCondList(cond(i),side,'pseudo',2);
 
     p.trial.allconditions = c;
     p.trialMem.whichConditions = 0;

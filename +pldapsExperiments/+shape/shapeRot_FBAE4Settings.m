@@ -16,10 +16,13 @@ s.stimulus.filetype='png';
 s.display.bgColor = [0 0 0];
 s.stimulus.rotShape=[0 1 2 3];%rotate none, positive, negative, or both shapes
 s.stimulus.Nrot=8;
+s.stimulus.shapeOffset=600;
+%s.stimulus.duration.ITI = 0.2;
+
 
 %ignore midpoint IR port
-s.datapixx.adc.channels = [2 4 6];
-s.ports.nports=3;
+%s.datapixx.adc.channels = [2 4 6];
+%s.ports.nports=3;
 
 % 
 % % Debugging settings

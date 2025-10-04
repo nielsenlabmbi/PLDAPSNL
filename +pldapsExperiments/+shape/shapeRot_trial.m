@@ -1,4 +1,4 @@
-function shapeRot_trial(p,state)
+ function shapeRot_trial(p,state)
 %%%Doty et al shape discrimination - one positive, one negative shape 
 
 %use normal functionality in states
@@ -188,23 +188,30 @@ end
 centerPosX=p.trial.display.pWidth/2;
 centerPosY=800;
 
-%read images
-%positive shape
-imgPos=imread(fullfile(p.trial.stimulus.imgBase,[p.trial.stimulus.posImg p.trial.stimulus.filetype]));
-imgPos=double(imgPos);
-imgPos=imgPos./255;
-p.trial.stimulus.posShape = Screen(screenPTR, 'MakeTexture', imgout);
+%read images - only do this on the first trial
+if ~isfield(p.trialMem,'posImg')
+    %positive shape
+    imgPos=imread(fullfile(p.trial.stimulus.imgBase,...
+        [p.trial.stimulus.posImg '.' p.trial.stimulus.filetype]));
+    imgPos=double(squeeze(imgPos(:,:,1)));
+    %imgPos=imgPos./255;
+    p.trialMem.posImgSize=size(imgPos);
+    p.trialMem.posImg = Screen(p.trial.display.ptr, 'MakeTexture', imgPos);
+end
 
-%negative shape
-imgNeg=imread(fullfile(p.trial.stimulus.imgBase,[p.trial.stimulus.negImg p.trial.stimulus.filetype]));
-imgNeg=double(imgNeg);
-imgNeg=imgNeg./255;
-p.trial.stimulus.negShape = Screen(screenPTR, 'MakeTexture', imgout);
-
+if ~isfield(p.trialMem,'negImg')
+    %negative shape
+    imgNeg=imread(fullfile(p.trial.stimulus.imgBase,...
+        [p.trial.stimulus.negImg '.' p.trial.stimulus.filetype]));
+    imgNeg=double(squeeze(imgNeg(:,:,1)));
+    %imgNeg=imgNeg./255;
+    p.trialMem.negImgSize=size(imgNeg);
+    p.trialMem.negImg = Screen(p.trial.display.ptr, 'MakeTexture', imgNeg);
+end
 
 
 %determine plotting positions
-stimDstT = [0 0 size(imgPos,2)-1 size(imgPos,1)-1];
+stimDstT = [0 0 p.trialMem.posImgSize(2)-1 p.trialMem.posImgSize(1)-1];
 p.trial.stimulus.stimSrcPos=stimDstT;
 if p.trial.side==p.trial.stimulus.side.LEFT
     p.trial.stimulus.stimDstPos=CenterRectOnPoint(stimDstT,centerPosX-p.trial.stimulus.shapeOffset,centerPosY);
@@ -212,7 +219,7 @@ else
     p.trial.stimulus.stimDstPos=CenterRectOnPoint(stimDstT,centerPosX+p.trial.stimulus.shapeOffset,centerPosY);
 end
 
-stimDstT = [0 0 size(imgNeg,2)-1 size(imgNeg,1)-1];
+stimDstT = [0 0 p.trialMem.negImgSize(2)-1 p.trialMem.negImgSize(1)-1];
 p.trial.stimulus.stimSrcNeg=stimDstT;
 if p.trial.side==p.trial.stimulus.side.LEFT
     p.trial.stimulus.stimDstNeg=CenterRectOnPoint(stimDstT,centerPosX+p.trial.stimulus.shapeOffset,centerPosY);
@@ -246,12 +253,12 @@ p.trial.state=p.trial.stimulus.states.START;
 function showStimulus(p)
 
 %positive
-Screen('DrawTexture', p.trial.display.ptr, p.trial.stimulus.posShape,...
+Screen('DrawTexture', p.trial.display.ptr, p.trialMem.posImg,...
     p.trial.stimulus.stimSrcPos,p.trial.stimulus.stimDstPos,p.trial.stimulus.rotPos);
 
 
 %negative
-Screen('DrawTexture', p.trial.display.ptr, p.trial.stimulus.negShape,...
+Screen('DrawTexture', p.trial.display.ptr, p.trialMem.negImg,...
     p.trial.stimulus.stimSrcNeg,p.trial.stimulus.stimDstNeg,p.trial.stimulus.rotNeg);
 
 
