@@ -222,11 +222,12 @@ if ~isfield(p.trialMem,'stair')
     p.trialMem.stair = p.trial.stimulus.stair;
 end
 
-%coherence values - only happens at start of script
+%contrast values - only happens at start of script
 if ~isfield(p.trialMem,'contrast')
     p.trialMem.contrast = p.trial.stimulus.contrastDefault;
 end
 
+p.trial.stimulus.range = p.trialMem.contrast;
 %execute staircase based on stimulus side
 %staircase left
 if p.trialMem.stair==0 %staircase off; default value
@@ -241,6 +242,7 @@ else
     end
 end
 p.trial.stimulus.range = p.trialMem.contrast;
+
 
 
 p.trial.stimulus.sf = p.trial.stimulus.sf;
@@ -332,7 +334,7 @@ if p.trialMem.stair == 1
     if p.trial.pldaps.goodtrial & p.trialMem.correct == 2 %decrease coherence after 2 correct trials
         p.trialMem.contrast = p.trialMem.contrast - p.trial.stimulus.delta_contrast;
         if p.trialMem.contrast<0
-            p.trialMem.contrast=0;
+            p.trialMem.contrast=7;
         end
         p.trialMem.correct = 0; %reset counter
     elseif ~p.trial.pldaps.goodtrial %immediately increase after incorrect trial

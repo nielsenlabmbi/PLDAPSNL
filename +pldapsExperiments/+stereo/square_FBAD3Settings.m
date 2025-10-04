@@ -15,7 +15,7 @@ s.stimulus.angle = [0 1];
 
 %Large but no longer touching screen edges
 s.stimulus.sizeX=800;
-s.stimulus.sizeY=175;
+s.stimulus.sizeY=200;
 
 %very small
 % s.stimulus.sizeX=100;

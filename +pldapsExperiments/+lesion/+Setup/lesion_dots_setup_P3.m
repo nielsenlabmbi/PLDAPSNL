@@ -3,7 +3,7 @@ function p = lesion_dots_setup_P3(p)
 %use left/right keys to toggle size, up/down to toggle density
 
 %% basic definitions
-p = pdsDefaultTrialStructureBL(p); 
+p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
 p.trial.pldaps.trialFunction='pldapsExperiments.lesion.Trials.lesion_dots_trial_P3';

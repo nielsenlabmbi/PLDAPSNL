@@ -10,7 +10,10 @@ s.stimulus.angle = [0 1];
 
 
 %Full Size
-s.stimulus.sizeX=1900;
+% s.stimulus.sizeX=1900;
+% s.stimulus.sizeY=200;
+%Large but no longer touching screen edges
+s.stimulus.sizeX=800;
 s.stimulus.sizeY=200;
 
 %Large but no longer touching screen edges
