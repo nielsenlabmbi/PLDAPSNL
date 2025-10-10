@@ -110,7 +110,7 @@ s.  datapixx.   dio.    useForReward = 0;
 
 %s. ephys.      
  s. ephys.       use = 0;
- s. ephys.       IP = '172.30.11.145';
+ s. ephys.       IP = '172.30.11.130';
  s. ephys.       role = 'client';
  s. ephys.       localPort = 1234;
  s. ephys.       tcpRemotePort = 1234;
