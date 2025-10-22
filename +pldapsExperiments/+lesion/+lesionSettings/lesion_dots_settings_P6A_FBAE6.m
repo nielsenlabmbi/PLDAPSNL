@@ -26,8 +26,8 @@ s.stimulus.durStim = 20; %start stimulus duration (sec)
 
 s.datapixx.adc.channels = [2 4 6 8 10];
 s.ports.nPorts=5;
-s.ports.adc.portThreshold = [2 2 2 2 0.05]';
-s.ports.adc.portPol = [1 1 1 1 -1]';
+s.ports.adc.portThreshold = [2 2 2 -2 2]';
+s.ports.adc.portPol = [1 1 1 -1 1]';
 s.ports.adc.portAvg = 1;
 
 s.stimulus.iniMatchType=0; %value:  0-normal, 1-non-matching choice, 2-matching choice
@@ -35,7 +35,8 @@ s.stimulus.cond.Ncond=4; %stim side x direction, mapping will L - 0, R - 0, L - 
 s.stimulus.cond.counterIdx=[1 3 2 4]; %index into the counter for each condition
 s.stimulus.cond.counterNames{1}={'L-0';'R-0';'L-180';'R-180'};
 
-
+% s.ports.adc.portThreshold = [2 2 2 2 0.05]';
+% s.ports.adc.portPol = [1 1 1 1 -1]';
 
 %debug by flipping hardware channels
 % s.datapixx.adc.channels = [2 4 6 8 10];

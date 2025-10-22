@@ -22,12 +22,12 @@ s.stimulus.stimSide= [-1 1];
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 s.stimulus.centerY=540; %vertical stimulus position (pixels)
 s.stimulus.offset=15; %horizontal offset in deg (from point where stimulus turns on)
-s.stimulus.durStim = 20; %start stimulus duration (sec)
+s.stimulus.durStim = 200; %start stimulus duration (sec)
 
 s.datapixx.adc.channels = [2 4 6 8 10];
 s.ports.nPorts=5;
-s.ports.adc.portThreshold = [2 2 2 2 0.05]';
-s.ports.adc.portPol = [1 1 1 1 -1]';
+s.ports.adc.portThreshold = [2 2 2 -2 2]';
+s.ports.adc.portPol = [1 1 1 -1 1]';
 s.ports.adc.portAvg = 1;
 
 s.stimulus.iniMatchType=0; %value:  0-normal, 1-non-matching choice, 2-matching choice
@@ -42,5 +42,8 @@ s.stimulus.cond.counterNames{1}={'L-0';'R-0';'L-180';'R-180'};
 % s.ports.nPorts=5;
 % s.ports.adc.portThreshold = [2 2 2 0.1 2]';
 % s.ports.adc.portPol = [1 1 1 -1 1]';
+
+%s.ports.adc.portThreshold = [2 2 2 2 0.05]';
+%s.ports.adc.portPol = [1 1 1 1 -1]';
 
 

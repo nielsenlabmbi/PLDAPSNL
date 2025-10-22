@@ -1,14 +1,14 @@
 function s = acuity_P4_Stair_FBAE3Settings
 
 %set reward amounts
-s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
+s.behavior.reward.amount = [0.15 0.25 0.25 0.25];
 
 %set orientation and offsets
 s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
 s.stimulus.angle = [0 90];
 
 
-s.stimulus.sf = 0.4; %start 10/07
+s.stimulus.sf = 0.2; %start 10/22
 s.stimulus.range = [127];
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 0;
