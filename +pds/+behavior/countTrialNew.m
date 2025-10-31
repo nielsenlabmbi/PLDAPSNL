@@ -25,7 +25,7 @@ end
 %increment condition counters
 if countCond==1
     if nargin==3 %no varargin
-        condIdx=currCond.condIdx;
+        condIdx=p.trial.stimulus.cond.counterIdx(currCond.condIdx);
     else
         condIdx=varargin{1};
     end

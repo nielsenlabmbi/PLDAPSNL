@@ -1,4 +1,4 @@
-function s = square_stereo_XXXX0Settings
+function s = square_stereo_FBAD7Settings
 
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];

@@ -25,7 +25,12 @@ switch state
             Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotposL, ...
                 p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColorL, ...
                 [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
-            
+              Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotposB, ...
+                            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColorR, ...
+                            [p.trial.stimulus.centerX p.trial.stimulus.centerY],1)
+               Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotposB, ...
+                            p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColorL, ...
+                            [p.trial.stimulus.centerX p.trial.stimulus.centerY],1)
         else
             Screen(p.trial.display.ptr, 'FillRect', 0.5);
         end
@@ -229,21 +234,25 @@ p.trial.stimulus.ori = p.trial.stimulus.angle(sideResp);
 condIdx=p.conditions{p.trial.pldaps.iTrial}.condIdx;
 
 switch mod(condIdx-1,6)+1
-    case 1 || 2 %monocular, both eyes color 1
+    case {1,2} %monocular, both eyes color 1
         p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor1;
         p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor1;
-    case 3 || 4 %monocular, both eyes color 2
+        bino=0;
+    case {3,4} %monocular, both eyes color 2
         p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor2;
         p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor2;
+        bino=0;
     case 5 %monocular 1
         p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor1;
         p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor2;
+        bino=1;
     case 6 %monocular 2
-        p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor2;
-        p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor3;
+        p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor1;
+        p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor2;
+        bino=1;
 end
 
-
+disp(p.trial.stimulus.dotColorR)
 
 
 %figure out dots
@@ -264,22 +273,53 @@ p.trial.stimulus.nrDots=round(p.trial.stimulus.dotDensity*p.trial.stimulus.sizeX
     p.trial.stimulus.sizeY);
 randpos=rand(2,p.trial.stimulus.nrDots); %this gives numbers between 0 and 1
 if p.trial.stimulus.ori==1
-    randpos(1,:)=(randpos(1,:)-0.5)*2000;
-    randpos(2,:)=(randpos(2,:)-0.5)*1000;
-    randposind=(randpos(1,:)>-.5*p.trial.stimulus.sizeX & randpos(1,:)<.5*p.trial.stimulus.sizeX &...
-        randpos(2,:)>-.5*p.trial.stimulus.sizeY & randpos(2,:)<.5*p.trial.stimulus.sizeY);
-
-else
-    randpos(1,:)=(randpos(1,:)-0.5)*2000;
-    randpos(2,:)=(randpos(2,:)-0.5)*1000;
-    randposind=(randpos(2,:)>-.5*p.trial.stimulus.sizeX & randpos(2,:)<.5*p.trial.stimulus.sizeX &...
-        randpos(1,:)>-.5*p.trial.stimulus.sizeY & randpos(1,:)<.5*p.trial.stimulus.sizeY);
-end
+ randpos(1,:)=(randpos(1,:)-0.5)*p.trial.stimulus.sizeX;
+ randpos(2,:)=(randpos(2,:)-0.5)*p.trial.stimulus.sizeY;
+ else
+     randpos(1,:)=(randpos(1,:)-0.5)*p.trial.stimulus.sizeY;
+ randpos(2,:)=(randpos(2,:)-0.5)*p.trial.stimulus.sizeX;
+ end
 randposL=randpos;
 randposR=randpos;
-randposR(1,randposind)=randpos(1,randposind)+p.trial.stimulus.dispPix;
+if bino==1;
+    randposR(1,:)=randposR(1,:)+p.trial.stimulus.dispPix; 
+end
 p.trial.stimulus.dotposL =randposL;
 p.trial.stimulus.dotposR=randposR;
+%background dots- less dense than stim 
+p.trial.stimulus.nrDotsB=round(p.trial.stimulus.dotDensity*.8*p.trial.stimulus.sizeX*...
+    p.trial.stimulus.sizeY);
+randposB=rand(2,p.trial.stimulus.nrDotsB); %this gives numbers between 0 and 1
+ if p.trial.stimulus.ori==1
+ randposB(1,:)=(randposB(1,:)-0.5)*2000;
+ randposB(2,:)=(randposB(2,:)-0.5)*1000;
+ randposB=randposB(:,randposB(1,:)<-.5*p.trial.stimulus.sizeX|randposB(1,:)>.5*p.trial.stimulus.sizeX|...
+     randposB(2,:)<-.5*p.trial.stimulus.sizeY|randposB(2,:)>.5*p.trial.stimulus.sizeY);
+
+ else
+ randposB(1,:)=(randposB(1,:)-0.5)*2000;
+ randposB(2,:)=(randposB(2,:)-0.5)*1000;
+ randposB=randposB(:,randposB(2,:)<-.5*p.trial.stimulus.sizeX|randposB(2,:)>.5*p.trial.stimulus.sizeX|...
+     randposB(1,:)<-.5*p.trial.stimulus.sizeY|randposB(1,:)>.5*p.trial.stimulus.sizeY);
+ end
+ p.trial.stimulus.dotposB =randposB;
+% if p.trial.stimulus.ori==1
+%     randpos(1,:)=(randpos(1,:)-0.5)*2000;
+%     randpos(2,:)=(randpos(2,:)-0.5)*1000;
+%     randposind=(randpos(1,:)>-.5*p.trial.stimulus.sizeX & randpos(1,:)<.5*p.trial.stimulus.sizeX &...
+%         randpos(2,:)>-.5*p.trial.stimulus.sizeY & randpos(2,:)<.5*p.trial.stimulus.sizeY);
+% 
+% else
+%     randpos(1,:)=(randpos(1,:)-0.5)*2000;
+%     randpos(2,:)=(randpos(2,:)-0.5)*1000;
+%     randposind=(randpos(2,:)>-.5*p.trial.stimulus.sizeX & randpos(2,:)<.5*p.trial.stimulus.sizeX &...
+%         randpos(1,:)>-.5*p.trial.stimulus.sizeY & randpos(1,:)<.5*p.trial.stimulus.sizeY);
+% end
+% randposL=randpos;
+% randposR=randpos;
+% randposR(1,randposind)=randpos(1,randposind)+p.trial.stimulus.dispPix;
+% p.trial.stimulus.dotposL =randposL;
+% p.trial.stimulus.dotposR=randposR;
 
 
 %set state
@@ -309,7 +349,7 @@ if p.trial.pldaps.draw.reward.show
 end
 
  %show stats
- pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1, p.trialMem.condIdx); %updates counters
+ pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1); %updates counters
  pds.behavior.printCounter(p.trialMem.stats.sideCounter,p.trialMem.stats.sideCounterNames)
  pds.behavior.printCounter(p.trialMem.stats.condCounter,p.trialMem.stats.condCounterNames)
 
