@@ -21,6 +21,7 @@ if respCorr==1
 else
     p.trialMem.stats.sideCounter(3,currCond.side)=p.trialMem.stats.sideCounter(3,currCond.side)+1;
 end
+p.trialMem.stats.sideCounter(4,:)=p.trialMem.stats.sideCounter(2,:)./p.trialMem.stats.sideCounter(1,:);
 
 %increment condition counters
 if countCond==1
@@ -36,4 +37,5 @@ if countCond==1
     else
         p.trialMem.stats.condCounter(3,condIdx)=p.trialMem.stats.condCounter(3,condIdx)+1;
     end
+    p.trialMem.stats.condCounter(4,:)=p.trialMem.stats.condCounter(2,:)./p.trialMem.stats.condCounter(1,:);
 end
