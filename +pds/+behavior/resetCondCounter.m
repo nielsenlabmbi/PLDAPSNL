@@ -1,5 +1,8 @@
-function p = resetCondCounter(p,counterNames,counterIdx)
+function p = resetCondCounter(p,counterNames)
 
-p.trialMem.stats.condCounter=zeros(4,length(counterNames{counterIdx}));
-p.trialMem.stats.condCounterNames=counterNames{counterIdx};
+for i=1:length(counterNames)
+    p.trialMem.stats.condCounter{i}=zeros(4,length(counterNames{i}));
+    p.trialMem.stats.condCounterNames{i}=counterNames{i};
+end
+
 disp('Reset counter')

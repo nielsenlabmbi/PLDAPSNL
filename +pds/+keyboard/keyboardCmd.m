@@ -63,8 +63,9 @@ if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.rKey)  %r = user 7
 end
 
 if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.spaceKey) %change trials list
-    pds.behavior.updateTrialList(p); %keeping it minimal here; counters etc happen in trial file
-    p.trial.userInput= -1;
+    p.trial.userInput= -1; %indicate switch necessary
+    p.trialMem.switchList=1;
+    disp('space bar')
 
     % p.trialMem.whichConditions = mod(p.trialMem.whichConditions+1,length(p.trial.allconditions));
     % p.conditions = p.trial.allconditions{p.trialMem.whichConditions + 1};

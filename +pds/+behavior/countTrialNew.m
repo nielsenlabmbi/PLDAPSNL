@@ -1,4 +1,4 @@
-function p=countTrialNew(p,respCorr,countCond,varargin)
+function p=countTrialNew(p,respCorr,countCond,lIdx,varargin)
 
 %increment counters for the trial
 %input: 
@@ -25,17 +25,18 @@ p.trialMem.stats.sideCounter(4,:)=p.trialMem.stats.sideCounter(2,:)./p.trialMem.
 
 %increment condition counters
 if countCond==1
-    if nargin==3 %no varargin
-        condIdx=p.trial.stimulus.cond.counterIdx(currCond.condIdx);
+    if nargin==4 %no varargin
+        condIdx=p.trial.stimulus.cond.counterIdx{lIdx}(currCond.condIdx);
     else
         condIdx=varargin{1};
     end
-    p.trialMem.stats.condCounter(1,condIdx)=p.trialMem.stats.condCounter(1,condIdx)+1;
+    p.trialMem.stats.condCounter{lIdx}(1,condIdx)=p.trialMem.stats.condCounter{lIdx}(1,condIdx)+1;
     %correct/incorrect
     if respCorr==1
-        p.trialMem.stats.condCounter(2,condIdx)=p.trialMem.stats.condCounter(2,condIdx)+1;
+        p.trialMem.stats.condCounter{lIdx}(2,condIdx)=p.trialMem.stats.condCounter{lIdx}(2,condIdx)+1;
     else
-        p.trialMem.stats.condCounter(3,condIdx)=p.trialMem.stats.condCounter(3,condIdx)+1;
+        p.trialMem.stats.condCounter{lIdx}(3,condIdx)=p.trialMem.stats.condCounter{lIdx}(3,condIdx)+1;
     end
-    p.trialMem.stats.condCounter(4,:)=p.trialMem.stats.condCounter(2,:)./p.trialMem.stats.condCounter(1,:);
+    p.trialMem.stats.condCounter{lIdx}(4,:)=...
+        p.trialMem.stats.condCounter{lIdx}(2,:)./p.trialMem.stats.condCounter{lIdx}(1,:);
 end

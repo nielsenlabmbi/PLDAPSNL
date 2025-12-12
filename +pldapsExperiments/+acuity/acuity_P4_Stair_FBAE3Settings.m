@@ -8,7 +8,7 @@ s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
 s.stimulus.angle = [0 90];
 
 
-s.stimulus.sf = 0.4; %start 10/28
+s.stimulus.sf = 0.6; %start 11/25
 s.stimulus.range = [127];
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 0;
@@ -32,6 +32,8 @@ s.stimulus.contrastDefault = 127;
 s.stimulus.stair=0;
 s.stimulus.delta_contrast = 20;
 
+s.ports.adc.portThreshold = [2 2 2 2]';
+s.ports.adc.portPol = [1 1 1 1]';
 
 
 % 

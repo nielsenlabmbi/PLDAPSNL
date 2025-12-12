@@ -8,7 +8,7 @@ s.stimulus.midpointIR = 1; %use midpoint IR beam to turn off stimulus
 s.stimulus.angle = [0 90];
 
 
-s.stimulus.sf = 0.075; %start 10/31
+s.stimulus.sf = 0.4; %start 11/21/25
 s.stimulus.range = [127];
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 0;
@@ -21,7 +21,11 @@ s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential
 s.stimulus.duration.ITI = 1;
 
 %set up the viewing distance
-s.display.viewdist = 46; 
+%s.display.viewdist = 46;
+s.display.viewdist = 57;
+
+% s.ports.adc.portThreshold = [2 2 2 -2]';
+% s.ports.adc.portPol = [1 1 1 -1]';
 
 %camera
 s.camera.use = 0;

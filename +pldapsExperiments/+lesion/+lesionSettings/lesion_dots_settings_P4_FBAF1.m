@@ -4,9 +4,9 @@ function s = lesion_dots_settings_P4_FBAF1
 
 %%%these parameters can get changed
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
-s.stimulus.width=30; %start value (deg)
-s.stimulus.delta_width = 10; %step size using keys (deg)
-s.display.viewdist = 38; %cm
+s.stimulus.width=10; %start value (deg)
+s.stimulus.delta_width = 5; %step size using keys (deg)
+s.display.viewdist = 57; %cm
 s.stimulus.duration.ITI = 0.2;
 
 

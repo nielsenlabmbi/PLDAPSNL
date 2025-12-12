@@ -430,6 +430,8 @@ function cleanUpandSave(p)
             p.trialMem.matchType = 0;
             disp('All 4 Response Conditions')
     end
+    
+   
 
 %% Helper functions
 %-------------------------------------------------------------------%

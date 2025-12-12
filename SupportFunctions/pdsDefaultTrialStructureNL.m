@@ -52,6 +52,8 @@ p.defaultParameters.stimulus.states.BASELINE = 0;
 p.defaultParameters.stimulus.states.MOVE = 11;
 p.defaultParameters.stimulus.states.WAITSTART = 12;
 p.defaultParameters.stimulus.states.STIMOFF = 13;
+p.defaultParameters.stimulus.states.STIMON1 = 14; %12/4/25 - acuity tunnel
+p.defaultParameters.stimulus.states.STIMON2= 15; %12/4/25 - acuity tunnel
 
 
 %-------------------------------------------------------------------------%

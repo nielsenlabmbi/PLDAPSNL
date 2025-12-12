@@ -28,5 +28,5 @@ s.display.viewdist = 75;
 s.display.useOverlay=0;
 
 s.stimulus.cond.Ncond=12; %stim side x color
-s.stimulus.cond.counterIdx=[1 1 1 1 3 3 2 2 2 2 4 4]; %index into the counter for each condition
+s.stimulus.cond.counterIdx{1}=[1 1 1 1 3 3 2 2 2 2 4 4]; %index into the counter for each condition
 s.stimulus.cond.counterNames{1}={'L-Mono';'R-Mono';'L-Stereo';'R-Stereo'};

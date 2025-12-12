@@ -147,6 +147,9 @@ try
     % Initialize trial locking status
     p.trialMem.lock = 0;
     
+    %initialize triallist switch
+    p.trialMem.switchList=0;
+
     %% Last chance to check variables
     if(p.trial.pldaps.pause.type==1 && p.trial.pldaps.pause.preExperiment==true) %0=don't,1 is debugger, 2=pause loop
         p  %#ok<NOPRT>

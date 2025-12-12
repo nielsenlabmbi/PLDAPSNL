@@ -252,7 +252,7 @@ switch mod(condIdx-1,6)+1
         bino=1;
 end
 
-disp(p.trial.stimulus.dotColorR)
+%disp(p.trial.stimulus.dotColorR)
 
 
 %figure out dots
@@ -349,9 +349,9 @@ if p.trial.pldaps.draw.reward.show
 end
 
  %show stats
- pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1); %updates counters
+ pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1,1); %updates counters
  pds.behavior.printCounter(p.trialMem.stats.sideCounter,p.trialMem.stats.sideCounterNames)
- pds.behavior.printCounter(p.trialMem.stats.condCounter,p.trialMem.stats.condCounterNames)
+ pds.behavior.printCounter(p.trialMem.stats.condCounter{1},p.trialMem.stats.condCounterNames{1})
 
 
 end

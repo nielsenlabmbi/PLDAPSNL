@@ -321,6 +321,10 @@ if p.trial.pldaps.iTrial>1
     p.trial.behavior.reward.amount=p.trialMem.currentAmount;
 end
 
+if p.trialMem.switchList==1
+    pds.behavior.updateTrialList(p); %keeping it minimal here; counters etc happen in trial file
+    p.trialMem.switchList=0;
+end
 end %trialSetup
 
 %% trialPrepare

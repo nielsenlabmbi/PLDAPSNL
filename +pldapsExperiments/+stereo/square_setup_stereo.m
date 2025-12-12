@@ -29,4 +29,4 @@ p.trial.pldaps.finish = length(p.conditions);
 pds.behavior.resetSideCounter(p);
 
 %condition counter
-pds.behavior.resetCondCounter(p,p.trial.stimulus.cond.counterNames,1);
+pds.behavior.resetCondCounter(p,p.trial.stimulus.cond.counterNames);

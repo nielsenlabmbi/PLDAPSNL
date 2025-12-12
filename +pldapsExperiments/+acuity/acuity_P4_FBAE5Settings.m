@@ -9,7 +9,7 @@ s.stimulus.angle = [0 90];
 
 
 %s.stimulus.sf = 0.3; %began 9/15/25 - 9/24
-s.stimulus.sf = 0.075; %began 9/24/25
+s.stimulus.sf = 0.2; %began 11/25/25 - doing this for glasses testing
 s.stimulus.range = {127;[127 100]; [127 100 50 20 6]; [127 50 25 15 10 6]};
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 0;
