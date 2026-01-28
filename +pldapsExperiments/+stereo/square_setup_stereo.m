@@ -4,7 +4,7 @@ function p=square_setup_stereo(p)
 p = pdsDefaultTrialStructureNL(p); 
 
 %% set the trial function: the function that gets called for each frame state
-p.trial.pldaps.trialFunction='pldapsExperiments.stereo.squaretrial_dots_stereo';
+p.trial.pldaps.trialFunction='pldapsExperiments.stereo.squaretrial_dots_stereo_2';
 
 %% set general parameters
 p.trial.stimulus.forceCorrect = 1;

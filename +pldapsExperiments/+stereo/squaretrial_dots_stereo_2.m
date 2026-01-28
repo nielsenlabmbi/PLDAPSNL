@@ -1,4 +1,4 @@
-function squaretrial_dots_stereo(p,state)
+function squaretrial_dots_stereo_2(p,state)
 %%%% Note: includes staircase functionality for spatial frequency. Set
 %%%% stimulus.step = 0 in settings file to suppress staircase. 
 
@@ -231,24 +231,37 @@ p.trial.stimulus.ori = p.trial.stimulus.angle(sideResp);
 %condIdx 5, 11: L color 1, R color 2, crossed with side
 %condIdx 6, 12: L color 2, R color 1, crossed with side
 
+%1, 2, 7, 8- black, mono, crossed w/side
+%3, 9,- L color 1, R color 2, w/ side, small disp
+%4, 10- R color 1, L color 2, w/ side, small disp
+%5, 11- L color 1, R color 2, w/ side, larger disp
+%6, 12- R color 1, L color 2, w/ side, larger disp 
 condIdx=p.conditions{p.trial.pldaps.iTrial}.condIdx;
 
 switch mod(condIdx-1,6)+1
-    case {1,2} %monocular, both eyes color 1
-        p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor1;
-        p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor1;
+    case {1,2} %monocular, both eyes black
+        p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor3;
+        p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor3;
         bino=0;
-    case {3,4} %monocular, both eyes color 2
+    case 3 %binocular, smaller disp
         p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor2;
-        p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor2;
-        bino=0;
-    case 5 %binocular 1
         p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor1;
-        p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor2;
+        p.trial.stimulus.disp=p.trial.stimulus.disp2;
         bino=1;
-    case 6 %binocular 2
+    case 4 %binocular, smaller disp
+        p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor1;
+        p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor2;
+        p.trial.stimulus.disp=p.trial.stimulus.disp2;
+        bino=1;
+    case 5 %binocular, larger disp
         p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor1;
         p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor2;
+        p.trial.stimulus.disp=p.trial.stimulus.disp1;
+        bino=1;
+    case 6 %binocular, larger disp
+        p.trial.stimulus.dotColorL=p.trial.stimulus.dotColor2;
+        p.trial.stimulus.dotColorR=p.trial.stimulus.dotColor1;
+        p.trial.stimulus.disp=p.trial.stimulus.disp1;
         bino=1;
 end
 

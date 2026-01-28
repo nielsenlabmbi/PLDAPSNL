@@ -229,6 +229,9 @@ if ~isfield(p.trialMem,'removeStim')
    p.trialMem.removeStim = p.trial.stimulus.removeStim;
 end
 
+if ~isfield(p.trialMem,'radius')
+   p.trialMem.radius = p.trial.stimulus.radius;
+end
 
 p.trial.stimulus.sf = p.trial.stimulus.sf;
 p.trial.stimulus.angle = p.conditions{p.trial.pldaps.iTrial}.angle;
@@ -240,7 +243,8 @@ p.trial.stimulus.fullField = p.trial.stimulus.fullField;
 %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
 %PixPerDeg = 1/DegPerPix;
 
-ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
+%ApertureDeg = 2*p.trial.stimulus.radius;%DegPerCyc*nCycles;
+ApertureDeg = 2*p.trialMem.radius;%DegPerCyc*nCycles; %up/down toggled 1/13/26
 
 % CREATE A MESHGRID THE SIZE OF THE GRATING
 x=linspace(-(p.trial.display.dWidth/2),p.trial.display.dWidth/2,p.trial.display.pWidth);%-p.trial.stimulus.shift(p.trial.side);
@@ -296,6 +300,7 @@ pds.behavcam.triggercam(p,0);
 
 disp('----------------------------------')
 disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
+disp(['Stimulus Radius: ' p.trialMem.radius])
 %show reward amount
 if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S';'L';'R'})
@@ -320,9 +325,33 @@ switch p.trial.userInput
     case 2 %right key
         p.trialMem.removeStim=1; %Stimulus will cease once ferret crosses exit beam
         disp('Stimulus Removed when Exit beam crossed')
+    case 3 %up key
+        p.trialMem.radius=p.trialMem.radius+p.trial.stimulus.delta_radius;
+        disp(['increased stim aperture radius to ' num2str(p.trialMem.radius)])
+    case 4 %down key
+        p.trialMem.radius=p.trialMem.radius-p.trial.stimulus.delta_radius;
+        disp(['decreased stim aperture radius to ' num2str(p.trialMem.radius)])
 
 end
 
+disp('----------------------------------')
+    disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
+    disp(['Current radius:  ' (p.trialMem.radius)])
+    %show reward amount
+    if p.trial.pldaps.draw.reward.show
+        pds.behavior.reward.showReward(p,{'S';'L';'R'})
+    end
+    
+    %show stats
+    pds.behavior.countTrial(p,p.trial.pldaps.goodtrial); %updates counters
+    disp(num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+        p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)))
+
+    switch p.trial.userInput
+
+        
+       
+    end
 
 %% -------------------------------------------------------------------%
 %%%%%%Helper functions
