@@ -19,7 +19,7 @@ s.stimulus.removeStim = 0; %toggle whether stimulus will remain following exit t
 % 0 = leave stimulus on (left key)
 % 1 = remove stimulus (right key)
 s.stimulus.delta_radius = 2;
-s.stimulus.masktype='gauss'; %alternative: sqcosyne
+s.stimulus.masktype='gauss'; %alternatives: gauss, sqcosyne
 
 
 %set viewing parameters

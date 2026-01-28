@@ -274,21 +274,23 @@ else
         PixPerDeg = 1/DegPerPix;
         maskSizePx=p.trialMem.radius*PixPerDeg;
         
-        xpix=linspace(-p.trial.display.pWidth/2:p.trial.display.pWidth/2);
-        ypix=linspace(-p.trial.display.pHeight/2:p.trial.display.pHeight/2);
+        xpix=linspace(-p.trial.display.pWidth/2,p.trial.display.pWidth/2,p.trial.display.pWidth);
+        ypix=linspace(-p.trial.display.pHeight/2,p.trial.display.pHeight/2,p.trial.display.pHeight);
         [xpix,ypix]=meshgrid(xpix,ypix);
         
         xpix=xpix./maskSizePx*pi;
         xbounds=abs(xpix)>pi; %we just need one cycle, so setting everything larger than pi to pi
         xpix(xbounds)=sign(xpix(xbounds))*pi;
-        xmat=cos(xpix)+1;
+        xmat=(cos(xpix)+1)./2;
 
         ypix=ypix./maskSizePx*pi;
         ybounds=abs(ypix)>pi; %we just need one cycle, so setting everything larger than pi to pi
         ypix(ybounds)=sign(ypix(ybounds))*pi;
-        ymat=cos(ypix)+1;
+        ymat=(cos(ypix)+1)./2;
         
         maskdom=xmat.*ymat;
+        disp(min(maskdom(:)))
+        disp(max(maskdom(:)))
         grating=sdom1.*maskdom;
 
     end
