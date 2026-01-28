@@ -17,7 +17,7 @@ s.stimulus.fullField = 0;
 s.stimulus.removeStim = 0; %toggle whether stimulus will remain following exit tunnel
 % 0 = leave stimulus on (left key)
 s.stimulus.delta_radius = 2;
-
+s.stimulus.masktype='gauss'; %alternative: sqcosyne
 
 
 %set viewing parameters

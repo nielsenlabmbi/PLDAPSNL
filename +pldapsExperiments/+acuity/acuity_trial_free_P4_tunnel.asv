@@ -288,8 +288,7 @@ else
         ypix(ybounds)=sign(ypix(ybounds))*pi;
         ymat=cos(ypix)+1;
         
-        maskdom=xmat.*ymat;
-        grating=sdom1.*maskdom;
+        maskdom=xmat.*ym
 
     end
 end

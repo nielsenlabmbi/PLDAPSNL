@@ -19,6 +19,8 @@ s.stimulus.removeStim = 0; %toggle whether stimulus will remain following exit t
 % 0 = leave stimulus on (left key)
 % 1 = remove stimulus (right key)
 s.stimulus.delta_radius = 2;
+s.stimulus.masktype='gauss'; %alternative: sqcosyne
+
 
 %set viewing parameters
 s.stimulus.radius=16; %stimulus radius in deg %DEFAULT IS 12 (the target value)
