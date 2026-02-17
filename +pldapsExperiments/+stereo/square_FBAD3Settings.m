@@ -14,7 +14,7 @@ s.stimulus.angle = [0 1];
 % s.stimulus.sizeY=200;
 
 % %Large but no longer touching screen edges
-s.stimulus.sizeX=600;
+s.stimulus.sizeX=550;
 s.stimulus.sizeY=200;
 
 %very small
@@ -26,7 +26,7 @@ s.stimulus.dotSize = .3;% original 1.5
 s.stimulus.dotDensity = 0.0035; %dots/deg^2
 s.stimulus.dotColor = 0;
 s.stimulus.centerX= 990; %pixels
-s.stimulus.centerY= 510;
+s.stimulus.centerY= 700;
 s.stimulus.stepSize=.05; 
 s.stimulus.stepDens=.0005; 
 s.stimulus.runtype = 'pseudo';

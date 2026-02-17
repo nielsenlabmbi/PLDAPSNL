@@ -11,7 +11,7 @@ s.stimulus.angle = [0 90];
 s.stimulus.sf = 0.2; %start 1/22/25
 s.stimulus.range = [127];
 s.stimulus.runtype = 'pseudo';
-s.stimulus.fullField = 0;
+s.stimulus.fullField = 1;
 
 
 %set viewing parameters

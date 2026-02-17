@@ -10,14 +10,16 @@ s.stimulus.angle = [0 90];
 
 
 %s.stimulus.sf = 0.3; %began 9/15/25 - 9/24
-s.stimulus.sf = 0.2; %began 11/25/25 - doing this for glasses testing
+%s.stimulus.sf = 0.2; %began 11/25/25 - doing this for glasses testing
+s.stimulus.sf = 0.1; %began 2/2/26 - Monocular sqcosyne
 s.stimulus.range = {127;[127 100]; [127 100 50 20 6]; [127 50 25 15 10 6]};
+%s.stimulus.range = {[127 100 50 20 6]};
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 0;
-s.stimulus.removeStim = 0; %toggle whether stimulus will remain following exit tunnel
+s.stimulus.removeStim = 1; %toggle whether stimulus will remain following exit tunnel
 % 0 = leave stimulus on (left key)
 s.stimulus.delta_radius = 2;
-s.stimulus.masktype='gauss'; %alternative: sqcosyne
+s.stimulus.masktype='sqcosyne'; %alternative: gauss, sqcosyne
 
 
 %set viewing parameters
@@ -25,6 +27,7 @@ s.stimulus.radius=16; %stimulus radius in deg %DEFAULT IS 12 (the target value)
 s.stimulus.sigma=2*s.stimulus.radius/16.5;
 s.stimulus.maskLimit=.6*s.stimulus.radius; %switch from open mask to exponential function
 s.stimulus.duration.ITI = 1;
+s.stimulus.maskWidthPx=1080; %this is for the square mask
 
 %set up the viewing distance
 s.display.viewdist = 46; 

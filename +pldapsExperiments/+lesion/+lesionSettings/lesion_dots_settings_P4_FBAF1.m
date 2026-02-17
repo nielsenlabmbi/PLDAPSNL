@@ -23,3 +23,8 @@ s.display.bgColor = [.5 .5 .5];
 s.stimulus.durStim = 30; %sec
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 
+s.stimulus.centerY=540+360; %vertical stimulus position (pixels)
+% %adjust center Y to [540-360; 540; 540+360];
+% %                   [top stim; middle stim; bottom stim];
+% %                      top = 0 bottom = 1080
+

@@ -4,7 +4,7 @@ function s = lesion_dots_settings_P4_FBAE9
 
 %%%these parameters can get changed
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
-s.stimulus.width=15; %start value (deg)
+s.stimulus.width=10; %start value (deg)
 s.stimulus.delta_width = 5; %step size using keys (deg)
 s.display.viewdist = 57; %cm
 s.stimulus.duration.ITI = 0.2;
@@ -23,3 +23,7 @@ s.display.bgColor = [.5 .5 .5];
 s.stimulus.durStim = 30; %sec
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 
+s.stimulus.centerY=540+360; %vertical stimulus position (pixels)
+%adjust center Y to [540-360; 540; 540+360];
+%                   [top stim; middle stim; bottom stim];
+%                      top = 0 bottom = 1080

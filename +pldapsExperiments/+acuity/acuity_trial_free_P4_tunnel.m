@@ -270,9 +270,9 @@ else
         grating = sdom1.*maskdom;
     elseif strcmp(p.trial.stimulus.masktype,'sqcosyne')
         %raised cosyne, with cycle set to maskSizePx, square
-        DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
-        PixPerDeg = 1/DegPerPix;
-        maskSizePx=p.trialMem.radius*PixPerDeg;
+        %DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
+        %PixPerDeg = 1/DegPerPix;
+        maskSizePx=p.trial.stimulus.maskWidthPx/2;
         
         xpix=linspace(-p.trial.display.pWidth/2,p.trial.display.pWidth/2,p.trial.display.pWidth);
         ypix=linspace(-p.trial.display.pHeight/2,p.trial.display.pHeight/2,p.trial.display.pHeight);

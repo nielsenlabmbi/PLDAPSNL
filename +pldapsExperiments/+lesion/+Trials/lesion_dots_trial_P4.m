@@ -224,6 +224,9 @@ function p=trialSetup(p)
     p.trial.stimulus.height=p.trialMem.width;
     p.trial.stimulus.pWidth=round(p.trialMem.width*PixPerDeg);
     p.trial.stimulus.pHeight=p.trial.stimulus.pWidth;
+
+    %stimulus center shift
+    p.trial.stimulus.centerX = p.trial.display.pWidth/2;
     
     
     %number of dots - density is in dots/deg^2, size in deg
@@ -336,9 +339,12 @@ function showStimulus(p)
         p.trial.stimulus.dotpos{f}=randpos;
         p.trial.stimulus.randpos = randpos;
         p.trial.stimulus.randdir = randdir;
+%         Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
+%             p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
+%              [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
         Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
             p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
-             [p.trial.display.pWidth/2 p.trial.display.pHeight/2],1);
+             [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
 
     end
 

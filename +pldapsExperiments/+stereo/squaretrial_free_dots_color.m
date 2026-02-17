@@ -294,7 +294,7 @@ p.trial.stimulus.backgroundDot=p.trialMem.backgroundDot;
 p.trial.stimulus.dotColorR = [1 0 0];
 p.trial.stimulus.dotColorL= [0 0 .7];
 p.trial.stimulus.centerX= 990; %pixels
-p.trial.stimulus.centerY= 510; %500 puts in center, 810 is bottom
+p.trial.stimulus.centerY= 700; %500 puts in center, 810 is bottom
 %number of dots - density is in dots/deg^2, size in deg
 p.trial.stimulus.nrDots=round(p.trial.stimulus.dotDensity*p.trial.stimulus.sizeX*...
     p.trial.stimulus.sizeY);
