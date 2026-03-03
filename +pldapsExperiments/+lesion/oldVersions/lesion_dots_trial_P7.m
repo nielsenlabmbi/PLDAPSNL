@@ -1,4 +1,4 @@
-function lesion_dots_trial_P7Level(p,state)
+function lesion_dots_trial_P7(p,state)
 %This phase adjusts the stimulus duration
 
 %use normal functionality in states
@@ -43,7 +43,6 @@ if p.trial.state ~= p.trial.stimulus.states.STIMON
     activePort=activePort(activePort~=p.trial.stimulus.port.EXIT);
 end
 
-
 switch p.trial.state
     case p.trial.stimulus.states.START %trial started
         
@@ -79,20 +78,14 @@ switch p.trial.state
             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             
             %advance state
-            if p.trial.stimulus.midpointIR %needs to cross midline first to show stimulus
-                p.trial.state=p.trial.stimulus.states.MOVE;
-            else %immediately show stimulus
-                p.trial.state=p.trial.stimulus.states.STIMON;
-            end
+            p.trial.state=p.trial.stimulus.states.MOVE;
         end
 
     case p.trial.stimulus.states.MOVE %wait for ferret to cross midline
         if activePort==p.trial.stimulus.port.MIDDLE
             %advance state
-            p.trial.stimulus.timeStimOn= p.trial.ttime;
-            p.trial.stimulus.frameStimOn = p.trial.iFrame;
             p.trial.state=p.trial.stimulus.states.STIMON;
-            pds.LED.stimLEDOn(p);
+            pds.LED.stimLEDOn(p)
         end
         
     case p.trial.stimulus.states.STIMON
@@ -103,8 +96,10 @@ switch p.trial.state
             pds.LED.stimLEDOff(p);
         end
 
+
     case p.trial.stimulus.states.STIMOFF %stimulus shown; port selected in response
         %check whether left or right port chosen
+
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
@@ -147,6 +142,12 @@ switch p.trial.state
             p.trial.stimulus.timeTrialFinish = p.trial.ttime;
             p.trial.stimulus.frameTrialFinish = p.trial.iFrame;
             
+            if p.conditions{p.trial.pldaps.iTrial}.stimSide==-1 %left
+                p.trialMem.correctL = p.trialMem.correctL + 1;
+            else
+                p.trialMem.correctR = p.trialMem.correctR + 1;
+            end
+
             %advance state, mark as correct trial and flag next trial
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.pldaps.goodtrial = 1;
@@ -154,6 +155,7 @@ switch p.trial.state
         end
         
     case p.trial.stimulus.states.INCORRECT %incorrect port selected for stimulus
+
         if p.trial.stimulus.forceCorrect == 1 %must give correct response before ending trial            
             %check whether any port chosen
             if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
@@ -224,67 +226,62 @@ function p=trialSetup(p)
             p.trial.side=p.trial.stimulus.side.MIDDLE;
     end
     
-    if ~isfield(p.trialMem,'condIdx')
-        p.trialMem.condIdx=1;
+    %staircase performance counters - only happens at start of script
+    if ~isfield(p.trialMem,'correctL')
+        p.trialMem.correctL = 0;
+    end
+    if ~isfield(p.trialMem,'correctR')
+        p.trialMem.correctR = 0;
     end
 
-    if ~isfield(p.trialMem,'matchType')
-        p.trialMem.matchType=p.trial.stimulus.iniMatchType;
+    %staircase state - only happens at start of script
+    if ~isfield(p.trialMem,'stairL')
+        p.trialMem.stairL = p.trial.stimulus.stairL;
+    end
+    if ~isfield(p.trialMem,'stairR')
+        p.trialMem.stairR = p.trial.stimulus.stairR;
     end
 
-    %determine direction and side; we'll keep direction and adjust side as
-    %needed for match condition for trials list 1
-    %direction is tethered to response side, using that to make code
-    %simpler
-    sideResp=p.conditions{p.trial.pldaps.iTrial}.side;
-    p.trial.stimulus.dir = p.trial.stimulus.direction(sideResp);
+    %coherence values - only happens at start of script
+    if ~isfield(p.trialMem,'dotCohL')
+        p.trialMem.dotCohL = p.trial.stimulus.dotCohDefaultL;
+    end
+    if ~isfield(p.trialMem,'dotCohR')
+        p.trialMem.dotCohR = p.trial.stimulus.dotCohDefaultR;
+    end
 
-    disp(p.trialMem.w)
 
-    if p.trialMem.whichConditions==1 %100 only; locking possible
-
-        p.trial.stimulus.dotCoh=1;
-
-        %figure out side based on match type
-        switch p.trialMem.matchType
-            case 0 %full cross
-                p.trialMem.condIdx=p.conditions{p.trial.pldaps.iTrial}.condIdx; %we need this for counting
-                sideIdx = mod(p.trialMem.condIdx-1,2)+1; %cond 1, 3 = L = side 1, cond 2, 4 = R = side 2
-                p.trial.stimulus.sSide = p.trial.stimulus.stimSide(sideIdx);
-
-            case 1 % either 0 & R, or 180 & L
-                if p.trial.stimulus.dir == 0
-                    p.trial.stimulus.sSide = 1;
-                    %overwrite condition idx to end up in the correct counter
-                    %bin
-                    p.trialMem.condIdx=2;
-                elseif p.trial.stimulus.dir == 180
-                    p.trial.stimulus.sSide = -1;
-                    p.trialMem.condIdx=3;
-                end
-            case 2 % either 0 & L, or 180 & R
-                if p.trial.stimulus.dir == 0
-                    p.trial.stimulus.sSide = -1;
-                    p.trialMem.condIdx=1;
-                elseif p.trial.stimulus.dir == 180
-                    p.trial.stimulus.sSide = 1;
-                    p.trialMem.condIdx=4;
-                end
+    %execute staircase based on stimulus side
+    if p.conditions{p.trial.pldaps.iTrial}.stimSide==-1 %left
+        %staircase left
+        if p.trialMem.stairL==0 %staircase off; default value
+            %we can do it this way since resetting the staircase state resets the staircase anyways
+            p.trialMem.dotCohL=p.trial.stimulus.dotCohDefaultL; 
+            p.trialMem.stairstartL=1;
+        else
+            if p.trialMem.stairstartL==1 %staircase is being initialized
+                p.trialMem.dotCohL=p.trial.stimulus.dotCoherenceL;
+                p.trialMem.stairstartL=0;
+                p.trialMem.correctL=0;
+            end
         end
-
-    else %variable coherence levels
-        cIdx=p.conditions{p.trial.pldaps.iTrial}.condIdx;
-        p.trialMem.condIdx=cIdx; %we need this for counting
-       
-        cohIdx=mod(cIdx-1,5)+1;        
-        p.trial.stimulus.dotCoh=p.trial.stimulus.dotCoherence(cohIdx);
-
-        sideIdx=floor((cIdx-1)/5)+1; %sideIdx 1 & 3 -> L, 2 & 4 -> R
-        p.trial.stimulus.sSide = p.trial.stimulus.stimSide(rem(sideIdx-1,2)+1);
-
+        p.trial.stimulus.dotCoherence = p.trialMem.dotCohL;
+    else
+        %staircase right
+        if p.trialMem.stairR==0
+            p.trialMem.dotCohR = p.trial.stimulus.dotCohDefaultR;
+            p.trialMem.stairstartR=1;
+        else
+            if p.trialMem.stairstartR==1 %staircase is being initialized
+                p.trialMem.dotCohR=p.trial.stimulus.dotCoherenceR;
+                p.trialMem.stairstartR=0;
+                p.trialMem.correctR=0;
+            end
+        end
+        p.trial.stimulus.dotCoherence = p.trialMem.dotCohR;
     end
 
-
+  
     % set up stimulus    
     DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
     PixPerDeg = 1/DegPerPix;
@@ -296,10 +293,15 @@ function p=trialSetup(p)
 
     %stimulus center
     p.trial.stimulus.centerX = p.trial.display.pWidth/2;
+    p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
     p.trial.stimulus.offsetPx=round(p.trial.stimulus.offset*PixPerDeg);
-    p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
-        p.trial.stimulus.sSide*p.trial.stimulus.offsetPx;
+    
+    %offsetconv = 25*tan(deg2rad(p.trial.stimulus.offset))*36.6;
+    %p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
+    %    p.trial.stimulus.stimSide*offsetconv;
 
+     p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
+         p.trial.stimulus.stimSide*p.trial.stimulus.offsetPx;
 
         
     %number of dots - density is in dots/deg^2, size in deg
@@ -314,7 +316,10 @@ function p=trialSetup(p)
     
     %dot lifetime in frames (lifetime is in ms)
     p.trial.stimulus.dotLifeFr = round(p.trial.stimulus.dotLifetime*p.trial.stimulus.frameRate/1000);
-           
+       
+    %direction
+    p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+    
 
     %initialize frame
     p.trial.stimulus.frameI = 0;
@@ -325,14 +330,14 @@ function p=trialSetup(p)
     randpos(2,:)=(randpos(2,:)-0.5)*p.trial.stimulus.pHeight;
     
     %initialize noise vector
-    nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoh);
+    nrSignal=round(p.trial.stimulus.nrDots*p.trial.stimulus.dotCoherence);
     noisevec=zeros(p.trial.stimulus.nrDots,1);
     noisevec(1:nrSignal)=1;
     
     %initialize directions: correct displacement for signal, random for noise
     %side is either 1 or 2; 1 should equal direction=0, 2 direction=180
     randdir=zeros(p.trial.stimulus.nrDots,1);
-    randdir(1:end)=p.trial.stimulus.dir;
+    randdir(1:end)=p.trial.stimulus.direction;
     idx=find(noisevec==0);
     randdir(idx)=randi([0,359],length(idx),1);
     
@@ -395,8 +400,8 @@ function showStimulus(p)
             %directions are drawn based on coherence level
             rvec=rand(size(idx));
             for i=1:length(idx)
-                if rvec(i)<p.trial.stimulus.dotCoh %these get moved with the signal
-                    randdir(idx(i))=p.trial.stimulus.dir;
+                if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
+                    randdir(idx(i))=p.trial.stimulus.direction;
                 else
                     randdir(idx(i))=randi([0,359],1,1);
                 end
@@ -424,23 +429,69 @@ function cleanUpandSave(p)
         
     disp('----------------------------------')
     disp(['Trialno: ' num2str(p.trial.pldaps.iTrial)])
+    disp(['Current coh L:  ' num2str(p.trialMem.dotCohL)])
+    disp(['Current coh R:  ' num2str(p.trialMem.dotCohR)])
     %show reward amount
     if p.trial.pldaps.draw.reward.show
         pds.behavior.reward.showReward(p,{'S';'L';'R'})
     end
-
-%     %show stats
-%     pds.behavior.countTrial(p,p.trial.pldaps.goodtrial); %updates counters
-%     disp(num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
-%         p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)))
-
-    %show stats
-    pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1, p.trialMem.condIdx); %updates counters
-    pds.behavior.printCounter(p.trialMem.stats.sideCounter,p.trialMem.stats.sideCounterNames)
-    pds.behavior.printCounter(p.trialMem.stats.condCounter,p.trialMem.stats.condCounterNames)
     
-  
+    %show stats
+    pds.behavior.countTrial(p,p.trial.pldaps.goodtrial); %updates counters
+    disp(num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+        p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)))
 
+
+    %staircase function - need this to execute before we change state for
+    %the next trial to get bookkeeping right
+    if p.conditions{p.trial.pldaps.iTrial}.stimSide==-1 %left
+        if p.trialMem.stairL == 1
+            %staircase
+            if p.trial.pldaps.goodtrial & p.trialMem.correctL == 2 %decrease coherence after 2 correct trials
+                p.trialMem.dotCohL = p.trialMem.dotCohL - p.trial.stimulus.delta_cohL;
+                if p.trialMem.dotCohL<0
+                    p.trialMem.dotCohL=0;
+                end
+                p.trialMem.correctL = 0; %reset counter
+            elseif ~p.trial.pldaps.goodtrial %immediately increase after incorrect trial
+                p.trialMem.dotCohL = p.trialMem.dotCohL + p.trial.stimulus.delta_cohL;
+                if p.trialMem.dotCohL>1
+                    p.trialMem.dotCohL=1;
+                end
+                p.trialMem.correctL = 0;
+            end
+            disp(['Coh on the next L trial: ' num2str(p.trialMem.dotCohL)]);
+        end
+    else
+        if p.trialMem.stairR == 1
+            if p.trial.pldaps.goodtrial & p.trialMem.correctR == 2 %decrease coherence after 2 correct trials
+                p.trialMem.dotCohR = p.trialMem.dotCohR - p.trial.stimulus.delta_cohR;
+                if p.trialMem.dotCohR<0
+                    p.trialMem.dotCohR=0;
+                end
+                p.trialMem.correctR = 0; %reset counter
+            elseif ~p.trial.pldaps.goodtrial %immediately increase after incorrect trial
+                p.trialMem.dotCohR = p.trialMem.dotCohR + p.trial.stimulus.delta_cohR;
+                if p.trialMem.dotCohR>1
+                    p.trialMem.dotCohR=1;
+                end
+                p.trialMem.correctR = 0;
+            end
+            disp(['Coh on the next R trial: ' num2str(p.trialMem.dotCohR)]);
+        end
+    end
+
+    %update staircase state
+    switch p.trial.userInput
+        case 1 %left key - left staircase on/off
+            p.trialMem.stairL=~p.trialMem.stairL;
+            disp(['changed staircase state L to ' num2str(p.trialMem.stairL)])
+        case 2 %right key
+            p.trialMem.stairR=~p.trialMem.stairR;
+            disp(['changed staircase state R to ' num2str(p.trialMem.stairR)])
+    end
+
+    
 
 %% Helper functions
 %-------------------------------------------------------------------%

@@ -1,4 +1,4 @@
-function lesion_dots_trial_P5A(p,state)
+function lesion_dots_trial_P5(p,state)
 %This phase adjusts the stimulus offset
 
 %use normal functionality in states
@@ -6,7 +6,6 @@ pldapsDefaultTrialFunction(p,state);
 
 %add functions to particular states
 switch state
-    
     case p.trial.pldaps.trialStates.trialSetup
         trialSetup(p);
         
@@ -18,7 +17,7 @@ switch state
     case p.trial.pldaps.trialStates.frameDraw
         if p.trial.state==p.trial.stimulus.states.START
             Screen(p.trial.display.ptr, 'FillRect', p.trial.display.bgColor);
-        elseif p.trial.state==p.trial.stimulus.states.STIMON 
+        elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             showStimulus(p);
             
         end
@@ -130,6 +129,8 @@ switch p.trial.state
             p.trial.stimulus.timeTrialFinish = p.trial.ttime;
             p.trial.stimulus.frameTrialFinish = p.trial.iFrame;
             
+            p.trialMem.correct = p.trialMem.correct + 1;
+
             %advance state, mark as correct trial and flag next trial
             p.trial.state=p.trial.stimulus.states.TRIALCOMPLETE;
             p.trial.pldaps.goodtrial = 1;
@@ -186,6 +187,7 @@ end
 %------------------------------------------------------------------%
 %% setup trial parameters, prep stimulus as far as possible
 function p=trialSetup(p)
+    
     if isfield(p.trial,'masktxtr')
         Screen('Close',p.trial.masktxtr);
     end
@@ -205,18 +207,20 @@ function p=trialSetup(p)
         case 3
             p.trial.side=p.trial.stimulus.side.MIDDLE;
     end
+    
+    if ~isfield(p.trialMem,'correct')
+        p.trialMem.correct = 0;
+    end
 
     if ~isfield(p.trialMem,'offset')
         p.trialMem.offset=p.trial.stimulus.offset;
     end
 
     if ~isfield(p.trialMem,'matchType')
-        p.trialMem.matchType=p.trial.stimulus.iniMatchType;
+        p.trialMem.matchType=p.trial.stimulus.matchType;
     end
 
-    if ~isfield(p.trialMem,'condIdx')
-        p.trialMem.condIdx=1;
-    end
+
 
     % set up stimulus    
     DegPerPix = p.trial.display.dWidth/p.trial.display.pWidth;
@@ -227,49 +231,48 @@ function p=trialSetup(p)
     p.trial.stimulus.pWidth=round(p.trial.stimulus.width*PixPerDeg);
     p.trial.stimulus.pHeight=p.trial.stimulus.pWidth;
 
-    %determine direction and side; we'll keep direction and adjust side as
-    %needed for match condition
-    %direction is tethered to response side, using that to make code
-    %simpler
-
-    sideResp=p.conditions{p.trial.pldaps.iTrial}.side;
-    p.trial.stimulus.dir = p.trial.stimulus.direction(sideResp);
-          
-    
-    %figure out side based on match type
+    %direction %8/28/25 moved stimulus direction up before stimulus center
+    %as well as moved stimSide up before matchType loop
+    %MAYBE I DON'T NEED THIS IF INSDE OF SWITCH CASE 0
+    p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+    p.trial.stimulus.stimSide = p.conditions{p.trial.pldaps.iTrial}.stimSide;
+    %disp(p.trial.stimulus.direction)
+    %disp(p.trialMem.matchType)
     switch p.trialMem.matchType
-        case 0 %full cross
-            
-            p.trialMem.condIdx=p.conditions{p.trial.pldaps.iTrial}.condIdx; %we need this for counting
-            sideIdx = mod(p.trialMem.condIdx-1,2)+1; %cond 1, 3 = L = side 1, cond 2, 4 = R = side 2
-            p.trial.stimulus.sSide = p.trial.stimulus.stimSide(sideIdx);
-             
-        case 1 % either 0 & R, or 180 & L
-            if p.trial.stimulus.dir == 0
-                p.trial.stimulus.sSide = 1;
-                %overwrite condition idx to end up in the correct counter
-                %bin
-                p.trialMem.condIdx=2;
-            elseif p.trial.stimulus.dir == 180
-                p.trial.stimulus.sSide = -1;
-                p.trialMem.condIdx=3;
+        case 1
+            if p.trial.stimulus.direction == 0
+                p.trial.stimulus.stimSide = 1;
+%                 disp(p.trial.stimulus.stimSide)
+%                 disp(p.trial.stimulus.direction)
+%                 disp('\n')
+            elseif p.trial.stimulus.direction == 180
+                p.trial.stimulus.stimSide = -1;
+%                 disp(p.trial.stimulus.stimSide)
+%                 disp(p.trial.stimulus.direction)
+%                 disp('\n')
             end
-        case 2 % either 0 & L, or 180 & R
-            if p.trial.stimulus.dir == 0
-                p.trial.stimulus.sSide = -1;
-                p.trialMem.condIdx=1;
-            elseif p.trial.stimulus.dir == 180
-                p.trial.stimulus.sSide = 1;
-                p.trialMem.condIdx=4;
+        case 2
+            if p.trial.stimulus.direction == 0
+                p.trial.stimulus.stimSide = -1;
+%                 disp(p.trial.stimulus.stimSide)
+%                 disp(p.trial.stimulus.direction)
+%                 disp('\n')
+            elseif p.trial.stimulus.direction == 180
+                p.trial.stimulus.stimSide = 1;
+%                 disp(p.trial.stimulus.stimSide)
+%                 disp(p.trial.stimulus.direction)
+%                 disp('\n')
             end
     end
-   
 
     %stimulus center
-    p.trial.stimulus.centerX = p.trial.display.pWidth/2;                                                       
+    p.trial.stimulus.centerX = p.trial.display.pWidth/2;
+                                                        %moved stimSide
+                                                        %initiation higher
+                                                        %up
     p.trial.stimulus.offsetPx=round(p.trialMem.offset*PixPerDeg);
     p.trial.stimulus.centerX=p.trial.stimulus.centerX+...
-        p.trial.stimulus.sSide*p.trial.stimulus.offsetPx;
+        p.trial.stimulus.stimSide*p.trial.stimulus.offsetPx;
 
         
     %number of dots - density is in dots/deg^2, size in deg
@@ -285,6 +288,10 @@ function p=trialSetup(p)
     %dot lifetime in frames (lifetime is in ms)
     p.trial.stimulus.dotLifeFr = round(p.trial.stimulus.dotLifetime*p.trial.stimulus.frameRate/1000);
        
+    %direction
+    %p.trial.stimulus.direction = p.conditions{p.trial.pldaps.iTrial}.direction;
+    
+
     %initialize frame
     p.trial.stimulus.frameI = 0;
     
@@ -301,10 +308,10 @@ function p=trialSetup(p)
     %initialize directions: correct displacement for signal, random for noise
     %side is either 1 or 2; 1 should equal direction=0, 2 direction=180
     randdir=zeros(p.trial.stimulus.nrDots,1);
-    randdir(1:end)=p.trial.stimulus.dir;
+    randdir(1:end)=p.trial.stimulus.direction;
     idx=find(noisevec==0);
     randdir(idx)=randi([0,359],length(idx),1);
-
+    
     
     %initialize lifetime vector
     if p.trial.stimulus.dotLifeFr>0
@@ -324,6 +331,7 @@ function p=trialSetup(p)
     if p.trial.camera.use
         pds.behavcam.startcam(p);
     end
+
     
 
 %------------------------------------------------------------------%
@@ -366,7 +374,7 @@ function showStimulus(p)
             rvec=rand(size(idx));
             for i=1:length(idx)
                 if rvec(i)<p.trial.stimulus.dotCoherence %these get moved with the signal
-                    randdir(idx(i))=p.trial.stimulus.dir;
+                    randdir(idx(i))=p.trial.stimulus.direction;
                 else
                     randdir(idx(i))=randi([0,359],1,1);
                 end
@@ -401,9 +409,9 @@ function cleanUpandSave(p)
     end
     
     %show stats
-    pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1, p.trialMem.condIdx); %updates counters
-    pds.behavior.printCounter(p.trialMem.stats.sideCounter,p.trialMem.stats.sideCounterNames)
-    pds.behavior.printCounter(p.trialMem.stats.condCounter,p.trialMem.stats.condCounterNames)
+    pds.behavior.countTrial(p,p.trial.pldaps.goodtrial); %updates counters
+    disp(num2str(vertcat(p.trialMem.stats.val,p.trialMem.stats.count.Ntrial,...
+        p.trialMem.stats.count.correct./p.trialMem.stats.count.Ntrial*100)))
 
     switch p.trial.userInput
         case 1 %left key
@@ -420,7 +428,7 @@ function cleanUpandSave(p)
             disp('Non-Matching Response Condition if [Good% Bad%][Bad% Good%]')
         case 7 %O key
             p.trialMem.matchType = 0;
-            disp('All 4 Response Conditions')
+            disp('A return to all 4 Response Conditions')
     end
 
 %% Helper functions

@@ -12,27 +12,22 @@ p.trial.stimulus.forceCorrect = 1;
 
 
 %% conditions:
-side.par = 'direction';
-side.match=p.defaultParameters.stimulus.direction;
 
-cond.direction=p.defaultParameters.stimulus.direction; %stimulus direction
-cond.stimSide=p.defaultParameters.stimulus.stimSide; %stimulus side
-c=generateCondList(cond,side,'pseudo',500);
+c{1}=generateCondList_Gellerm(p.trial.stimulus.cond.Ncond(1));
+c{2}=generateCondList_Gellerm(p.trial.stimulus.cond.Ncond(2));
 
-p.conditions=c;
+
+p.trial.allconditions = c;
+p.trialMem.whichConditions = 0; %index into trialslist; 0 is easier for mod
+p.trialMem.oldCond=0; %1 if condition has been switched
+p.conditions=p.trial.allconditions{1}; %set to first trials list
 
 p.trial.pldaps.finish = length(p.conditions);
 
 
-%% display stats
-%we want percent correct for left/right and the positions to check for bias
-p.trialMem.stats.cond={'direction', 'stimSide'}; %conditions to display
-[A,B] = ndgrid(cond.direction,[cond.stimSide]);
+%% initialize trial counters
+%side counter
+pds.behavior.resetSideCounter(p);
 
-p.trialMem.stats.val = [A(:),B(:)]';
-nCond=size(p.trialMem.stats.val,2);
-
-p.trialMem.stats.count.correct=zeros(1,nCond);
-p.trialMem.stats.count.incorrect=zeros(1,nCond);
-p.trialMem.stats.count.Ntrial=zeros(1,nCond);
-
+%condition counter
+pds.behavior.resetCondCounter(p,p.trial.stimulus.cond.counterNames);
