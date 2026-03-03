@@ -1,4 +1,4 @@
-function s = acuity_P4_FBAE3Settings_tunnel
+function s = acuity_P4_FBAE4Settings_tunnel
 %up /down arrow increaes/decreases radius
 
 
@@ -11,13 +11,12 @@ s.stimulus.angle = [0 90];
 
 
 %s.stimulus.sf = 0.3; %began 9/15/25 - 9/24
-s.stimulus.sf = 0.5; %began 3/3/26
+s.stimulus.sf = 0.2; %began 2/25/26
 % - doing this for glasses testing
 s.stimulus.range = {127;[127 100]; [127 100 50 20 6]; [127 50 25 15 10 6]};
 s.stimulus.runtype = 'pseudo';
-s.stimulus.fullField = 0;
-s.stimulus.removeStim = 1; %toggle whether stimulus will remain following exit tunnel 
-%changed to 1 2/26/25
+s.stimulus.fullField = 1;
+s.stimulus.removeStim = 0; %toggle whether stimulus will remain following exit tunnel
 % 0 = leave stimulus on (left key)
 % 1 = remove stimulus (right key)
 s.stimulus.delta_radius = 2;
