@@ -24,4 +24,9 @@ s.stimulus.width=10; %deg
 s.stimulus.stimSide= [-1 1];
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 s.stimulus.centerY=540; %vertical stimulus position (pixels)
-s.stimulus.matchType=0; %values between 0-normal, 1-non-matching choice, 2-matching choice
+
+s.stimulus.iniMatchType=0; %value:  0-normal, 1-non-matching choice, 2-matching choice
+s.stimulus.cond.Ncond=4; %stim side x direction, mapping will L - 0, R - 0, L - 180, R - 180 (split by response sid0e
+s.stimulus.cond.counterIdx{1}=[1 3 2 4]; %index into the counter for each condition
+s.stimulus.cond.counterNames{1}={'L-0';'R-0';'L-180';'R-180'};
+

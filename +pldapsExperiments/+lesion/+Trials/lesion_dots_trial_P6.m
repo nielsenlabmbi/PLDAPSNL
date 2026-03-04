@@ -1,4 +1,4 @@
-function lesion_dots_trial_P6A(p,state)
+function lesion_dots_trial_P6(p,state)
 %This phase adjusts the stimulus duration
 
 %use normal functionality in states
@@ -414,9 +414,9 @@ function cleanUpandSave(p)
     end
     
     %show stats
-    pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1, p.trialMem.condIdx); %updates counters
+    pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1, 1, p.trialMem.condIdx); %updates counters
     pds.behavior.printCounter(p.trialMem.stats.sideCounter,p.trialMem.stats.sideCounterNames)
-    pds.behavior.printCounter(p.trialMem.stats.condCounter,p.trialMem.stats.condCounterNames)
+    pds.behavior.printCounter(p.trialMem.stats.condCounter{1},p.trialMem.stats.condCounterNames{1})
 
 
     switch p.trial.userInput

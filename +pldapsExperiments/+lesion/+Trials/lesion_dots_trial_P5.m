@@ -399,11 +399,11 @@ function cleanUpandSave(p)
     if p.trial.pldaps.draw.reward.show
         pds.behavior.reward.showReward(p,{'S';'L';'R'})
     end
-    
+
     %show stats
-    pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1, p.trialMem.condIdx); %updates counters
+    pds.behavior.countTrialNew(p,p.trial.pldaps.goodtrial,1, 1, p.trialMem.condIdx); %updates counters
     pds.behavior.printCounter(p.trialMem.stats.sideCounter,p.trialMem.stats.sideCounterNames)
-    pds.behavior.printCounter(p.trialMem.stats.condCounter,p.trialMem.stats.condCounterNames)
+    pds.behavior.printCounter(p.trialMem.stats.condCounter{1},p.trialMem.stats.condCounterNames{1})
 
     switch p.trial.userInput
         case 1 %left key
