@@ -14,6 +14,9 @@ if nargin < 2
     amount = p.trial.behavior.reward.defaultAmount;
 end
 
+%turn volume into time
+%s. 
+%amountTime=XXXX (chan);
 
 if p.trial.newEraSyringePump.usePumps
     pds.newEraSyringePump.give(p,amount);

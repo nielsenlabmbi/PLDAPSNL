@@ -11,6 +11,8 @@ function s=pldapsClassDefaultParameters(s)
  s. behavior.   reward. amount = [0.1 0.3 0.3 0.3];
  s. behavior.   reward. amountDelta = 0.05;
  s. behavior.   reward. propAmtIncorrect = 0.2;
+ s. behavior.   reward. volCoeff = [1 1 1 1];
+ s. behavior.   reward. volOffset = [1 1 1 1];
  s. behavior.   reward. dacAmp = 10;
  s. behavior.   reward. nChannels = 3;
  s. behavior.   reward. channel. START = 3; %dac channel for reward delivery
@@ -139,7 +141,9 @@ s.  datapixx.   dio.    useForReward = 0;
 %s. led.
  s. led.    channel = 24;
  s. led.    use = 1;
- s. led.    channel2 = 21; %5/30/25 - EO added to use second stimuli for stim off (camera)
+ s. led.    channel2 = 21; %5/30/25 - EO added to use second LED to signal stim ON/OFF - CHANNEL20
+ s. led.    channel3 = 22; %3/10/26 - EO added to send trigger to FLIR for acquisition; TOP
+ s. led.    channel4 = 23; %3/13/26 - EO added to send trigger to FLIR for acquisition; SIDE
  
 %s.	mouse.
  s.	mouse.	use = false;

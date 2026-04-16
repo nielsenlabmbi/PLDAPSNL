@@ -93,6 +93,7 @@ switch p.trial.state
             p.trial.stimulus.frameStimOn = p.trial.iFrame;
             p.trial.state=p.trial.stimulus.states.STIMON;
             pds.LED.stimLEDOn(p);
+            pds.LED.camTrigSTART(p); %3/10/26
         end
         
     case p.trial.stimulus.states.STIMON
@@ -109,6 +110,7 @@ switch p.trial.state
             %note time
             p.trial.stimulus.timeTrialFirstResp = p.trial.ttime;
             p.trial.stimulus.frameTrialFirstResp = p.trial.iFrame;
+            pds.LED.camTrigSTOP(p);
         
             %note response
             %p.trial.stimulus.respTrial=activePort;

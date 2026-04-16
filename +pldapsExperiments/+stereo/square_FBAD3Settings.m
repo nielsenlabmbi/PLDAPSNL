@@ -30,7 +30,7 @@ s.stimulus.centerY= 700;
 s.stimulus.stepSize=.05; 
 s.stimulus.stepDens=.0005; 
 s.stimulus.runtype = 'pseudo';
-s.stimulus.backgroundDot=0;
+s.stimulus.backgroundDot=1;
 s.stimulus.duration.ITI = 1.5;
 %changed 2 to 1.5 11/12/24
 

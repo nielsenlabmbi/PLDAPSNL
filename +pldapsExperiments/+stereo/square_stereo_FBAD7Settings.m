@@ -22,9 +22,10 @@ s.stimulus.dotDensity = .005; %0.03; %dots/deg^2
 s.stimulus.centerX= 990; %pixels
 s.stimulus.centerY= 300;
 s.stimulus.duration.ITI = 1.5;
-s.stimulus.disp= .75; 
-s.stimulus.disp1= 1; 
-s.stimulus.disp2= .25; 
+s.stimulus.disp= .8; 
+s.stimulus.disp1= 2.5; %originally 1, changed 3/19, changed to 2.5 4/13
+s.stimulus.disp2= .8; %originally .5, changed 3/19, changed to .8 4/13
+
 
 %set up the viewing distance
 s.display.viewdist = 75; 

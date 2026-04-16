@@ -27,11 +27,11 @@ s.display.bgColor = [.5 .5 .5];
 s.stimulus.width=10; %deg
 s.stimulus.stimSide= [-1 1];
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
-s.stimulus.centerY=540-360; %vertical stimulus position (pixels)
+s.stimulus.centerY=540+360; %vertical stimulus position (pixels)
 %adjust center Y to [540-360; 540; 540+360];
 %                   [top stim; middle stim; bottom stim];
 %                      top = 0 bottom = 1080
-s.stimulus.offset=15; %horizontal offset in deg (from point where stimulus turns on)
+s.stimulus.offset=10; %horizontal offset in deg (from point where stimulus turns on)
 s.datapixx.adc.channels = [2 4 6 8 10];
 s.ports.nPorts=5;
 s.ports.adc.portThreshold = [2 2 2 -2 2]';
