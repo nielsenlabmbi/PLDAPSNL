@@ -8,11 +8,12 @@ function s=pldapsClassDefaultParameters(s)
 %s.	behavior.	reward.
  s.	behavior.	reward.	defaultAmount = 0.3;
  s. behavior.   reward. manualAmount = 0.2;
- s. behavior.   reward. amount = [0.1 0.3 0.3 0.3];
+ s. behavior.   reward. amount = [0.15 0.35 0.35 0.35]; %indexed by rewardidx
+ s. behavior.   reward. amountVol = [0.07 0.24 0.24 0.24];
  s. behavior.   reward. amountDelta = 0.05;
  s. behavior.   reward. propAmtIncorrect = 0.2;
- s. behavior.   reward. volCoeff = [1 1 1 1];
- s. behavior.   reward. volOffset = [1 1 1 1];
+ s. behavior.   reward. volCoeff = [0.83 0.93 0.86]; %indexed by reward.channel
+ s. behavior.   reward. volOffset = [-0.06 -0.07 -0.06];
  s. behavior.   reward. dacAmp = 10;
  s. behavior.   reward. nChannels = 3;
  s. behavior.   reward. channel. START = 3; %dac channel for reward delivery
