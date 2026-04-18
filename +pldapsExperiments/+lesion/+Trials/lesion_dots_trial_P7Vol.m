@@ -76,7 +76,7 @@ switch p.trial.state
             
             %deliver reward
             amountVol=p.trial.behavior.reward.amountVol(p.trial.stimulus.rewardIdx.START);
-            amount=rewardVol2Time(p,amountVol,p.trial.stimulus.reward.channel.START);
+            amount=pds.behavior.reward.rewardVol2Time(p,amountVol,p.trial.behavior.reward.channel.START);
             pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             
             %advance state
@@ -126,11 +126,11 @@ switch p.trial.state
                 %give reward
                 if activePort==p.trial.stimulus.port.LEFT
                     amountVol=p.trial.behavior.reward.amountVol(p.trial.stimulus.rewardIdx.LEFT);
-                    amount=rewardVol2Time(p,amountVol,p.trial.stimulus.reward.channel.LEFT);
+                    amount=pds.behavior.reward.rewardVol2Time(p,amountVol,p.trial.behavior.reward.channel.LEFT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                 else
                     amountVol=p.trial.behavior.reward.amountVol(p.trial.stimulus.rewardIdx.RIGHT);
-                    amount=rewardVol2Time(p,amountVol,p.trial.stimulus.reward.channel.RIGHT);
+                    amount=pds.behavior.reward.rewardVol2Time(p,amountVol,p.trial.behavior.reward.channel.RIGHT);
                     pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                 end
                 
@@ -171,11 +171,11 @@ switch p.trial.state
                     
                     if activePort==p.trial.stimulus.port.LEFT
                         amountVol=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amountVol(p.trial.stimulus.rewardIdx.LEFT);
-                        amount=rewardVol2Time(p,amountVol,p.trial.stimulus.reward.channel.LEFT);
+                        amount=pds.behavior.reward.rewardVol2Time(p,amountVol,p.trial.behavior.reward.channel.LEFT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
                     else
                         amountVol=p.trial.behavior.reward.propAmtIncorrect*p.trial.behavior.reward.amountVol(p.trial.stimulus.rewardIdx.RIGHT);
-                        amount=rewardVol2Time(p,amountVol,p.trial.stimulus.reward.channel.RIGHT);
+                        amount=pds.behavior.reward.rewardVol2Time(p,amountVol,p.trial.behavior.reward.channel.RIGHT);
                         pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
                     end
                     

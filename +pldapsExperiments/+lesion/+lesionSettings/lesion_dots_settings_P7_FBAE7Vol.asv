@@ -4,7 +4,7 @@ function s = lesion_dots_settings_P7_FBAE7Vol
 
 %%%these parameters can get changed
 %s.behavior.reward.amountVol = [0.07 0.24 0.24 0.24];
-s.behavior.reward.amountVol = [0.4 0.4 0.4 0.24];
+s.behavior.reward.amountVol = [0.2 0.2 0.2 0.24];
 s.stimulus.durStim = 10; %ferret specific stimulus duration (sec)
 s.stimulus.stairL=0; %staircase state L (off initially)
 s.stimulus.dotCoherenceL =  1; %start level L
