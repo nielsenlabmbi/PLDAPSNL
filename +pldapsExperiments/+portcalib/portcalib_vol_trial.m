@@ -48,6 +48,9 @@ switch p.trial.state
                 pds.LED.LEDOff(p);
                 p.trial.led.state=0;
             end
+
+            %note time
+            p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
             
             %give reward
             if activePort==p.trial.stimulus.port.LEFT

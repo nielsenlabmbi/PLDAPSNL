@@ -107,31 +107,6 @@ if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.eitKey)   % reward change
     pds.behavior.reward.updateAmount(p,8);
 end
 
-%%%%%change reward amounts for VOLUME % Added 4/27/26
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.wKey)   % reward change
-    pds.behavior.reward.updateAmountVol(p,1);
-end
-
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.eKey)   % reward change
-    pds.behavior.reward.updateAmountVol(p,2);
-end
-
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.rKey)   % reward change
-    pds.behavior.reward.updateAmountVol(p,3);
-end
-
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.tKey)   % reward change
-    pds.behavior.reward.updateAmountVol(p,4);
-end
-
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.yKey)   % reward change
-    pds.behavior.reward.updateAmountVol(p,5);
-end
-
-if p.trial.keyboard.firstPressQ(p.trial.keyboard.codes.uKey)   % reward change
-    pds.behavior.reward.updateAmountVol(p,6);
-end
-
 %%%%%toggle reward spout position
 if p.trial.ports.movable
     moveP=0;

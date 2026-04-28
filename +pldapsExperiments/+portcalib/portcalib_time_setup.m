@@ -16,7 +16,7 @@ p.trial.stimulus.duration.ITI = 0.1; %ITI in s
 
 %% conditions:
 %this is just a placeholder
-c=generateCondList_Gellerman(2);
+c=generateCondList_Gellerm(2);
 
 p.conditions=c;
 
