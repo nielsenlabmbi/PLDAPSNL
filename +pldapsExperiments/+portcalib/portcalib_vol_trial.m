@@ -54,15 +54,15 @@ switch p.trial.state
             
             %give reward
             if activePort==p.trial.stimulus.port.LEFT
-                amountVol=p.trial.behavior.reward.amountVol(p.trial.stimulus.rewardIdx.LEFT);
+                amountVol=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
                 amount=pds.behavior.reward.rewardVol2Time(p,amountVol,p.trial.behavior.reward.channel.LEFT);
                 pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.LEFT);
             elseif activePort==p.trial.stimulus.port.RIGHT
-                amountVol=p.trial.behavior.reward.amountVol(p.trial.stimulus.rewardIdx.RIGHT);
+                amountVol=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.RIGHT);
                 amount=pds.behavior.reward.rewardVol2Time(p,amountVol,p.trial.behavior.reward.channel.RIGHT);
                 pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.RIGHT);
               elseif activePort==p.trial.stimulus.port.START
-                amountVol=p.trial.behavior.reward.amountVol(p.trial.stimulus.rewardIdx.START);
+                amountVol=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.START);
                 amount=pds.behavior.reward.rewardVol2Time(p,amountVol,p.trial.behavior.reward.channel.START);
                 pds.behavior.reward.give(p,amount,p.trial.behavior.reward.channel.START);
             end
@@ -107,4 +107,6 @@ if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S';'L';'R'})
 end
 disp('Port activations')
-disp(p.trialMem.portCount)
+disp(p.trialMem.portCount([p.trial.stimulus.port.START,...
+    p.trial.stimulus.port.LEFT,...
+    p.trial.stimulus.port.RIGHT]))

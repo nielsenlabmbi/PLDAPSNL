@@ -49,6 +49,9 @@ switch p.trial.state
                 p.trial.led.state=0;
             end
             
+            %note time
+            p.trial.stimulus.timeTrialFinalResp = p.trial.ttime;
+
             %give reward
             if activePort==p.trial.stimulus.port.LEFT
                 amount=p.trial.behavior.reward.amount(p.trial.stimulus.rewardIdx.LEFT);
@@ -101,4 +104,6 @@ if p.trial.pldaps.draw.reward.show
     pds.behavior.reward.showReward(p,{'S';'L';'R'})
 end
 disp('Port activations')
-disp(p.trialMem.portCount)
+disp(p.trialMem.portCount([p.trial.stimulus.port.START,...
+    p.trial.stimulus.port.LEFT,...
+    p.trial.stimulus.port.RIGHT]))
