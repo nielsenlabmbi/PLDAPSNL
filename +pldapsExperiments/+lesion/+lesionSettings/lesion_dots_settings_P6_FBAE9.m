@@ -18,10 +18,11 @@ s.stimulus.direction = [0 180];
 s.stimulus.frameRate = 120;
 s.display.bgColor = [.5 .5 .5]; 
 s.stimulus.width=10; %deg
-s.stimulus.stimSide= [-1 1];
+%s.stimulus.stimSide= [-1 1];
+s.stimulus.stimSide= [-1 1]; %right offset only for 7/20/26
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 s.stimulus.centerY=540+360; %vertical stimulus position (pixels)
-s.stimulus.offset=15; %horizontal offset in deg (from point where stimulus turns on)
+s.stimulus.offset=14; %horizontal offset in deg (from point where stimulus turns on)
 s.stimulus.durStim = 20; %start stimulus duration (sec)
 
 s.datapixx.adc.channels = [2 4 6 8 10];

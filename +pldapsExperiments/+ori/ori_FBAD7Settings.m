@@ -25,6 +25,10 @@ s.stimulus.offStim=1;
 % %0 is left 180 is right
 %s.stimulus.direction = [0 180];
 
+%Added to try vert grating w/offset 6/1/26
+s.stimulus.angle=90; 
+s.stimulus.rotation=[-1,1];
+s.stimulus.displacement=30;
 
 
 s.stimulus.sf = 0.25;

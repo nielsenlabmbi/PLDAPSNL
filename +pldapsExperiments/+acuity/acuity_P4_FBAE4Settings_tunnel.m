@@ -11,9 +11,9 @@ s.stimulus.angle = [0 90];
 
 
 %s.stimulus.sf = 0.3; %began 9/15/25 - 9/24
-s.stimulus.sf = 0.4; %began 4/23/26
+s.stimulus.sf = 0.075; %began 7/30/26
 % - doing this for glasses testing
-s.stimulus.range = {127;[127 100]; [127 100 50 20 6]; [127 50 25 15 10 6]};
+s.stimulus.range = {127;[127 100]; [127 100 50 20 6]; [127 80 70 60 10]};
 s.stimulus.runtype = 'pseudo';
 s.stimulus.fullField = 0;
 s.stimulus.removeStim = 0; %toggle whether stimulus will remain following exit tunnel

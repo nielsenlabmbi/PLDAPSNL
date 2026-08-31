@@ -3,7 +3,7 @@ function s = square_stereo_FBAD7Settings
 %set reward amounts
 s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 %set orientation and offsets
-s.stimulus.midpointIR = 0; %use midpoint IR beam 
+s.stimulus.midpointIR = 1 %use midpoint IR beam 
 s.stimulus.angle = [0 1];
 
 
