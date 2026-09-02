@@ -406,7 +406,8 @@ function showStimulus(p)
         p.trial.stimulus.lifetime = lifetime;
         p.trial.stimulus.dotpos{f}=randpos;
         p.trial.stimulus.randpos = randpos;
-        p.trial.stimulus.randdir = randdir;
+        p.trial.stimulus.randdir=randdir;
+        p.trial.stimulus.dotdir{f} = randdir;
         Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotpos{p.trial.stimulus.frameI}, ...
             p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
              [p.trial.stimulus.centerX p.trial.stimulus.centerY],1);
