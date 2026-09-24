@@ -20,7 +20,7 @@ switch state
             Screen(p.trial.display.ptr, 'FillRect', 0.5)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             if p.trial.stimulus.midpointIR 
-                if p.trial.stimulus.midpointCrossed
+                if p.trial.stimulus.midpointCrossed & p.trial.ttime > p.trial.stimulus.timeTrialCross+5
                    Screen(p.trial.display.ptr, 'FillRect', 0.5) 
                 else
                     Screen('DrawDots',p.trial.display.ptr,p.trial.stimulus.dotpos, ...
@@ -91,6 +91,7 @@ switch p.trial.state
         %check whether any port chosen
         if p.trial.stimulus.midpointIR & find(p.trial.ports.status==1)==p.trial.stimulus.port.MIDDLE
             p.trial.stimulus.midpointCrossed = 1;
+            p.trial.stimulus.timeTrialCross = p.trial.ttime;
         end
         if ismember(activePort, [p.trial.stimulus.port.LEFT p.trial.stimulus.port.RIGHT])
             %note time
