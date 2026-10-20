@@ -276,13 +276,19 @@ function p=trialSetup(p)
     else %variable coherence levels
         cIdx=p.conditions{p.trial.pldaps.iTrial}.condIdx;
         %p.trialMem.condIdx=cIdx; %we need this for counting
-       
-        cohIdx=mod(cIdx-1,5)+1;        
-        p.trial.stimulus.dotCoh=p.trial.stimulus.dotCoherence(cohIdx);
-
-        sideIdx=floor((cIdx-1)/5)+1; %sideIdx 1 & 3 -> L, 2 & 4 -> R
-        p.trial.stimulus.sSide = p.trial.stimulus.stimSide(rem(sideIdx-1,2)+1);
-
+        try
+            cohIdx=mod(cIdx-1,5)+1;        
+            p.trial.stimulus.dotCoh=p.trial.stimulus.dotCoherence(cohIdx);
+    
+            sideIdx=floor((cIdx-1)/5)+1; %sideIdx 1 & 3 -> L, 2 & 4 -> R
+            p.trial.stimulus.sSide = p.trial.stimulus.stimSide(rem(sideIdx-1,2)+1);
+        catch %added 10/12/26 to deal with 4 coherences instead of 5
+            cohIdx=mod(cIdx-1,4)+1;        
+            p.trial.stimulus.dotCoh=p.trial.stimulus.dotCoherence(cohIdx);
+    
+            sideIdx=floor((cIdx-1)/4)+1; %sideIdx 1 & 3 -> L, 2 & 4 -> R
+            p.trial.stimulus.sSide = p.trial.stimulus.stimSide(rem(sideIdx-1,2)+1);
+        end
     end
 
     disp(p.trial.stimulus.dotCoh)

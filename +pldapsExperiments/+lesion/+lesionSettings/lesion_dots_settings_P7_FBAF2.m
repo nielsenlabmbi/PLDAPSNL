@@ -4,7 +4,7 @@ function s = lesion_dots_settings_P7_FBAF2
 %right arrow turns right staircase on/off
 
 %%%these parameters can get changed
-s.behavior.reward.amount = [0.35 0.35 0.35 0.35];
+s.behavior.reward.amount = [0.15 0.35 0.35 0.35];
 s.stimulus.durStim = 10; %ferret specific stimulus duration (sec)
 s.stimulus.stairL=0; %staircase state L (off initially)
 s.stimulus.dotCoherenceL =  1; %start level L
@@ -20,7 +20,7 @@ s.stimulus.duration.ITI = 0.2;
 s.stimulus.dotSize=0.7; %deg
 s.stimulus.dotDensity = 0.75; %dots/deg^2
 s.stimulus.dotColor = 0;
-s.stimulus.dotSpeed = 48; %deg/sec
+s.stimulus.dotSpeed = 72; %deg/sec
 s.stimulus.dotLifetime = 25; %ms, 
 s.stimulus.direction = [0 180];
 s.stimulus.frameRate = 120;

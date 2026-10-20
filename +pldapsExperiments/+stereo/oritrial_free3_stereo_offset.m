@@ -20,7 +20,7 @@ switch state
             Screen(p.trial.display.ptr, 'FillRect', 0.5)
         elseif p.trial.state==p.trial.stimulus.states.STIMON || p.trial.state==p.trial.stimulus.states.INCORRECT
             if p.trial.stimulus.midpointIR 
-                if p.trial.stimulus.midpointCrossed & p.trial.ttime>(p.trial.stimulus.crossTime+.15) %add delay after crossing
+                if p.trial.stimulus.midpointCrossed & p.trial.ttime>(p.trial.stimulus.crossTime+.05) %add delay after crossing
                    Screen(p.trial.display.ptr, 'FillRect', 0.5) 
                 else
                     Screen('DrawTexture',p.trial.display.ptr,p.trial.gratTex,[],p.trial.gratPos,0);

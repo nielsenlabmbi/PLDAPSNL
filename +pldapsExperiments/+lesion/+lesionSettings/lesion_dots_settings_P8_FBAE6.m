@@ -10,8 +10,8 @@ s.display.viewdist = 57; %cm
 s.stimulus.duration.ITI = 0.2;
 s.stimulus.delta_offset = 1;%step size for offset in deg
 s.stimulus.delta_coh = 0.1;%step size for offset in deg
-s.stimulus.dotCoherence = 1;
-s.stimulus.offset=0; %horizontal offset in deg (from point where stimulus turns on)
+s.stimulus.dotCoherence = .5;
+s.stimulus.offset=5; %horizontal offset in deg (from point where stimulus turns on)
 
 %%%these parameters should not be changed without discussion
 s.stimulus.dotSize=0.7; %deg
@@ -22,7 +22,7 @@ s.stimulus.dotLifetime = 25; %ms,
 s.stimulus.direction = [0 180];
 s.stimulus.frameRate = 120;
 s.display.bgColor = [.5 .5 .5]; 
-s.stimulus.width=10; %deg
+s.stimulus.width=5; %deg
 s.stimulus.stimSide= [-1 1];
 s.stimulus.midpointIR = 1; %turn stimulus on when crossing midline
 s.stimulus.centerY=540+360; %vertical stimulus position (pixels)
