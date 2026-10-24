@@ -238,12 +238,17 @@ bwlum=bwlum*0.5+0.5; %scale to be between 0 and 1
 %dot positions relative to grating matrix
 dotDeltaPx=round(p.trial.stimulus.dotSpacing*PixPerDeg);
 dotX=[1:dotDeltaPx:p.trial.display.pWidth]; 
-dotY=[1:dotDeltaPx:p.trial.display.p.Height];
+dotY=[1:dotDeltaPx:p.trial.display.pHeight];
 [dotX,dotY]=meshgrid(dotX,dotY);
 
 %use dot positions to get dot color
-dotColor=bwlum(dotY(:),dotX(:)); 
-p.trial.stimulus.dotColor=dotColor(:); 
+idx=sub2ind([p.trial.display.pHeight,p.trial.display.pWidth],dotY,dotX);
+dotColor=bwlum(idx); 
+%for now copy into all 3 color channels to be black to white, this is where
+%colors can be assigned
+p.trial.stimulus.dotColor(1,:)=dotColor(:); 
+p.trial.stimulus.dotColor(2,:)=dotColor(:); 
+p.trial.stimulus.dotColor(3,:)=dotColor(:);
 
 %transform dot positions to be relative to center
 dotX=dotX-p.trial.display.pWidth/2;
@@ -265,6 +270,7 @@ end
 
 %% show stimulus 
 function showStimulus(p)
+
 
 Screen('DrawDots', p.trial.display.ptr, p.trial.stimulus.dotPos, ...
     p.trial.stimulus.dotSizePix, p.trial.stimulus.dotColor, ...
